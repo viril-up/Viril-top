@@ -1,18 +1,32 @@
 import 'package:flutter/material.dart';
 import '../../core/data/viril_store.dart';
+import '../habits/data/habit_store.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/section_title.dart';
 import '../../core/widgets/metric_tile.dart';
 
-class ProgressScreen extends StatelessWidget {
+class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
+
+  @override
+  State<ProgressScreen> createState() => _ProgressScreenState();
+}
+
+class _ProgressScreenState extends State<ProgressScreen> {
+  @override
+  void initState() {
+    super.initState();
+    VirilStore.instance.initialize();
+    HabitStore.instance.initialize();
+  }
 
   @override
   Widget build(BuildContext context) {
     final store = VirilStore.instance;
+    final habits = HabitStore.instance;
     return AnimatedBuilder(
-      animation: store,
+      animation: Listenable.merge([store, habits]),
       builder: (context, _) => ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
         children: [
@@ -61,6 +75,24 @@ class ProgressScreen extends StatelessWidget {
             )),
             const SizedBox(height: 10),
             Text('Ещё ${100 - store.levelProgress} XP до уровня ${store.level + 1}', style: const TextStyle(color: VirilColors.ice, fontSize: 12, fontWeight: FontWeight.w700)),
+          ])),
+          const SizedBox(height: 14),
+          GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('Дисциплина и привычки', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 5),
+            const Text('Результат ежедневных ритуалов', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+            const SizedBox(height: 12),
+            Row(children: [
+              Expanded(child: MetricTile(value: '${habits.totalCompletions}', label: 'ОТМЕТОК')),
+              const SizedBox(width: 8),
+              Expanded(child: MetricTile(value: '${habits.bestStreak}', label: 'ЛУЧШАЯ СЕРИЯ')),
+              const SizedBox(width: 8),
+              Expanded(child: MetricTile(value: '${habits.activeHabits}', label: 'ПРИВЫЧЕК')),
+            ]),
+            const SizedBox(height: 10),
+            _Achievement(icon: Icons.wb_sunny_rounded, title: 'Первый ритуал', description: 'Отметь выполнение привычки', unlocked: habits.totalCompletions >= 1),
+            _Achievement(icon: Icons.local_fire_department_rounded, title: 'Неделя дисциплины', description: 'Собери серию из 7 дней', unlocked: habits.bestStreak >= 7),
+            _Achievement(icon: Icons.workspace_premium_rounded, title: 'Мастер постоянства', description: 'Набери 30 отметок привычек', unlocked: habits.totalCompletions >= 30),
           ])),
           const SizedBox(height: 14),
           GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
