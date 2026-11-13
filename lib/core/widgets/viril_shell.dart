@@ -15,9 +15,12 @@ class VirilShell extends StatefulWidget {
 
 class _VirilShellState extends State<VirilShell> {
   int _index = 0;
-  static const _screens = [
-    HomeScreen(), DevelopmentScreen(), ResourcesScreen(), ProgressScreen(), ProfileScreen(),
+  late final List<Widget> _screens = [
+    HomeScreen(onOpenProfile: _openProfile),
+    const DevelopmentScreen(), const ResourcesScreen(), const ProgressScreen(), const ProfileScreen(),
   ];
+
+  void _openProfile() => setState(() => _index = 4);
   static const _items = [
     (Icons.home_rounded, 'Главная'),
     (Icons.auto_awesome_rounded, 'Развитие'),
