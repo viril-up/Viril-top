@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/viril_colors.dart';
 import 'particle_backdrop.dart';
+import '../data/viril_store.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/development/development_screen.dart';
 import '../../features/resources/resources_screen.dart';
@@ -71,10 +72,18 @@ class _VirilShellState extends State<VirilShell> {
         Text('Viril', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
         Text('Стань сильнее во всех измерениях', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
       ])),
-      Container(padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
-        decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: VirilColors.line)),
-        child: const Row(children: [Text('🔥'), SizedBox(width: 5), Text('0', style: TextStyle(fontWeight: FontWeight.bold))])),
+      AnimatedBuilder(
+        animation: VirilStore.instance,
+        builder: (context, _) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+          decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: VirilColors.line)),
+          child: Row(children: [
+            const Text('✦'), const SizedBox(width: 5),
+            Text('${VirilStore.instance.xp} XP', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+          ]),
+        ),
+      ),
     ]),
   );
 }
