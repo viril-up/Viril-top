@@ -3,6 +3,8 @@ import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/section_title.dart';
 import 'domains/domain_detail_screen.dart';
+import '../habits/habits_screen.dart';
+import '../../core/widgets/glass_card.dart';
 
 class DevelopmentScreen extends StatelessWidget {
   const DevelopmentScreen({super.key});
@@ -12,6 +14,27 @@ class DevelopmentScreen extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
     children: [
       const SectionTitle('Развитие', subtitle: 'Четыре грани личности — единая система'),
+      InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HabitsScreen())),
+        child: GlassCard(
+          margin: const EdgeInsets.only(bottom: 15),
+          child: Row(children: [
+            Container(width: 48, height: 48, decoration: BoxDecoration(
+              color: VirilColors.gold.withValues(alpha: .13),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: VirilColors.gold.withValues(alpha: .3)),
+            ), child: const Icon(Icons.repeat_rounded, color: VirilColors.gold, size: 24)),
+            const SizedBox(width: 13),
+            const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Привычки и ритуалы', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+              SizedBox(height: 4),
+              Text('Ежедневные отметки, серии и недельный ритм', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+            ])),
+            const Icon(Icons.chevron_right, color: VirilColors.gold),
+          ]),
+        ),
+      ),
       _TrackCard(icon: Icons.fitness_center, title: 'Физическое развитие', text: 'Тренировки, мобильность, восстановление и привычки движения.', color: VirilColors.lava, tag: 'ТЕЛО', domain: 'Физическое'),
       _TrackCard(icon: Icons.psychology_alt, title: 'Ментальное развитие', text: 'Эмоциональная грамотность, внимание, стресс-менеджмент и рефлексия.', color: VirilColors.ice, tag: 'РАЗУМ', domain: 'Ментальное'),
       _TrackCard(icon: Icons.auto_stories, title: 'Интеллектуальное развитие', text: 'Чтение, языки, память, критическое и стратегическое мышление.', color: VirilColors.gold, tag: 'ИНТЕЛЛЕКТ', domain: 'Интеллект'),
