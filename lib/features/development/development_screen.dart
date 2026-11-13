@@ -4,7 +4,6 @@ import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/section_title.dart';
 import 'domains/domain_detail_screen.dart';
 import '../habits/habits_screen.dart';
-import '../../core/widgets/glass_card.dart';
 
 class DevelopmentScreen extends StatelessWidget {
   const DevelopmentScreen({super.key});
