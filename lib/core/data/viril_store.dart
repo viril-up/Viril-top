@@ -9,10 +9,12 @@ class VirilStore extends ChangeNotifier {
 
   static const _tasksKey = 'viril.tasks.v1';
   static const _xpKey = 'viril.xp.v1';
+  static const _habitRewardsKey = 'viril.habit_rewards.v1';
 
   SharedPreferences? _preferences;
   List<VirilTask> _tasks = [];
   int _xp = 0;
+  final Set<String> _habitRewards = <String>{};
   bool _ready = false;
 
   List<VirilTask> get tasks => List.unmodifiable(_tasks);
@@ -27,6 +29,7 @@ class VirilStore extends ChangeNotifier {
     if (_ready) return;
     _preferences = await SharedPreferences.getInstance();
     _xp = _preferences!.getInt(_xpKey) ?? 0;
+    _habitRewards.addAll(_preferences!.getStringList(_habitRewardsKey) ?? <String>[]);
     final raw = _preferences!.getString(_tasksKey);
     if (raw != null) {
       try {
@@ -67,6 +70,17 @@ class VirilStore extends ChangeNotifier {
     await _saveTasks();
     await _preferences?.setInt(_xpKey, _xp);
     notifyListeners();
+  }
+
+  Future<bool> awardHabitXp(String habitId, String dayKey) async {
+    await initialize();
+    final rewardKey = '$habitId:$dayKey';
+    if (!_habitRewards.add(rewardKey)) return false;
+    _xp = (_xp + 5).clamp(0, 999999).toInt();
+    await _preferences?.setStringList(_habitRewardsKey, _habitRewards.toList());
+    await _preferences?.setInt(_xpKey, _xp);
+    notifyListeners();
+    return true;
   }
 
   Future<void> removeTask(String id) async {
