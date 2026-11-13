@@ -132,6 +132,7 @@ class GoalStore extends ChangeNotifier {
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       title: value,
     ));
+    goal.completedAt = null;
     await _save();
     notifyListeners();
   }
@@ -155,6 +156,11 @@ class GoalStore extends ChangeNotifier {
     final goal = _find(goalId);
     if (goal == null) return;
     goal.steps.removeWhere((step) => step.id == stepId);
+    if (goal.isCompleted) {
+      goal.completedAt ??= DateTime.now();
+    } else {
+      goal.completedAt = null;
+    }
     await _save();
     notifyListeners();
   }
