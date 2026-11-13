@@ -29,7 +29,7 @@ class _VirilShellState extends State<VirilShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
+      extendBody: false,
       body: ParticleBackdrop(child: SafeArea(
         bottom: false,
         child: Column(children: [
