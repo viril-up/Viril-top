@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/viril_colors.dart';
 import 'particle_backdrop.dart';
-import '../data/viril_store.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/development/development_screen.dart';
 import '../../features/resources/resources_screen.dart';
@@ -34,7 +33,7 @@ class _VirilShellState extends State<VirilShell> {
       body: ParticleBackdrop(child: SafeArea(
         bottom: false,
         child: Column(children: [
-          _header(),
+          if (_index != 0) _header(),
           Expanded(child: IndexedStack(index: _index, children: _screens)),
         ]),
       )),
@@ -69,21 +68,9 @@ class _VirilShellState extends State<VirilShell> {
       ), child: const Center(child: Text('🧠', style: TextStyle(fontSize: 23)))),
       const SizedBox(width: 12),
       const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Viril', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
-        Text('Стань сильнее во всех измерениях', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+        Text('Viril Top', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+        Text('Система дисциплины и целей', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
       ])),
-      AnimatedBuilder(
-        animation: VirilStore.instance,
-        builder: (context, _) => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
-          decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: VirilColors.line)),
-          child: Row(children: [
-            const Text('✦'), const SizedBox(width: 5),
-            Text('${VirilStore.instance.xp} XP', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
-          ]),
-        ),
-      ),
     ]),
   );
 }
