@@ -6,7 +6,8 @@ import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.onOpenProfile});
+  final VoidCallback? onOpenProfile;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -58,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _roundAction(
         icon: Icons.person_rounded,
         label: 'Профиль',
-        onTap: () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
+        onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
       ),
       const Spacer(),
       Container(
