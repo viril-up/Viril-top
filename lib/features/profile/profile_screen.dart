@@ -29,18 +29,18 @@ class ProfileScreen extends StatelessWidget {
             color: VirilColors.stoneLight, border: Border.all(color: VirilColors.gold, width: 1.5)),
             child: const Icon(Icons.psychology_alt, color: VirilColors.ice, size: 32)),
           const SizedBox(width: 13),
-          const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Путник', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 21)),
-            Text('Уровень ${store.level} · Путь продолжается', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
-            Text('VIRIL MEMBER', style: TextStyle(color: VirilColors.gold, letterSpacing: 1.5, fontSize: 9)),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('Путник', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 21)),
+            Text('Уровень ${store.level} · Путь продолжается', style: const TextStyle(color: VirilColors.muted, fontSize: 11)),
+            const Text('VIRIL MEMBER', style: TextStyle(color: VirilColors.gold, letterSpacing: 1.5, fontSize: 9)),
           ])),
         ]),
         const SizedBox(height: 18),
-        const Row(children: [
+        Row(children: [
           Expanded(child: MetricTile(value: '${store.xp}', label: 'ОБЩИЙ XP')),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(child: MetricTile(value: '${store.xp}', label: 'XP СЕЗОНА')),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(child: MetricTile(value: '${store.completedCount}', label: 'ЗАДАЧ')),
         ]),
       ])),
@@ -58,10 +58,10 @@ class ProfileScreen extends StatelessWidget {
       const SizedBox(height: 6),
       const Text('Рейтинг и таблица участников появятся после подключения аккаунтов и серверной системы.', style: TextStyle(color: VirilColors.muted, fontSize: 11, height: 1.4)),
       const SizedBox(height: 14),
-      const Row(children: [
-        Expanded(child: _LeagueBadge(label: 'ТЕКУЩАЯ ЛИГА', value: 'Бронза')),
-        SizedBox(width: 9),
-        Expanded(child: _LeagueBadge(label: 'ОЧКИ СЕЗОНА', value: '0 XP')),
+      Row(children: [
+        const Expanded(child: _LeagueBadge(label: 'ТЕКУЩАЯ ЛИГА', value: 'Бронза')),
+        const SizedBox(width: 9),
+        Expanded(child: _LeagueBadge(label: 'ОЧКИ СЕЗОНА', value: '${store.xp} XP')),
       ]),
     ])),
     const SectionTitle('Настройки профиля'),
