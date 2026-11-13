@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/viril_colors.dart';
+import '../../core/data/viril_store.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/section_title.dart';
 import '../../core/widgets/metric_tile.dart';
@@ -7,7 +8,11 @@ import '../../core/widgets/metric_tile.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
   @override
-  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.fromLTRB(20, 8, 20, 120), children: [
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: VirilStore.instance,
+    builder: (context, _) {
+      final store = VirilStore.instance;
+      return ListView(padding: const EdgeInsets.fromLTRB(20, 8, 20, 120), children: [
     const SectionTitle('Профиль', subtitle: 'Твоя личная территория развития'),
     GlassCard(padding: const EdgeInsets.all(0), child: Column(children: [
       Container(height: 155, decoration: const BoxDecoration(
@@ -26,17 +31,17 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(width: 13),
           const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Путник', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 21)),
-            Text('Уровень 1 · Начало пути', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+            Text('Уровень ${store.level} · Путь продолжается', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
             Text('VIRIL MEMBER', style: TextStyle(color: VirilColors.gold, letterSpacing: 1.5, fontSize: 9)),
           ])),
         ]),
         const SizedBox(height: 18),
         const Row(children: [
-          Expanded(child: MetricTile(value: '0', label: 'ОБЩИЙ XP')),
+          Expanded(child: MetricTile(value: '${store.xp}', label: 'ОБЩИЙ XP')),
           SizedBox(width: 8),
-          Expanded(child: MetricTile(value: '0', label: 'XP СЕЗОНА')),
+          Expanded(child: MetricTile(value: '${store.xp}', label: 'XP СЕЗОНА')),
           SizedBox(width: 8),
-          Expanded(child: MetricTile(value: '—', label: 'МЕСТО')),
+          Expanded(child: MetricTile(value: '${store.completedCount}', label: 'ЗАДАЧ')),
         ]),
       ])),
     ])),
@@ -68,7 +73,9 @@ class ProfileScreen extends StatelessWidget {
       (Icons.help_outline, 'Помощь и поддержка'),
     ]) GlassCard(margin: const EdgeInsets.only(bottom: 9), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       child: Row(children: [Icon(item.$1, color: VirilColors.ice), const SizedBox(width: 13), Expanded(child: Text(item.$2, style: const TextStyle(fontWeight: FontWeight.w600))), const Icon(Icons.chevron_right, color: VirilColors.muted)])),
-  ]);
+      ]);
+    },
+  );
 }
 
 class _LeagueBadge extends StatelessWidget {
