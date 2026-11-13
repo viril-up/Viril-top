@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/data/viril_store.dart';
 
 class VirilHabit {
   VirilHabit({required this.id, required this.title, required this.iconCode, Set<String>? completedDays})
@@ -42,6 +43,24 @@ class HabitStore extends ChangeNotifier {
   bool get isReady => _ready;
   int get completedToday => _habits.where((h) => h.completedToday).length;
   int get todayPercent => _habits.isEmpty ? 0 : (completedToday * 100 ~/ _habits.length);
+  int get totalCompletions => _habits.fold(0, (sum, habit) => sum + habit.completedDays.length);
+  int get bestStreak => _habits.fold(0, (best, habit) => best > _longestStreak(habit) ? best : _longestStreak(habit));
+  int get activeHabits => _habits.length;
+
+  int _longestStreak(VirilHabit habit) {
+    final days = habit.completedDays.toList()..sort();
+    var best = 0;
+    var current = 0;
+    DateTime? previous;
+    for (final key in days) {
+      final parts = key.split('-').map(int.parse).toList();
+      final date = DateTime(parts[0], parts[1], parts[2]);
+      current = previous != null && date.difference(previous).inDays == 1 ? current + 1 : 1;
+      if (current > best) best = current;
+      previous = date;
+    }
+    return best;
+  }
 
   Future<void> initialize() async {
     if (_ready) return;
@@ -76,7 +95,12 @@ class HabitStore extends ChangeNotifier {
     if (index < 0) return;
     final habit = _habits[index];
     final key = _dayKey(DateTime.now());
-    if (!habit.completedDays.add(key)) habit.completedDays.remove(key);
+    final newlyCompleted = habit.completedDays.add(key);
+    if (!newlyCompleted) {
+      habit.completedDays.remove(key);
+    } else {
+      await VirilStore.instance.awardHabitXp(id, key);
+    }
     await _save();
     notifyListeners();
   }
