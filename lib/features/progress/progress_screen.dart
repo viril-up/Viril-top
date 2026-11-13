@@ -30,6 +30,25 @@ class ProgressScreen extends StatelessWidget {
           ]),
           const SizedBox(height: 14),
           GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('Баланс развития', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 5),
+            const Text('Выполненные задачи по четырём направлениям', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+            const SizedBox(height: 14),
+            _DomainProgress(label: 'Физическое', icon: Icons.fitness_center, color: VirilColors.lava,
+              count: store.tasks.where((task) => task.domain == 'Физическое' && task.completed).length,
+              total: store.tasks.where((task) => task.domain == 'Физическое').length),
+            _DomainProgress(label: 'Ментальное', icon: Icons.psychology_alt, color: VirilColors.ice,
+              count: store.tasks.where((task) => task.domain == 'Ментальное' && task.completed).length,
+              total: store.tasks.where((task) => task.domain == 'Ментальное').length),
+            _DomainProgress(label: 'Интеллект', icon: Icons.auto_stories, color: VirilColors.gold,
+              count: store.tasks.where((task) => task.domain == 'Интеллект' && task.completed).length,
+              total: store.tasks.where((task) => task.domain == 'Интеллект').length),
+            _DomainProgress(label: 'Духовное', icon: Icons.spa, color: VirilColors.violet,
+              count: store.tasks.where((task) => task.domain == 'Духовное' && task.completed).length,
+              total: store.tasks.where((task) => task.domain == 'Духовное').length),
+          ])),
+          const SizedBox(height: 14),
+          GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text('Путь к следующему уровню', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
             const SizedBox(height: 8),
             Text('${store.levelProgress} из 100 XP', style: const TextStyle(color: VirilColors.muted, fontSize: 12)),
@@ -89,4 +108,38 @@ class _Achievement extends StatelessWidget {
       Icon(unlocked ? Icons.check_circle : Icons.lock_outline, color: unlocked ? VirilColors.ice : VirilColors.muted, size: 18),
     ]),
   );
+}
+
+class _DomainProgress extends StatelessWidget {
+  const _DomainProgress({required this.label, required this.icon, required this.color, required this.count, required this.total});
+  final String label;
+  final IconData icon;
+  final Color color;
+  final int count;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    final ratio = total == 0 ? 0.0 : count / total;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(children: [
+        Icon(icon, color: color, size: 19),
+        const SizedBox(width: 10),
+        SizedBox(width: 94, child: Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600))),
+        Expanded(child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: LinearProgressIndicator(
+            value: ratio,
+            minHeight: 7,
+            backgroundColor: VirilColors.line,
+            valueColor: AlwaysStoppedAnimation(color),
+          ),
+        )),
+        const SizedBox(width: 10),
+        SizedBox(width: 28, child: Text('$count/$total', textAlign: TextAlign.end,
+          style: const TextStyle(color: VirilColors.muted, fontSize: 10))),
+      ]),
+    );
+  }
 }
