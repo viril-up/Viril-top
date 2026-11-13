@@ -105,7 +105,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
                     Container(
                       width: 42, height: 42,
                       decoration: BoxDecoration(color: VirilColors.gold.withValues(alpha: .12), borderRadius: BorderRadius.circular(14)),
-                      child: Icon(IconData(habit.iconCode, fontFamily: 'MaterialIcons'), color: VirilColors.gold),
+                      child: const Icon(Icons.auto_awesome_rounded, color: VirilColors.gold),
                     ),
                     const SizedBox(width: 12),
                     Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
