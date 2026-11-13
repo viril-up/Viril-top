@@ -63,7 +63,7 @@ class VirilStore extends ChangeNotifier {
     if (index < 0) return;
     final wasCompleted = _tasks[index].completed;
     _tasks[index] = _tasks[index].copyWith(completed: !wasCompleted);
-    _xp = (_xp + (wasCompleted ? -10 : 10)).clamp(0, 999999);
+    _xp = (_xp + (wasCompleted ? -10 : 10)).clamp(0, 999999).toInt();
     await _saveTasks();
     await _preferences?.setInt(_xpKey, _xp);
     notifyListeners();
