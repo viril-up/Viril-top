@@ -289,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _showAddGoalDialog() async {
     final controller = TextEditingController();
     var reward = 5;
-    final selectedPeriod = _period;
+    var goalPeriod = _period;
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
@@ -310,8 +310,8 @@ class _HomeScreenState extends State<HomeScreen> {
               for (final entry in _periods.entries)
                 ChoiceChip(
                   label: Text(entry.value),
-                  selected: selectedPeriod == entry.key,
-                  onSelected: null,
+                  selected: goalPeriod == entry.key,
+                  onSelected: (_) => setDialogState(() => goalPeriod = entry.key),
                 ),
             ]),
             const SizedBox(height: 12),
@@ -328,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () async {
                 if (controller.text.trim().isEmpty) return;
                 await VirilStore.instance.addTask(
-                  controller.text, 'Личная цель', period: selectedPeriod, xpReward: reward,
+                  controller.text, 'Личная цель', period: goalPeriod, xpReward: reward,
                 );
                 if (dialogContext.mounted) Navigator.pop(dialogContext);
               },
