@@ -4,6 +4,7 @@ import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/section_title.dart';
 import 'domains/domain_detail_screen.dart';
 import '../habits/habits_screen.dart';
+import '../goals/goals_screen.dart';
 
 class DevelopmentScreen extends StatelessWidget {
   const DevelopmentScreen({super.key});
@@ -31,6 +32,27 @@ class DevelopmentScreen extends StatelessWidget {
               Text('Ежедневные отметки, серии и недельный ритм', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
             ])),
             const Icon(Icons.chevron_right, color: VirilColors.gold),
+          ]),
+        ),
+      ),
+      InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GoalsScreen())),
+        child: GlassCard(
+          margin: const EdgeInsets.only(bottom: 15),
+          child: Row(children: [
+            Container(width: 48, height: 48, decoration: BoxDecoration(
+              color: VirilColors.ice.withValues(alpha: .13),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: VirilColors.ice.withValues(alpha: .3)),
+            ), child: const Icon(Icons.track_changes_rounded, color: VirilColors.ice, size: 24)),
+            const SizedBox(width: 13),
+            const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Мои цели', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+              SizedBox(height: 4),
+              Text('Планы на 7, 30 и 90 дней с этапами и прогрессом', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+            ])),
+            const Icon(Icons.chevron_right, color: VirilColors.ice),
           ]),
         ),
       ),
