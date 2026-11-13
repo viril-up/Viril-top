@@ -24,6 +24,7 @@ class VirilGoal {
     required this.startedAt,
     required this.steps,
     this.isArchived = false,
+    this.completedAt,
   });
 
   final String id;
@@ -32,6 +33,7 @@ class VirilGoal {
   final DateTime startedAt;
   final List<VirilGoalStep> steps;
   bool isArchived;
+  DateTime? completedAt;
 
   DateTime get deadline => startedAt.add(Duration(days: durationDays));
   int get completedSteps => steps.where((step) => step.isDone).length;
@@ -45,6 +47,7 @@ class VirilGoal {
     'durationDays': durationDays,
     'startedAt': startedAt.toIso8601String(),
     'isArchived': isArchived,
+    'completedAt': completedAt?.toIso8601String(),
     'steps': steps.map((step) => step.toJson()).toList(),
   };
 
@@ -54,6 +57,7 @@ class VirilGoal {
     durationDays: json['durationDays'] as int,
     startedAt: DateTime.parse(json['startedAt'] as String),
     isArchived: json['isArchived'] as bool? ?? false,
+    completedAt: json['completedAt'] == null ? null : DateTime.tryParse(json['completedAt'] as String),
     steps: (json['steps'] as List<dynamic>? ?? [])
         .map((item) => VirilGoalStep.fromJson(item as Map<String, dynamic>))
         .toList(),
@@ -71,7 +75,23 @@ class GoalStore extends ChangeNotifier {
 
   List<VirilGoal> get goals => List.unmodifiable(_goals);
   List<VirilGoal> get activeGoals => _goals.where((goal) => !goal.isArchived).toList();
-  int get completedGoals => _goals.where((goal) => goal.isCompleted).length;
+  List<VirilGoal> get inProgressGoals =>
+      _goals.where((goal) => !goal.isArchived && !goal.isCompleted).toList();
+  List<VirilGoal> get completedHistory {
+    final items = _goals.where((goal) => goal.completedAt != null).toList()
+      ..sort((a, b) => b.completedAt!.compareTo(a.completedAt!));
+    return items;
+  }
+  int get completedGoals => _goals.where((goal) => goal.completedAt != null).length;
+  int get totalSteps => _goals.fold(0, (sum, goal) => sum + goal.steps.length);
+  int get completedSteps => _goals.fold(
+    0, (sum, goal) => sum + goal.steps.where((step) => step.isDone).length,
+  );
+  int get averageProgress {
+    final measurable = _goals.where((goal) => !goal.isArchived && goal.steps.isNotEmpty).toList();
+    if (measurable.isEmpty) return 0;
+    return measurable.fold(0, (sum, goal) => sum + goal.progress) ~/ measurable.length;
+  }
 
   Future<void> initialize() async {
     if (_ready) return;
@@ -122,6 +142,11 @@ class GoalStore extends ChangeNotifier {
     final index = goal.steps.indexWhere((step) => step.id == stepId);
     if (index < 0) return;
     goal.steps[index].isDone = !goal.steps[index].isDone;
+    if (goal.isCompleted) {
+      goal.completedAt ??= DateTime.now();
+    } else {
+      goal.completedAt = null;
+    }
     await _save();
     notifyListeners();
   }
