@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+import '../theme/viril_colors.dart';
+import 'particle_backdrop.dart';
+import '../../features/home/home_screen.dart';
+import '../../features/development/development_screen.dart';
+import '../../features/resources/resources_screen.dart';
+import '../../features/progress/progress_screen.dart';
+import '../../features/profile/profile_screen.dart';
+
+class VirilShell extends StatefulWidget {
+  const VirilShell({super.key});
+  @override
+  State<VirilShell> createState() => _VirilShellState();
+}
+
+class _VirilShellState extends State<VirilShell> {
+  int _index = 0;
+  static const _screens = [
+    HomeScreen(), DevelopmentScreen(), ResourcesScreen(), ProgressScreen(), ProfileScreen(),
+  ];
+  static const _items = [
+    (Icons.home_rounded, 'Главная'),
+    (Icons.auto_awesome_rounded, 'Развитие'),
+    (Icons.menu_book_rounded, 'Ресурсы'),
+    (Icons.insights_rounded, 'Прогресс'),
+    (Icons.person_rounded, 'Профиль'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBody: true,
+      body: ParticleBackdrop(child: SafeArea(
+        bottom: false,
+        child: Column(children: [
+          _header(),
+          Expanded(child: IndexedStack(index: _index, children: _screens)),
+        ]),
+      )),
+      bottomNavigationBar: SafeArea(top: false, child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xF0101420),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: VirilColors.line.withValues(alpha: .8)),
+            boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 22, offset: Offset(0, 8))],
+          ),
+          child: NavigationBar(
+            height: 72,
+            selectedIndex: _index,
+            onDestinationSelected: (value) => setState(() => _index = value),
+            destinations: [for (final item in _items)
+              NavigationDestination(icon: Icon(item.$1), label: item.$2)],
+          ),
+        ),
+      )),
+    );
+  }
+
+  Widget _header() => Padding(
+    padding: const EdgeInsets.fromLTRB(22, 10, 22, 12),
+    child: Row(children: [
+      Container(width: 48, height: 48, decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(colors: [Color(0xFF34415D), Color(0xFF27223D)]),
+        border: Border.all(color: VirilColors.ice.withValues(alpha: .45)),
+      ), child: const Center(child: Text('🧠', style: TextStyle(fontSize: 23)))),
+      const SizedBox(width: 12),
+      const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text('Viril', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+        Text('Стань сильнее во всех измерениях', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+      ])),
+      Container(padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+        decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: VirilColors.line)),
+        child: const Row(children: [Text('🔥'), SizedBox(width: 5), Text('0', style: TextStyle(fontWeight: FontWeight.bold))])),
+    ]),
+  );
+}
