@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/data/viril_store.dart';
 import '../habits/data/habit_store.dart';
+import '../goals/data/goal_store.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/section_title.dart';
@@ -19,14 +20,16 @@ class _ProgressScreenState extends State<ProgressScreen> {
     super.initState();
     VirilStore.instance.initialize();
     HabitStore.instance.initialize();
+    GoalStore.instance.initialize();
   }
 
   @override
   Widget build(BuildContext context) {
     final store = VirilStore.instance;
     final habits = HabitStore.instance;
+    final goals = GoalStore.instance;
     return AnimatedBuilder(
-      animation: Listenable.merge([store, habits]),
+      animation: Listenable.merge([store, habits, goals]),
       builder: (context, _) => ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
         children: [
@@ -96,6 +99,44 @@ class _ProgressScreenState extends State<ProgressScreen> {
           ])),
           const SizedBox(height: 14),
           GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('Цели и результаты', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 5),
+            const Text('Как продвигаются твои долгосрочные планы', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+            const SizedBox(height: 12),
+            Row(children: [
+              Expanded(child: MetricTile(value: '${goals.inProgressGoals.length}', label: 'В ПРОЦЕССЕ')),
+              const SizedBox(width: 8),
+              Expanded(child: MetricTile(value: '${goals.completedGoals}', label: 'ЗАВЕРШЕНО')),
+              const SizedBox(width: 8),
+              Expanded(child: MetricTile(value: '${goals.averageProgress}%', label: 'СРЕДНИЙ ПРОГРЕСС')),
+            ]),
+            const SizedBox(height: 12),
+            Row(children: [
+              const Icon(Icons.checklist_rounded, color: VirilColors.ice, size: 18),
+              const SizedBox(width: 8),
+              Expanded(child: Text('Выполнено этапов: ${goals.completedSteps} из ${goals.totalSteps}', style: const TextStyle(color: VirilColors.muted, fontSize: 11))),
+            ]),
+            const SizedBox(height: 10),
+            _Achievement(icon: Icons.flag_circle_rounded, title: 'Первая цель', description: 'Заверши свою первую цель', unlocked: goals.completedGoals >= 1),
+            _Achievement(icon: Icons.emoji_events_rounded, title: 'Три победы', description: 'Заверши три цели', unlocked: goals.completedGoals >= 3),
+            _Achievement(icon: Icons.route_rounded, title: 'Путь из десяти шагов', description: 'Выполни 10 этапов целей', unlocked: goals.completedSteps >= 10),
+            if (goals.completedHistory.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              const Text('ИСТОРИЯ ЗАВЕРШЕНИЙ', style: TextStyle(fontSize: 10, letterSpacing: 1.3, color: VirilColors.muted, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 4),
+              ...goals.completedHistory.take(5).map((goal) => _GoalHistoryItem(
+                title: goal.title,
+                date: goal.completedAt!,
+                durationDays: goal.durationDays,
+              )),
+            ] else
+              const Padding(
+                padding: EdgeInsets.only(top: 6),
+                child: Text('Завершённые цели появятся здесь.', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
+              ),
+          ])),
+          const SizedBox(height: 14),
+          GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text('Твои достижения', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
             const SizedBox(height: 13),
             _Achievement(icon: Icons.flag_rounded, title: 'Первый шаг', description: 'Создай свой первый план', unlocked: store.tasks.isNotEmpty),
@@ -107,6 +148,33 @@ class _ProgressScreenState extends State<ProgressScreen> {
           const Text('Статистика обновляется на основе твоих планов на этом устройстве.', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
         ],
       ),
+    );
+  }
+}
+
+
+class _GoalHistoryItem extends StatelessWidget {
+  const _GoalHistoryItem({
+    required this.title,
+    required this.date,
+    required this.durationDays,
+  });
+
+  final String title;
+  final DateTime date;
+  final int durationDays;
+
+  @override
+  Widget build(BuildContext context) {
+    final formatted = '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(children: [
+        const Icon(Icons.verified_rounded, color: VirilColors.ice, size: 17),
+        const SizedBox(width: 8),
+        Expanded(child: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600))),
+        Text('$durationDays дн. · $formatted', style: const TextStyle(color: VirilColors.muted, fontSize: 9)),
+      ]),
     );
   }
 }
