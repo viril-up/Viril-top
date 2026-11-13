@@ -1,4 +1,5 @@
 name: Flutter CI
+
 on:
   push:
     branches: [main]
@@ -8,11 +9,9 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: flutter-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -23,44 +22,21 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
       - run: flutter pub get
       - run: flutter analyze --no-fatal-infos
       - run: flutter test
 
-  build-web:
-    needs: analyze
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-      - run: flutter create --platforms=web,android --org com.viril.app .
-      - run: flutter pub get
-      - run: flutter build web --release --base-href /Viril-top/
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: build/web
-
-  deploy-web:
-    if: github.ref == 'refs/heads/main'
-    needs: build-web
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
-
   build-apk:
     needs: analyze
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
       - run: flutter create --platforms=web,android --org com.viril.app .
       - run: flutter pub get
       - run: flutter build apk --release
