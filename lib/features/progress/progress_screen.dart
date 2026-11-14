@@ -72,7 +72,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
         final selectedTasks = store.completedOn(selected);
         final selectedXp = store.xpForDay(selected);
         final week = _periodPercent(store, now, 7);
-        final month = _periodPercent(store, now, now.day + (now.difference(DateTime(now.year, now.month, 1)).inDays - now.day + now.day));
         final monthStart = DateTime(now.year, now.month, 1);
         final monthValue = store.averagePercent(monthStart, _dateOnly(now));
         final yearValue = store.averagePercent(DateTime(now.year, 1, 1), _dateOnly(now));
@@ -296,8 +295,8 @@ class _ActivityChart extends StatelessWidget {
                 Text('${values[i]}', style: TextStyle(fontSize: dates.length > 14 ? 7 : 9, color: _sameDay(dates[i], selected) ? VirilColors.gold : VirilColors.muted, fontWeight: FontWeight.w700)),
                 const SizedBox(height: 4),
                 Expanded(child: Align(alignment: Alignment.bottomCenter, child: Container(
-                  width: math.max(3, slot * (dates.length > 14 ? .58 : .52)),
-                  height: math.max(3, 92 * values[i] / 100),
+                  width: math.max(3.0, slot * (dates.length > 14 ? .58 : .52)),
+                  height: math.max(3.0, 92 * values[i] / 100),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
                     color: _sameDay(dates[i], selected) ? VirilColors.gold : (values[i] == 0 ? VirilColors.line : VirilColors.ice.withValues(alpha: .75)),
