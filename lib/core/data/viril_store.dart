@@ -32,7 +32,7 @@ class VirilStore extends ChangeNotifier {
   int get level => (_xp ~/ 100) + 1;
   int get levelProgress => _xp % 100;
   int get todayXp => xpForDay(DateTime.now());
-  int get todayPercent => todayXp.clamp(0, 100);
+  int get todayPercent => todayXp.clamp(0, 100).toInt();
   int get activeDaysCount => _activeDays.length;
   int get activeDaysStreak {
     if (_activeDays.isEmpty) return 0;
@@ -52,7 +52,7 @@ class VirilStore extends ChangeNotifier {
       '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   int xpForDay(DateTime date) => _dailyXp[dayKey(date)] ?? 0;
   int percentForDay(DateTime date) => xpForDay(date).clamp(0, 100);
-  int domainLevel(String domain) => _tasks.where((t) => t.completed && t.domain == domain).length.clamp(0, 100);
+  int domainLevel(String domain) => _tasks.where((t) => t.completed && t.domain == domain).length.clamp(0, 100).toInt();
 
   int averagePercent(DateTime start, DateTime end) {
     final days = end.difference(start).inDays + 1;
@@ -109,7 +109,7 @@ class VirilStore extends ChangeNotifier {
     final day = date ?? DateTime.now();
     final key = dayKey(day);
     _activeDays.add(key);
-    if (xpDelta != 0) _dailyXp[key] = ((_dailyXp[key] ?? 0) + xpDelta).clamp(0, 999999);
+    if (xpDelta != 0) _dailyXp[key] = ((_dailyXp[key] ?? 0) + xpDelta).clamp(0, 999999).toInt();
     await _preferences?.setStringList(_activeDaysKey, _activeDays.toList()..sort());
     await _preferences?.setString(_dailyXpKey, jsonEncode(_dailyXp));
   }
@@ -135,12 +135,12 @@ class VirilStore extends ChangeNotifier {
     if (task.completed) {
       final completedAt = task.completedAt ?? DateTime.now();
       _tasks[index] = task.copyWith(completed: false, clearCompletedAt: true);
-      _xp = (_xp - task.xpReward).clamp(0, 999999);
+      _xp = (_xp - task.xpReward).clamp(0, 999999).toInt();
       await _recordActivity(xpDelta: -task.xpReward, date: completedAt);
     } else {
       final completedAt = DateTime.now();
       _tasks[index] = task.copyWith(completed: true, completedAt: completedAt);
-      _xp = (_xp + task.xpReward).clamp(0, 999999);
+      _xp = (_xp + task.xpReward).clamp(0, 999999).toInt();
       await _recordActivity(xpDelta: task.xpReward, date: completedAt);
     }
     await _saveTasks();
@@ -176,7 +176,7 @@ class VirilStore extends ChangeNotifier {
     await initialize();
     final rewardKey = '$habitId:$dayKey';
     if (!_habitRewards.add(rewardKey)) return false;
-    _xp = (_xp + 5).clamp(0, 999999);
+    _xp = (_xp + 5).clamp(0, 999999).toInt();
     final parts = dayKey.split('-').map(int.parse).toList();
     final date = DateTime(parts[0], parts[1], parts[2]);
     await _preferences?.setStringList(_habitRewardsKey, _habitRewards.toList());
