@@ -13,7 +13,6 @@ class VirilStore extends ChangeNotifier {
   static const _dailyXpKey = 'viril.daily_xp.v1';
   static const _journalKey = 'viril.journal.v1';
   static const _gratitudeKey = 'viril.gratitude.v1';
-
   SharedPreferences? _preferences;
   List<VirilTask> _tasks = [];
   int _xp = 0;
@@ -23,7 +22,6 @@ class VirilStore extends ChangeNotifier {
   final List<Map<String, String>> _journalEntries = [];
   final List<Map<String, String>> _gratitudeEntries = [];
   bool _ready = false;
-
   List<VirilTask> get tasks => List.unmodifiable(_tasks);
   int get xp => _xp;
   int get completedCount => _tasks.where((task) => task.completed).length;
@@ -39,35 +37,24 @@ class VirilStore extends ChangeNotifier {
     var day = DateTime.now();
     if (!_activeDays.contains(dayKey(day))) day = day.subtract(const Duration(days: 1));
     var streak = 0;
-    while (_activeDays.contains(dayKey(day))) {
-      streak++;
-      day = day.subtract(const Duration(days: 1));
-    }
+    while (_activeDays.contains(dayKey(day))) { streak++; day = day.subtract(const Duration(days: 1)); }
     return streak;
   }
   List<Map<String, String>> get journalEntries => List.unmodifiable(_journalEntries);
   List<Map<String, String>> get gratitudeEntries => List.unmodifiable(_gratitudeEntries);
-
-  String dayKey(DateTime date) =>
-      '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  String dayKey(DateTime date) => '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   int xpForDay(DateTime date) => _dailyXp[dayKey(date)] ?? 0;
   int percentForDay(DateTime date) => xpForDay(date).clamp(0, 100);
   int domainLevel(String domain) => _tasks.where((t) => t.completed && t.domain == domain).length.clamp(0, 100).toInt();
-
   int averagePercent(DateTime start, DateTime end) {
     final days = end.difference(start).inDays + 1;
     if (days <= 0) return 0;
     var total = 0;
-    for (var i = 0; i < days; i++) {
-      total += percentForDay(start.add(Duration(days: i)));
-    }
+    for (var i = 0; i < days; i++) { total += percentForDay(start.add(Duration(days: i))); }
     return (total / days).round();
   }
-
   List<VirilTask> completedOn(DateTime date) => _tasks.where((task) =>
-      task.completed && task.completedAt != null &&
-      dayKey(task.completedAt!) == dayKey(date)).toList();
-
+    task.completed && task.completedAt != null && dayKey(task.completedAt!) == dayKey(date)).toList();
   Future<void> initialize() async {
     if (_ready) return;
     _preferences = await SharedPreferences.getInstance();
@@ -76,8 +63,7 @@ class VirilStore extends ChangeNotifier {
     _activeDays.addAll(_preferences!.getStringList(_activeDaysKey) ?? <String>[]);
     final rawDaily = _preferences!.getString(_dailyXpKey);
     if (rawDaily != null) {
-      try {
-        final decoded = jsonDecode(rawDaily) as Map<String, dynamic>;
+      try { final decoded = jsonDecode(rawDaily) as Map<String, dynamic>;
         _dailyXp.addAll(decoded.map((key, value) => MapEntry(key, (value as num).toInt())));
       } catch (_) { _dailyXp.clear(); }
     }
@@ -85,25 +71,20 @@ class VirilStore extends ChangeNotifier {
     _readEntries(_gratitudeKey, _gratitudeEntries);
     final raw = _preferences!.getString(_tasksKey);
     if (raw != null) {
-      try {
-        final decoded = jsonDecode(raw) as List<dynamic>;
+      try { final decoded = jsonDecode(raw) as List<dynamic>;
         _tasks = decoded.map((item) => VirilTask.fromJson(item as Map<String, dynamic>)).toList();
       } catch (_) { _tasks = []; }
     }
-    // Backfill completion dates for older task records, without inventing historical XP.
     _ready = true;
     notifyListeners();
   }
-
   void _readEntries(String key, List<Map<String, String>> target) {
     final raw = _preferences?.getString(key);
     if (raw == null) return;
-    try {
-      final decoded = jsonDecode(raw) as List<dynamic>;
+    try { final decoded = jsonDecode(raw) as List<dynamic>;
       target.addAll(decoded.map((item) => Map<String, String>.from(item as Map)));
     } catch (_) { target.clear(); }
   }
-
   Future<void> _recordActivity({int xpDelta = 0, DateTime? date}) async {
     await initialize();
     final day = date ?? DateTime.now();
@@ -113,20 +94,14 @@ class VirilStore extends ChangeNotifier {
     await _preferences?.setStringList(_activeDaysKey, _activeDays.toList()..sort());
     await _preferences?.setString(_dailyXpKey, jsonEncode(_dailyXp));
   }
-
   Future<void> addTask(String title, String domain, {String period = 'day', int xpReward = 5}) async {
     final cleanTitle = title.trim();
     if (cleanTitle.isEmpty) return;
     await initialize();
-    _tasks = [VirilTask(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      title: cleanTitle, domain: domain, createdAt: DateTime.now(),
-      period: period, xpReward: xpReward,
-    ), ..._tasks];
-    await _saveTasks();
-    notifyListeners();
+    _tasks = [VirilTask(id: DateTime.now().microsecondsSinceEpoch.toString(), title: cleanTitle,
+      domain: domain, createdAt: DateTime.now(), period: period, xpReward: xpReward), ..._tasks];
+    await _saveTasks(); notifyListeners();
   }
-
   Future<void> toggleTask(String id) async {
     await initialize();
     final index = _tasks.indexWhere((task) => task.id == id);
@@ -143,57 +118,46 @@ class VirilStore extends ChangeNotifier {
       _xp = (_xp + task.xpReward).clamp(0, 999999).toInt();
       await _recordActivity(xpDelta: task.xpReward, date: completedAt);
     }
-    await _saveTasks();
-    await _preferences?.setInt(_xpKey, _xp);
-    notifyListeners();
+    await _saveTasks(); await _preferences?.setInt(_xpKey, _xp); notifyListeners();
   }
-
   Future<void> saveJournalEntry(String text) async {
-    final value = text.trim();
-    if (value.isEmpty) return;
-    await initialize();
-    _journalEntries.insert(0, {'text': value, 'createdAt': DateTime.now().toIso8601String()});
-    await _saveEntries(_journalKey, _journalEntries);
-    await _recordActivity();
-    notifyListeners();
+    final value = text.trim(); if (value.isEmpty) return;
+    await initialize(); _journalEntries.insert(0, {'text': value, 'createdAt': DateTime.now().toIso8601String()});
+    await _saveEntries(_journalKey, _journalEntries); await _recordActivity(); notifyListeners();
   }
-
   Future<void> saveGratitude(String text) async {
-    final value = text.trim();
-    if (value.isEmpty) return;
-    await initialize();
-    _gratitudeEntries.insert(0, {'text': value, 'createdAt': DateTime.now().toIso8601String()});
-    await _saveEntries(_gratitudeKey, _gratitudeEntries);
-    await _recordActivity();
-    notifyListeners();
+    final value = text.trim(); if (value.isEmpty) return;
+    await initialize(); _gratitudeEntries.insert(0, {'text': value, 'createdAt': DateTime.now().toIso8601String()});
+    await _saveEntries(_gratitudeKey, _gratitudeEntries); await _recordActivity(); notifyListeners();
   }
-
   Future<void> _saveEntries(String key, List<Map<String, String>> entries) async {
     await _preferences?.setString(key, jsonEncode(entries));
   }
-
   Future<bool> awardHabitXp(String habitId, String dayKey) async {
     await initialize();
-    final rewardKey = '$habitId:$dayKey';
-    if (!_habitRewards.add(rewardKey)) return false;
+    final rewardKey = '$habitId:$dayKey'; if (!_habitRewards.add(rewardKey)) return false;
     _xp = (_xp + 5).clamp(0, 999999).toInt();
     final parts = dayKey.split('-').map(int.parse).toList();
     final date = DateTime(parts[0], parts[1], parts[2]);
     await _preferences?.setStringList(_habitRewardsKey, _habitRewards.toList());
     await _preferences?.setInt(_xpKey, _xp);
-    await _recordActivity(xpDelta: 5, date: date);
-    notifyListeners();
-    return true;
+    await _recordActivity(xpDelta: 5, date: date); notifyListeners(); return true;
   }
-
   Future<void> removeTask(String id) async {
-    await initialize();
-    _tasks.removeWhere((task) => task.id == id);
-    await _saveTasks();
-    notifyListeners();
+    await initialize(); _tasks.removeWhere((task) => task.id == id);
+    await _saveTasks(); notifyListeners();
   }
-
   Future<void> _saveTasks() async {
     await _preferences?.setString(_tasksKey, jsonEncode(_tasks.map((task) => task.toJson()).toList()));
+  }
+
+  Future<void> resetProgress() async {
+    await initialize();
+    _tasks.clear(); _xp = 0; _habitRewards.clear(); _activeDays.clear();
+    _dailyXp.clear(); _journalEntries.clear(); _gratitudeEntries.clear();
+    for (final key in [_tasksKey, _xpKey, _habitRewardsKey, _activeDaysKey, _dailyXpKey, _journalKey, _gratitudeKey]) {
+      await _preferences?.remove(key);
+    }
+    notifyListeners();
   }
 }
