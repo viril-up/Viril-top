@@ -249,11 +249,11 @@ class _ActionTile extends StatelessWidget {
     margin: const EdgeInsets.only(bottom: 9),
     decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(17),
       border: Border.all(color: VirilColors.line)),
-    child: ListTile(onTap: onTap, contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+    child: Material(color: Colors.transparent, borderRadius: BorderRadius.circular(17), child: ListTile(onTap: onTap, contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
       leading: Icon(icon, color: VirilColors.gold, size: 23),
       title: Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
       subtitle: Text(subtitle, style: const TextStyle(fontSize: 10, color: VirilColors.muted)),
-      trailing: const Icon(Icons.chevron_right_rounded, color: VirilColors.muted)),
+      trailing: const Icon(Icons.chevron_right_rounded, color: VirilColors.muted))),
   );
 }
 

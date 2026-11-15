@@ -110,10 +110,10 @@ class _SettingTile extends StatelessWidget {
   final IconData icon; final String title, subtitle; final VoidCallback onTap; final Color? color;
   @override Widget build(BuildContext context) => Container(margin: const EdgeInsets.only(bottom: 9),
     decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(16), border: Border.all(color: VirilColors.line)),
-    child: ListTile(onTap: onTap, leading: Icon(icon, color: color ?? VirilColors.gold),
+    child: Material(color: Colors.transparent, borderRadius: BorderRadius.circular(16), child: ListTile(onTap: onTap, leading: Icon(icon, color: color ?? VirilColors.gold),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
       subtitle: Text(subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
-      trailing: const Icon(Icons.chevron_right_rounded, color: VirilColors.muted)));
+      trailing: const Icon(Icons.chevron_right_rounded, color: VirilColors.muted))));
 }
 class _InfoPage extends StatelessWidget {
   const _InfoPage({required this.title, required this.sections});
