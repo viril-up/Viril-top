@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/data/viril_store.dart';
-import '../../core/widgets/glass_card.dart';
 import 'data/profile_store.dart';
 import 'global_league_screen.dart';
 import 'profile_settings_screen.dart';
