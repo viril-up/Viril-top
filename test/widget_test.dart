@@ -4,7 +4,7 @@ import 'package:viril/app.dart';
 void main() {
   testWidgets('Viril opens with five main sections', (tester) async {
     await tester.pumpWidget(const VirilApp());
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('Мои цели'), findsOneWidget);
     expect(find.text('Главная'), findsOneWidget);
     expect(find.text('Развитие'), findsOneWidget);
