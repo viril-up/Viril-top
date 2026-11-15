@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -108,7 +107,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const Text('ТВОЯ ТРЕНИРОВОЧНАЯ СИСТЕМА', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
               const SizedBox(height: 5),
-              Text('Завершено тренировок: $_completed', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+              Text('Выполнено упражнений: $_completed', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
             ])),
           ])),
           const SizedBox(height: 22),
@@ -218,7 +217,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
   void dispose() { _timer?.cancel(); super.dispose(); }
 
   Future<void> _finishSet() async {
-    setState(() { _done = (_done + 1).clamp(0, _sets); _seconds = widget.exercise.rest; _running = _seconds > 0; });
+    setState(() { _done = (_done + 1).clamp(0, _sets).toInt(); _seconds = _done < _sets ? widget.exercise.rest : 0; _running = _seconds > 0; });
     if (_running) {
       _timer?.cancel();
       _timer = Timer.periodic(const Duration(seconds: 1), (t) {
