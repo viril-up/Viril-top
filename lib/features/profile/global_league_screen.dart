@@ -43,7 +43,7 @@ class _GlobalLeagueScreenState extends State<GlobalLeagueScreen> {
           const SizedBox(height: 15),
           if (_tab == 0) _emptyState(Icons.public_rounded, 'Мировой рейтинг скоро откроется',
             'Для настоящего Топ 100 нужны игровые аккаунты и общий сервер. Сейчас глобальные места ещё не рассчитываются.'),
-          if (_tab == 1) _emptyState(Icons.workspace_premium_rounded, 'История сезонов появится позже',
+          if (_tab == 1) _emptyState(Icons.emoji_events_rounded, 'История сезонов появится позже',
             'Рекорды будут сохраняться после запуска серверных сезонов.'),
           if (_tab == 2) _myResult(store.xp, store.level, league),
         ]),
@@ -106,7 +106,7 @@ class _PodiumPlace extends StatelessWidget {
     builder: (context, value, child) => Opacity(opacity: value.clamp(0, 1),
       child: Transform.translate(offset: Offset(0, (1-value)*22), child: child)),
     child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-      Icon(Icons.workspace_premium_rounded, color: color, size: rank == 1 ? 32 : 25),
+      Icon(Icons.emoji_events_rounded, color: color, size: rank == 1 ? 32 : 25),
       const SizedBox(height: 5),
       Text('—', style: TextStyle(color: color, fontSize: 17, fontWeight: FontWeight.w900)),
       const SizedBox(height: 5),
