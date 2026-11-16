@@ -4,7 +4,7 @@ import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/section_title.dart';
 import 'data/resource_store.dart';
 import 'models/resource_item.dart';
-import 'books/book_library_screen.dart';
+import 'books/book_library_screen.dart';\nimport 'videos/video_library_screen.dart';
 
 class ResourcesScreen extends StatefulWidget {
   const ResourcesScreen({super.key});
@@ -50,6 +50,14 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
           Text('Читай. Осмысливай. Сохраняй.',style:TextStyle(fontSize:15,fontWeight:FontWeight.w900)),SizedBox(height:4),
           Text('Твоя личная коллекция книг и заметок',style:TextStyle(color:VirilColors.muted,fontSize:10))
         ])),const Icon(Icons.arrow_forward_ios_rounded,color:VirilColors.gold,size:16)
+      ]))),
+      const SizedBox(height:12),InkWell(onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const VideoLibraryScreen())),borderRadius:BorderRadius.circular(20),child:Container(padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:VirilColors.stone,borderRadius:BorderRadius.circular(20),border:Border.all(color:VirilColors.ice.withValues(alpha:.25))),child:Row(children:[
+        Container(width:44,height:44,decoration:BoxDecoration(color:VirilColors.ice.withValues(alpha:.12),borderRadius:BorderRadius.circular(13)),child:const Icon(Icons.play_circle_outline_rounded,color:VirilColors.ice,size:25)),
+        const SizedBox(width:12),const Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+          Text('ВИДЕОТЕКА ЗНАНИЙ',style:TextStyle(color:VirilColors.ice,fontSize:9,letterSpacing:1.4,fontWeight:FontWeight.w900)),
+          SizedBox(height:4),Text('Короткие видео, большие идеи',style:TextStyle(fontSize:13,fontWeight:FontWeight.w800)),
+          SizedBox(height:3),Text('Познавательные ролики и жизненные уроки',style:TextStyle(color:VirilColors.muted,fontSize:10))
+        ])),const Icon(Icons.arrow_forward_ios_rounded,color:VirilColors.ice,size:14)
       ]))),
       const SizedBox(height:14),Row(children:[Expanded(child:Text('${items.length} МАТЕРИАЛОВ',style:const TextStyle(color:VirilColors.gold,letterSpacing:1.6,fontSize:9,fontWeight:FontWeight.w800))),TextButton.icon(onPressed:()=>setState(()=>favoritesOnly=!favoritesOnly),icon:Icon(favoritesOnly?Icons.bookmark_rounded:Icons.bookmark_border_rounded,size:17),label:Text(favoritesOnly?'Избранное':'Все материалы'),style:TextButton.styleFrom(foregroundColor:favoritesOnly?VirilColors.gold:VirilColors.muted))]),
       if(items.isEmpty)GlassCard(child:Column(children:[const Icon(Icons.search_off_rounded,color:VirilColors.muted,size:30),const SizedBox(height:8),const Text('Ничего не найдено',style:TextStyle(fontWeight:FontWeight.w800)),const SizedBox(height:4),const Text('Измени запрос или выбери другую категорию.',style:TextStyle(color:VirilColors.muted,fontSize:11))])) else for(final item in items)_ResourceCard(item:item,favorite:store.isFavorite(item.id),hasNote:store.noteFor(item.id).isNotEmpty,onFavorite:()=>store.toggleFavorite(item.id),onOpen:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>ResourceDetailScreen(item:item))))
