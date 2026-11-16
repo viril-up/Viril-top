@@ -64,7 +64,7 @@ class _VirilShellState extends State<VirilShell> {
           tooltip: 'Уведомления', style: IconButton.styleFrom(backgroundColor: VirilColors.stone, side: const BorderSide(color: VirilColors.line)),
           icon: const Icon(Icons.notifications_none_rounded, color: VirilColors.ice)),
       ])));
-    return Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 12), child: Row([
+    return Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 12), child: Row(children: [
       Container(width: 48, height: 48, decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),
         gradient: const LinearGradient(colors: [Color(0xFF34415D), Color(0xFF27223D)]),
         border: Border.all(color: VirilColors.ice.withValues(alpha: .45))),
