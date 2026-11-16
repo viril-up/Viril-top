@@ -15,51 +15,156 @@ class BookLibraryScreen extends StatefulWidget {
   @override State<BookLibraryScreen> createState()=>_BookLibraryScreenState();
 }
 class _BookLibraryScreenState extends State<BookLibraryScreen> {
-  late final Future<List<BookItem>> books= _load();
+  late final Future<List<BookItem>> books = _load();
+  final TextEditingController search = TextEditingController();
+  String genre = 'Все';
+
   Future<List<BookItem>> _load() async {
     await ResourceStore.instance.initialize();
-    final raw=await rootBundle.loadString('assets/resources/catalog/books.json');
-    final rows=jsonDecode(raw) as List;
-    final result=<BookItem>[];
-    for(final row in rows){
-      final item=Map<String,dynamic>.from(row as Map);
-      final descriptionFile=item['descriptionFile'];
-      if(descriptionFile is String && descriptionFile.isNotEmpty){
-        item['description']=await rootBundle.loadString(descriptionFile);
+    final raw = await rootBundle.loadString('assets/resources/catalog/books.json');
+    final rows = jsonDecode(raw) as List;
+    final result = <BookItem>[];
+    for (final row in rows) {
+      final item = Map<String, dynamic>.from(row as Map);
+      final descriptionFile = item['descriptionFile'];
+      if (descriptionFile is String && descriptionFile.isNotEmpty) {
+        item['description'] = await rootBundle.loadString(descriptionFile);
       }
       result.add(BookItem.fromJson(item));
     }
     return result;
   }
-  @override Widget build(BuildContext context)=>Scaffold(
-    backgroundColor:VirilColors.voidBlack,appBar:AppBar(title:const Text('Библиотека книг'),backgroundColor:Colors.transparent,actions:[IconButton(tooltip:'Дневник читателя',icon:const Icon(Icons.edit_note_rounded),onPressed:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const ReadingJournalScreen()))) ]),
-    body:FutureBuilder<List<BookItem>>(future:books,builder:(context,s){
-      if(s.connectionState!=ConnectionState.done)return const Center(child:CircularProgressIndicator());
-      if(s.hasError)return const Center(child:Text('Не удалось загрузить каталог'));
-      final list=s.data??[];
-      if(list.isEmpty)return const Center(child:Padding(padding:EdgeInsets.all(28),child:Column(mainAxisSize:MainAxisSize.min,children:[
-        Icon(Icons.menu_book_rounded,color:VirilColors.gold,size:54),SizedBox(height:16),
-        Text('Библиотека готова к наполнению',textAlign:TextAlign.center,style:TextStyle(fontSize:19,fontWeight:FontWeight.w800)),
-        SizedBox(height:8),Text('Добавь PDF-книгу, обложку и описание в папки assets/resources, затем внеси запись в books.json.',textAlign:TextAlign.center,style:TextStyle(color:VirilColors.muted,height:1.5))
-      ])));
-      return ListView.builder(padding:const EdgeInsets.all(18),itemCount:list.length,itemBuilder:(context,i){
-        final b=list[i];
-        return Card(color:VirilColors.stone,margin:const EdgeInsets.only(bottom:14),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(20),side:const BorderSide(color:VirilColors.line)),
-          child:InkWell(borderRadius:BorderRadius.circular(20),onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>BookReaderScreen(book:b))),
-            child:Padding(padding:const EdgeInsets.all(13),child:Row(crossAxisAlignment:CrossAxisAlignment.start,children:[
-              ClipRRect(borderRadius:BorderRadius.circular(12),child:Image.asset(b.cover,width:88,height:124,fit:BoxFit.cover,errorBuilder:(_,__,___)=>Container(width:88,height:124,color:VirilColors.stoneLight,child:const Icon(Icons.menu_book,color:VirilColors.gold,size:34)))),
-              const SizedBox(width:14),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-                Text(b.genre.toUpperCase(),style:const TextStyle(color:VirilColors.gold,fontSize:9,letterSpacing:1.3,fontWeight:FontWeight.w800)),
-                const SizedBox(height:6),Text(b.title,style:const TextStyle(fontSize:15,fontWeight:FontWeight.w800)),
-                const SizedBox(height:4),Text(b.author,style:const TextStyle(color:VirilColors.ice,fontSize:11)),
-                const SizedBox(height:8),Text(b.description,maxLines:4,overflow:TextOverflow.ellipsis,style:const TextStyle(color:VirilColors.muted,fontSize:11,height:1.4)),
-                const SizedBox(height:8),AnimatedBuilder(animation:ResourceStore.instance,builder:(_,__)=>Text(ResourceStore.instance.pageForBook(b.id)>1?'Продолжить · страница ${ResourceStore.instance.pageForBook(b.id)}':'Начать чтение',style:const TextStyle(color:VirilColors.gold,fontSize:10,fontWeight:FontWeight.w800)))
-              ]))
-            ]))));
-      });
-    }),
+
+  @override
+  void dispose() {
+    search.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: VirilColors.voidBlack,
+    appBar: AppBar(
+      title: const Text('Библиотека книг'),
+      backgroundColor: Colors.transparent,
+      actions: [
+        IconButton(
+          tooltip: 'Дневник читателя',
+          icon: const Icon(Icons.edit_note_rounded),
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReadingJournalScreen())),
+        ),
+      ],
+    ),
+    body: FutureBuilder<List<BookItem>>(
+      future: books,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
+        if (snapshot.hasError) return const Center(child: Text('Не удалось загрузить каталог'));
+        final allBooks = snapshot.data ?? [];
+        if (allBooks.isEmpty) return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(28),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Icon(Icons.menu_book_rounded, color: VirilColors.gold, size: 54),
+              SizedBox(height: 16),
+              Text('Библиотека готова к наполнению', textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+              SizedBox(height: 8),
+              Text('Добавь PDF-книгу, обложку и описание в папки assets/resources, затем внеси запись в books.json.',
+                textAlign: TextAlign.center, style: TextStyle(color: VirilColors.muted, height: 1.5)),
+            ]),
+          ),
+        );
+
+        final genres = ['Все', ...allBooks.map((book) => book.genre).toSet().toList()];
+        final query = search.text.trim().toLowerCase();
+        final filtered = allBooks.where((book) =>
+          (genre == 'Все' || book.genre == genre) &&
+          (query.isEmpty || book.title.toLowerCase().contains(query) ||
+            book.author.toLowerCase().contains(query) || book.description.toLowerCase().contains(query))
+        ).toList();
+
+        return ListView(
+          padding: const EdgeInsets.all(18),
+          children: [
+            TextField(
+              controller: search,
+              onChanged: (_) => setState(() {}),
+              decoration: InputDecoration(
+                hintText: 'Найти книгу или автора',
+                prefixIcon: const Icon(Icons.search_rounded, color: VirilColors.ice),
+                filled: true,
+                fillColor: VirilColors.stone,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: VirilColors.line)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: VirilColors.line)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(spacing: 7, runSpacing: 3, children: [
+              for (final value in genres)
+                ChoiceChip(
+                  label: Text(value),
+                  selected: genre == value,
+                  onSelected: (_) => setState(() => genre = value),
+                  selectedColor: VirilColors.ice.withValues(alpha: .2),
+                  backgroundColor: VirilColors.stone,
+                ),
+            ]),
+            const SizedBox(height: 12),
+            if (filtered.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(24),
+                child: Text('По этому запросу книг пока нет.', textAlign: TextAlign.center,
+                  style: TextStyle(color: VirilColors.muted)),
+              ),
+            for (final book in filtered)
+              Card(
+                color: VirilColors.stone,
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),
+                  side: const BorderSide(color: VirilColors.line)),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => BookReaderScreen(book: book))),
+                  child: Padding(
+                    padding: const EdgeInsets.all(13),
+                    child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(book.cover, width: 88, height: 124, fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            width: 88, height: 124, color: VirilColors.stoneLight,
+                            child: const Icon(Icons.menu_book, color: VirilColors.gold, size: 34))),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(book.genre.toUpperCase(), style: const TextStyle(color: VirilColors.gold,
+                          fontSize: 9, letterSpacing: 1.3, fontWeight: FontWeight.w800)),
+                        const SizedBox(height: 6),
+                        Text(book.title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+                        const SizedBox(height: 4),
+                        Text(book.author, style: const TextStyle(color: VirilColors.ice, fontSize: 11)),
+                        const SizedBox(height: 8),
+                        Text(book.description, maxLines: 4, overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(color: VirilColors.muted, fontSize: 11, height: 1.4)),
+                        const SizedBox(height: 8),
+                        AnimatedBuilder(animation: ResourceStore.instance, builder: (_, __) {
+                          final page = ResourceStore.instance.pageForBook(book.id);
+                          return Text(page > 1 ? 'Продолжить · страница $page' : 'Начать чтение',
+                            style: const TextStyle(color: VirilColors.gold, fontSize: 10, fontWeight: FontWeight.w800));
+                        }),
+                      ])),
+                    ]),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    ),
   );
 }
+
 class BookReaderScreen extends StatefulWidget {
   const BookReaderScreen({super.key,required this.book});
   final BookItem book;
