@@ -21,7 +21,7 @@ class _BookLibraryScreenState extends State<BookLibraryScreen> {
     return (jsonDecode(raw) as List).map((e)=>BookItem.fromJson(e as Map<String,dynamic>)).toList();
   }
   @override Widget build(BuildContext context)=>Scaffold(
-    backgroundColor:VirilColors.voidBlack,appBar:AppBar(title:const Text('Библиотека книг'),backgroundColor:Colors.transparent),
+    backgroundColor:VirilColors.voidBlack,appBar:AppBar(title:const Text('Библиотека книг'),backgroundColor:Colors.transparent,actions:[IconButton(tooltip:'Дневник читателя',icon:const Icon(Icons.edit_note_rounded),onPressed:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const ReadingJournalScreen()))) ]),
     body:FutureBuilder<List<BookItem>>(future:books,builder:(context,s){
       if(s.connectionState!=ConnectionState.done)return const Center(child:CircularProgressIndicator());
       if(s.hasError)return const Center(child:Text('Не удалось загрузить каталог'));
@@ -98,4 +98,20 @@ class _BookReaderScreenState extends State<BookReaderScreen> {
       ])))
     ])
   );
+}
+
+class ReadingJournalScreen extends StatefulWidget{
+  const ReadingJournalScreen({super.key});
+  @override State<ReadingJournalScreen> createState()=>_ReadingJournalScreenState();
+}
+class _ReadingJournalScreenState extends State<ReadingJournalScreen>{
+  late final TextEditingController controller=TextEditingController(text:ResourceStore.instance.journal);
+  @override void dispose(){controller.dispose();super.dispose();}
+  @override Widget build(BuildContext context)=>Scaffold(backgroundColor:VirilColors.voidBlack,appBar:AppBar(title:const Text('Дневник читателя'),backgroundColor:Colors.transparent),
+    body:ListView(padding:const EdgeInsets.all(20),children:[
+      const Text('МЫСЛИ, КОТОРЫЕ СТОИТ СОХРАНИТЬ',style:TextStyle(color:VirilColors.gold,fontSize:10,letterSpacing:1.5,fontWeight:FontWeight.w800)),
+      const SizedBox(height:10),const Text('Записывай идеи, выводы и вопросы, к которым захочешь вернуться.',style:TextStyle(color:VirilColors.muted,height:1.5)),
+      const SizedBox(height:16),TextField(controller:controller,minLines:14,maxLines:30,decoration:InputDecoration(hintText:'Сегодня я прочитал(а)…\\n\\nГлавная мысль…\\n\\nЧто хочу применить…',filled:true,fillColor:VirilColors.stone,border:OutlineInputBorder(borderRadius:BorderRadius.circular(18),borderSide:const BorderSide(color:VirilColors.line)))),
+      const SizedBox(height:14),FilledButton.icon(onPressed:()async{await ResourceStore.instance.saveJournal(controller.text);if(context.mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Дневник сохранён')));},icon:const Icon(Icons.save_rounded),label:const Text('Сохранить записи'))
+    ]));
 }
