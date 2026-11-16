@@ -75,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: IconButton.styleFrom(backgroundColor: Colors.black.withValues(alpha: .35),
             side: BorderSide(color: VirilColors.gold.withValues(alpha: .45))),
           icon: const Icon(Icons.settings_rounded, color: VirilColors.gold))),
-        Positioned(left: 17, right: 14, bottom: 13, child: Column(
+        Positioned(left: 17, right: 14, top: 88, child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
@@ -143,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _lifetimeStats(VirilStore stats) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
     decoration: BoxDecoration(color: Colors.black.withValues(alpha: .48),
-      borderRadius: BorderRadius.circular(15), border: Border.all(color: VirilColors.gold.withValues(alpha: .25)),
+      borderRadius: BorderRadius.circular(15), border: Border.all(color: VirilColors.gold.withValues(alpha: .25))),
     child: Row(children: [
       _StatItem(icon: Icons.local_fire_department_rounded, value: '${stats.activeDaysCount}', label: 'АКТИВ'),
       _statDivider(),
