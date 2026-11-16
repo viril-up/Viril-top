@@ -12,7 +12,7 @@ class ResourcesScreen extends StatefulWidget {
   @override State<ResourcesScreen> createState()=>_ResourcesScreenState();
 }
 class _ResourcesScreenState extends State<ResourcesScreen> {
-  static const categories=['Все','Обучение','Практики','База знаний','Психология','Интеллект','Философия','Здоровье','Коммуникация','Карьера','Финансы','Творчество','История','Наука','Факты','Откровения'];
+  static const categories=['Все','Обучение','Практики','База знаний','Психология','Интеллект','Философия','Здоровье','Коммуникация','Карьера','Финансы','Творчество','История','Наука','Факты','Откровения','Время','Отношения','Медиаграмотность','Лидерство'];
   final search=TextEditingController();
   String category='Все';
   final Set<String> filters={};
