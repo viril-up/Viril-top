@@ -4,6 +4,7 @@ import '../../core/theme/viril_colors.dart';
 import '../../core/data/viril_store.dart';
 import 'data/profile_store.dart';
 import 'global_league_screen.dart';
+import 'data/global_league_data.dart';
 import 'profile_settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -30,8 +31,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 118),
         children: [
           _profileCover(profile, stats, league),
-          const SizedBox(height: 14),
-          _lifetimeStats(stats),
           const SizedBox(height: 22),
           _leagueCard(context, stats, league),
           const SizedBox(height: 22),
@@ -55,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _profileCover(ProfileStore profile, VirilStore stats, _League league) {
     return Container(
-      height: 252,
+      height: 365,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
@@ -76,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: IconButton.styleFrom(backgroundColor: Colors.black.withValues(alpha: .35),
             side: BorderSide(color: VirilColors.gold.withValues(alpha: .45))),
           icon: const Icon(Icons.settings_rounded, color: VirilColors.gold))),
-        Positioned(left: 17, right: 14, bottom: 15, child: Column(
+        Positioned(left: 17, right: 14, bottom: 13, child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
@@ -133,6 +132,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 maxLines: 2, overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Colors.white, fontSize: 11, height: 1.35, fontStyle: FontStyle.italic)),
             ),
+            const SizedBox(height: 9),
+            _lifetimeStats(stats),
           ],
         )),
       ]),
@@ -140,9 +141,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _lifetimeStats(VirilStore stats) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
-    decoration: BoxDecoration(color: VirilColors.stone.withValues(alpha: .88),
-      borderRadius: BorderRadius.circular(20), border: Border.all(color: VirilColors.line)),
+    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
+    decoration: BoxDecoration(color: Colors.black.withValues(alpha: .48),
+      borderRadius: BorderRadius.circular(15), border: Border.all(color: VirilColors.gold.withValues(alpha: .25)),
     child: Row(children: [
       _StatItem(icon: Icons.local_fire_department_rounded, value: '${stats.activeDaysCount}', label: 'АКТИВ'),
       _statDivider(),
@@ -154,7 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ]),
   );
 
-  Widget _statDivider() => Container(width: 1, height: 35, color: VirilColors.line);
+  Widget _statDivider() => Container(width: 1, height: 32, color: Colors.white24);
 
   Widget _leagueCard(BuildContext context, VirilStore stats, _League league) => InkWell(
     borderRadius: BorderRadius.circular(23),
@@ -302,10 +303,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Icons.diamond_rounded, Icons.emoji_events_rounded,
   ][index.clamp(0, 19)];
   static _League _leagueFor(int xp) {
-    if (xp >= 2000) return const _League('Обсидиан', 'Элитный этап личного пути', VirilColors.violet);
-    if (xp >= 1000) return const _League('Золото', 'Высокая стабильность и дисциплина', VirilColors.gold);
-    if (xp >= 500) return const _League('Серебро', 'Уверенное движение вперёд', VirilColors.ice);
-    return const _League('Бронза', 'Начало большого пути', VirilColors.lava);
+    final index = GlobalLeagueData.leagueIndexForXp(xp);
+    final name = GlobalLeagueData.allLeagues[index];
+    return _League(name, 'Лига ${index + 1} из 60 · уровень ${GlobalLeagueData.levelForXp(xp)}', GlobalLeagueData.colorForLeague(index));
   }
 }
 
