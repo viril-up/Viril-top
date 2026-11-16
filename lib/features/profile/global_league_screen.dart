@@ -1,137 +1,155 @@
 import 'package:flutter/material.dart';
 import '../../core/data/viril_store.dart';
 import '../../core/theme/viril_colors.dart';
+import 'data/global_league_data.dart';
 
-class GlobalLeagueScreen extends StatefulWidget {
+class GlobalLeagueScreen extends StatelessWidget {
   const GlobalLeagueScreen({super.key});
-  @override State<GlobalLeagueScreen> createState() => _GlobalLeagueScreenState();
-}
-class _GlobalLeagueScreenState extends State<GlobalLeagueScreen> {
-  int _tab = 0;
-  @override Widget build(BuildContext context) => AnimatedBuilder(
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
     animation: VirilStore.instance,
     builder: (context, _) {
-      final store = VirilStore.instance;
-      final league = _leagueFor(store.xp);
-      final now = DateTime.now();
+      final xp = VirilStore.instance.xp;
+      final level = GlobalLeagueData.levelForXp(xp);
+      final leagueIndex = GlobalLeagueData.leagueIndexForXp(xp);
+      final tier = GlobalLeagueData.tierForXp(xp);
+      final epochIndex = GlobalLeagueData.epochIndexForLeague(leagueIndex);
+      final leagueName = GlobalLeagueData.allLeagues[leagueIndex];
+      final color = GlobalLeagueData.colorForLeague(leagueIndex);
       return Scaffold(
         backgroundColor: VirilColors.voidBlack,
-        appBar: AppBar(title: const Text('Глобальная лига'), backgroundColor: VirilColors.voidBlack),
-        body: ListView(padding: const EdgeInsets.fromLTRB(17, 8, 17, 35), children: [
-          _podium(),
+        appBar: AppBar(title: const Text('Путь глобальных лиг'), backgroundColor: VirilColors.voidBlack),
+        body: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 34), children: [
+          _currentCard(xp, level, leagueIndex, tier, leagueName, color, epochIndex),
           const SizedBox(height: 18),
-          Container(padding: const EdgeInsets.all(15), decoration: BoxDecoration(
-            color: VirilColors.stone, borderRadius: BorderRadius.circular(18), border: Border.all(color: VirilColors.line)),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(_monthName(now.month) + ' ${now.year}', style: const TextStyle(color: VirilColors.gold, fontWeight: FontWeight.w900, letterSpacing: 1.1)),
-              const SizedBox(height: 10),
-              Row(children: [
-                const Icon(Icons.military_tech_rounded, color: VirilColors.gold, size: 27),
-                const SizedBox(width: 9),
-                Expanded(child: Text('ТВОЯ ЛИГА · ${league.toUpperCase()}', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900))),
-                Text('${store.xp} XP', style: const TextStyle(color: VirilColors.gold, fontWeight: FontWeight.w900)),
-              ]),
-            ])),
-          const SizedBox(height: 16),
-          Row(children: [
-            _TabButton(label: 'Топ 100 мира', selected: _tab == 0, onTap: () => setState(() => _tab = 0)),
-            const SizedBox(width: 6),
-            _TabButton(label: 'Рекорды сезонов', selected: _tab == 1, onTap: () => setState(() => _tab = 1)),
-            const SizedBox(width: 6),
-            _TabButton(label: 'Мой результат', selected: _tab == 2, onTap: () => setState(() => _tab = 2)),
-          ]),
-          const SizedBox(height: 15),
-          if (_tab == 0) _emptyState(Icons.public_rounded, 'Мировой рейтинг скоро откроется',
-            'Для настоящего Топ 100 нужны игровые аккаунты и общий сервер. Сейчас глобальные места ещё не рассчитываются.'),
-          if (_tab == 1) _emptyState(Icons.workspace_premium_rounded, 'История сезонов появится позже',
-            'Рекорды будут сохраняться после запуска серверных сезонов.'),
-          if (_tab == 2) _myResult(store.xp, store.level, league),
+          const Text('ПЯТЬ ЭПОХ · ШЕСТЬДЕСЯТ ЛИГ · 180 УРОВНЕЙ',
+            style: TextStyle(color: VirilColors.gold, fontSize: 10, letterSpacing: 1.1, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 10),
+          for (var i = 0; i < GlobalLeagueData.epochs.length; i++)
+            _epochCard(i, leagueIndex, level),
+          const SizedBox(height: 12),
+          const Text('Каждая лига включает три уровня. Каждые 100 XP открывают следующий уровень. После третьего уровня открывается следующая лига.',
+            textAlign: TextAlign.center, style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.5)),
         ]),
       );
-    });
-  Widget _podium() => Container(
-    padding: const EdgeInsets.fromLTRB(12, 17, 12, 15),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(23),
-      gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-        colors: [Color(0xFF342D20), Color(0xFF171923), Color(0xFF11151F)]),
-      border: Border.all(color: VirilColors.gold.withValues(alpha: .55)),
-    ),
-    child: Column(children: [
-      const Text('ЗАЛ СЛАВЫ · ТЕКУЩИЙ СЕЗОН', style: TextStyle(color: VirilColors.gold, fontSize: 10, letterSpacing: 1.7, fontWeight: FontWeight.w900)),
-      const SizedBox(height: 17),
-      Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        Expanded(child: _PodiumPlace(rank: 2, label: 'СЕРЕБРО', height: 104, color: const Color(0xFFB7C0C9), delay: 250)),
-        Expanded(child: _PodiumPlace(rank: 1, label: 'ЗОЛОТО', height: 137, color: VirilColors.gold, delay: 0)),
-        Expanded(child: _PodiumPlace(rank: 3, label: 'БРОНЗА', height: 88, color: const Color(0xFFB9784E), delay: 450)),
+    },
+  );
+
+  Widget _currentCard(int xp, int level, int index, int tier, String name, Color color, int epoch) {
+    final progress = level >= 180 ? 1.0 : (xp % 100) / 100;
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
+          colors: [Color(0xFF342D20), Color(0xFF171923), Color(0xFF11151F)]),
+        border: Border.all(color: color.withValues(alpha: .7)),
+        boxShadow: [BoxShadow(color: color.withValues(alpha: .12), blurRadius: 20)],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('ТВОЯ ТЕКУЩАЯ СТУПЕНЬ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.5, fontWeight: FontWeight.w900)),
+        const SizedBox(height: 12),
+        Row(children: [
+          Container(width: 58, height: 58, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: color, width: 2), color: Colors.black26),
+            child: Icon(Icons.military_tech_rounded, color: color, size: 32)),
+          const SizedBox(width: 13),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(name, style: TextStyle(color: color, fontSize: 23, fontWeight: FontWeight.w900)),
+            Text('ЛИГА ${index + 1} · ЭПОХА ${epoch + 1}', style: const TextStyle(color: VirilColors.muted, fontSize: 9, letterSpacing: 1)),
+          ])),
+          Text('$xp XP', style: const TextStyle(color: VirilColors.gold, fontWeight: FontWeight.w900)),
+        ]),
+        const SizedBox(height: 17),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Text('ГЛОБАЛЬНЫЙ УРОВЕНЬ $level / 180', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900)),
+          Text('СТУПЕНЬ $tier / 3', style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.w900)),
+        ]),
+        const SizedBox(height: 8),
+        ClipRRect(borderRadius: BorderRadius.circular(20), child: LinearProgressIndicator(value: progress, minHeight: 8,
+          backgroundColor: Colors.white12, valueColor: AlwaysStoppedAnimation<Color>(color))),
+        const SizedBox(height: 7),
+        Text(level >= 180 ? 'Максимальная ступень достигнута' : 'До следующего уровня: ${100 - (xp % 100)} XP',
+          style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
       ]),
-      const SizedBox(height: 12),
-      const Text('Места и имена появятся после запуска серверного рейтинга.',
-        textAlign: TextAlign.center, style: TextStyle(color: VirilColors.muted, fontSize: 10)),
-    ]),
-  );
-  Widget _emptyState(IconData icon, String title, String body) => Container(
-    padding: const EdgeInsets.all(24),
-    decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(18), border: Border.all(color: VirilColors.line)),
-    child: Column(children: [
-      Icon(icon, color: VirilColors.gold, size: 35), const SizedBox(height: 12),
-      Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
-      const SizedBox(height: 7), Text(body, textAlign: TextAlign.center,
-        style: const TextStyle(color: VirilColors.muted, fontSize: 11, height: 1.5)),
-    ]));
-  Widget _myResult(int xp, int level, String league) => Container(
-    padding: const EdgeInsets.all(18),
-    decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(18), border: Border.all(color: VirilColors.gold.withValues(alpha: .35))),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Text('ТВОЙ ЛОКАЛЬНЫЙ РЕЗУЛЬТАТ', style: TextStyle(color: VirilColors.gold, fontWeight: FontWeight.w900, letterSpacing: 1.2, fontSize: 10)),
-      const SizedBox(height: 14),
-      _resultRow('Лига', league), _resultRow('Уровень', '$level'), _resultRow('Накопленный XP', '$xp'),
-      _resultRow('Место в мире', 'Не рассчитано'),
-      const SizedBox(height: 8),
-      const Text('Это данные текущего устройства, они ещё не синхронизированы с глобальным рейтингом.',
-        style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.45)),
-    ]));
-  Widget _resultRow(String label, String value) => Padding(padding: const EdgeInsets.symmetric(vertical: 7),
-    child: Row(children: [Expanded(child: Text(label, style: const TextStyle(color: VirilColors.muted, fontSize: 12))),
-      Text(value, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13))]));
-  static String _monthName(int m) => const ['ЯНВАРЬ','ФЕВРАЛЬ','МАРТ','АПРЕЛЬ','МАЙ','ИЮНЬ','ИЮЛЬ','АВГУСТ','СЕНТЯБРЬ','ОКТЯБРЬ','НОЯБРЬ','ДЕКАБРЬ'][m-1];
-  static String _leagueFor(int xp) => xp >= 2000 ? 'Обсидиан' : xp >= 1000 ? 'Золото' : xp >= 500 ? 'Серебро' : 'Бронза';
-}
-class _PodiumPlace extends StatelessWidget {
-  const _PodiumPlace({required this.rank, required this.label, required this.height, required this.color, required this.delay});
-  final int rank, height, delay; final String label; final Color color;
-  @override Widget build(BuildContext context) => TweenAnimationBuilder<double>(
-    tween: Tween(begin: .25, end: 1), duration: Duration(milliseconds: 850 + delay),
-    curve: Curves.easeOutBack,
-    builder: (context, value, child) => Opacity(opacity: value.clamp(0, 1),
-      child: Transform.translate(offset: Offset(0, (1-value)*22), child: child)),
-    child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-      Icon(Icons.workspace_premium_rounded, color: color, size: rank == 1 ? 32 : 25),
-      const SizedBox(height: 5),
-      Text('—', style: TextStyle(color: color, fontSize: 17, fontWeight: FontWeight.w900)),
-      const SizedBox(height: 5),
-      Container(height: height.toDouble(), margin: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            colors: [color.withValues(alpha: .38), color.withValues(alpha: .08)]),
-          border: Border.all(color: color.withValues(alpha: .65))),
-        child: Center(child: Text('$rank', style: TextStyle(color: color, fontSize: 27, fontWeight: FontWeight.w900)))),
-      const SizedBox(height: 7),
-      Text(label, style: TextStyle(color: color, fontSize: 8, letterSpacing: .8, fontWeight: FontWeight.w900)),
-      const SizedBox(height: 3),
-      const Text('ОЖИДАНИЕ', style: TextStyle(color: VirilColors.muted, fontSize: 7)),
-    ]),
-  );
-}
-class _TabButton extends StatelessWidget {
-  const _TabButton({required this.label, required this.selected, required this.onTap});
-  final String label; final bool selected; final VoidCallback onTap;
-  @override Widget build(BuildContext context) => Expanded(child: InkWell(onTap: onTap,
-    borderRadius: BorderRadius.circular(12), child: Container(height: 48,
-      alignment: Alignment.center, padding: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(color: selected ? VirilColors.gold.withValues(alpha: .16) : VirilColors.stone,
-        borderRadius: BorderRadius.circular(12), border: Border.all(color: selected ? VirilColors.gold : VirilColors.line)),
-      child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800,
-        color: selected ? VirilColors.gold : VirilColors.muted)))));
+    );
+  }
+
+  Widget _epochCard(int epochIndex, int currentLeagueIndex, int currentLevel) {
+    final epoch = GlobalLeagueData.epochs[epochIndex];
+    final start = GlobalLeagueData.epochStartLeague(epochIndex);
+    final end = GlobalLeagueData.epochEndLeague(epochIndex);
+    final completed = currentLeagueIndex > end;
+    final unlocked = currentLeagueIndex >= start;
+    final color = GlobalLeagueData.colorForLeague(start);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(17),
+        border: Border.all(color: unlocked ? color.withValues(alpha: .55) : VirilColors.line)),
+      child: Theme(
+        data: ThemeData.dark().copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: epochIndex == GlobalLeagueData.epochIndexForLeague(currentLeagueIndex),
+          tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+          childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          leading: Icon(completed ? Icons.check_circle_rounded : unlocked ? Icons.lock_open_rounded : Icons.lock_rounded,
+            color: completed ? VirilColors.gold : unlocked ? color : VirilColors.muted),
+          title: Text(epoch.name, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: .5)),
+          subtitle: Text(epoch.subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 9)),
+          children: [for (var i = 0; i < epoch.leagues.length; i++)
+            _leagueRow(start + i, epoch.leagues[i], currentLeagueIndex, currentLevel)],
+        ),
+      ),
+    );
+  }
+
+  Widget _leagueRow(int index, String name, int currentLeagueIndex, int currentLevel) {
+    final isCurrent = index == currentLeagueIndex;
+    final color = GlobalLeagueData.colorForLeague(index);
+    final firstLevel = index * 3 + 1;
+    return Container(
+      margin: const EdgeInsets.only(top: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: isCurrent ? color.withValues(alpha: .12) : Colors.black.withValues(alpha: .16),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isCurrent ? color.withValues(alpha: .8) : VirilColors.line.withValues(alpha: .65)),
+      ),
+      child: Column(children: [
+        Row(children: [
+          SizedBox(width: 28, child: Text('${index + 1}'.padLeft(2, '0'), style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: 11))),
+          Expanded(child: Text(name, style: TextStyle(color: isCurrent ? color : Colors.white, fontWeight: FontWeight.w800, fontSize: 12))),
+          if (isCurrent) const Text('ТЫ ЗДЕСЬ', style: TextStyle(color: VirilColors.gold, fontSize: 8, fontWeight: FontWeight.w900))
+          else if (index < currentLeagueIndex) const Icon(Icons.check_circle_rounded, color: VirilColors.gold, size: 16)
+          else const Icon(Icons.lock_outline_rounded, color: VirilColors.muted, size: 15),
+        ]),
+        const SizedBox(height: 8),
+        Row(children: [for (var tier = 1; tier <= 3; tier++) ...[
+          Expanded(child: _levelChip(firstLevel + tier - 1, tier, currentLevel, color)),
+          if (tier != 3) const SizedBox(width: 5),
+        ]]),
+      ]),
+    );
+  }
+
+  Widget _levelChip(int globalLevel, int tier, int currentLevel, Color color) {
+    final done = globalLevel < currentLevel;
+    final current = globalLevel == currentLevel;
+    final requiredXp = GlobalLeagueData.xpAtLevel(globalLevel);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 3),
+      decoration: BoxDecoration(
+        color: done ? VirilColors.gold.withValues(alpha: .14) : current ? color.withValues(alpha: .18) : Colors.white.withValues(alpha: .025),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: current ? color : done ? VirilColors.gold.withValues(alpha: .35) : VirilColors.line.withValues(alpha: .6)),
+      ),
+      child: Column(children: [
+        Icon(done ? Icons.check_rounded : current ? Icons.circle : Icons.lock_outline_rounded,
+          color: done ? VirilColors.gold : current ? color : VirilColors.muted, size: 12),
+        const SizedBox(height: 3),
+        Text('УР. $tier', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w900,
+          color: current ? color : done ? VirilColors.gold : VirilColors.muted)),
+        Text('${requiredXp} XP', style: const TextStyle(fontSize: 7, color: VirilColors.muted)),
+      ]),
+    );
+  }
 }
