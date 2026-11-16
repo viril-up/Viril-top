@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class LeagueEpoch {
   const LeagueEpoch({required this.number, required this.name, required this.subtitle, required this.leagues});
   final int number;
