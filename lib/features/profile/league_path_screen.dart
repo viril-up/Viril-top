@@ -5,7 +5,7 @@ import 'data/league_data.dart';
 
 class LeaguePathScreen extends StatefulWidget {
   const LeaguePathScreen({super.key});
-  @override State<GlobalLeagueScreen> createState() => _LeaguePathScreenState();
+  @override State<LeaguePathScreen> createState() => _LeaguePathScreenState();
 }
 class _LeaguePathScreenState extends State<LeaguePathScreen> {
   final _colors = const [Color(0xFFB9784E), Color(0xFFB7C0C9), Color(0xFF8C82D8), Color(0xFF75B9C8), Color(0xFF72C6B0)];
