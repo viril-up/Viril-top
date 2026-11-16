@@ -28,7 +28,7 @@ class _VirilShellState extends State<VirilShell> {
   @override Widget build(BuildContext context) => Scaffold(
     extendBody: false,
     body: ParticleBackdrop(child: SafeArea(bottom: false, child: Column(children: [
-      if (_index != 0 && _index != 4) _header(),
+      if (_index != 0 && _index != 2 && _index != 4) _header(),
       Expanded(child: IndexedStack(index: _index, children: _screens)),
     ]))),
     bottomNavigationBar: SafeArea(top: false, child: Padding(
