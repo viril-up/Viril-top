@@ -3,7 +3,7 @@ description: Viril — система комплексного саморазв�
 publish_to: 'none'
 version: 1.0.0+1
 environment:
-  sdk: '>=3.4.0 <4.0.0'
+  sdk: '>=3.7.0 <4.0.0'
 dependencies:
   flutter:
     sdk: flutter
@@ -21,4 +21,4 @@ flutter:
     - assets/profile_cover/
     - assets/resources/books/
     - assets/resources/book_covers/
-    - assets/resources/catalog/
+    - assets/resources/catalog/\n    - assets/resources/videos/\n    - assets/resources/articles/
