@@ -40,7 +40,7 @@ class _GlobalLeagueScreenState extends State<GlobalLeagueScreen> {
       );
     });
   Widget _current(int xp, LeagueDefinition league, int level, int inner, Color color) {
-    final progress = LeagueSystem.xpIntoLevel(xp);
+    final progress = league.isFinal && xp >= 17900 ? 100 : LeagueSystem.xpIntoLevel(xp);
     return Container(padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(22),
         gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
@@ -71,7 +71,7 @@ class _GlobalLeagueScreenState extends State<GlobalLeagueScreen> {
         ClipRRect(borderRadius: BorderRadius.circular(20), child: LinearProgressIndicator(
           value: progress / 100, minHeight: 8, backgroundColor: Colors.white12, color: color)),
         const SizedBox(height: 6),
-        Text('${progress}/100 XP · ещё ${100-progress} XP до следующего уровня',
+        Text(league.isFinal && xp >= 17900 ? 'МАКСИМАЛЬНЫЙ УРОВЕНЬ ДОСТИГНУТ' : '${progress}/100 XP · ещё ${100-progress} XP до следующего уровня',
           style: const TextStyle(color: VirilColors.muted, fontSize: 9)),
         const SizedBox(height: 12),
         Row(children: [
