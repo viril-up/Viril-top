@@ -173,9 +173,7 @@ class BookReaderScreen extends StatefulWidget {
 class _BookReaderScreenState extends State<BookReaderScreen> {
   final PdfViewerController controller=PdfViewerController();
   final TextEditingController note=TextEditingController();
-  double brightness=1;
   int page=1;
-  Color pageColor=const Color(0xFFFFFFFF);
   @override void initState(){super.initState();page=ResourceStore.instance.pageForBook(widget.book.id);note.text=ResourceStore.instance.noteForBookPage(widget.book.id,page);}
   @override void dispose(){note.dispose();super.dispose();}
   Future<void> saveNote()async{await ResourceStore.instance.saveBookPageNote(widget.book.id,page,note.text);if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Заметка сохранена')));}
@@ -192,21 +190,21 @@ class _BookReaderScreenState extends State<BookReaderScreen> {
       PopupMenuButton<int>(tooltip:'Закладки',icon:const Icon(Icons.bookmark_add_outlined),onSelected:(value)async{if(value==-1){await ResourceStore.instance.toggleBookBookmark(widget.book.id,page);if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Закладка обновлена')));}else{await controller.goToPage(pageNumber:value);}},itemBuilder:(_){final saved=ResourceStore.instance.bookmarksForBook(widget.book.id);return [PopupMenuItem<int>(value:-1,child:Text('Добавить / убрать страницу $page')),if(saved.isNotEmpty)const PopupMenuDivider(),for(final savedPage in saved)PopupMenuItem<int>(value:savedPage,child:Text('Перейти к странице $savedPage'))];})
     ]),
     body:Column(children:[
-      Padding(padding:const EdgeInsets.fromLTRB(14,8,14,10),child:Row(children:[
-        const Icon(Icons.brightness_6_outlined,color:VirilColors.gold,size:17),
-        Expanded(child:Slider(value:brightness,min:.45,max:1.35,onChanged:(v)=>setState(()=>brightness=v))),
-        PopupMenuButton<Color>(tooltip:'Цвет страницы',icon:const Icon(Icons.palette_outlined,color:VirilColors.ice),onSelected:(c)=>setState(()=>pageColor=c),itemBuilder:(_)=>const[
-          PopupMenuItem(value:Color(0xFFFFFFFF),child:Text('Белая')),
-          PopupMenuItem(value:Color(0xFFF4EBD8),child:Text('Тёплая')),
-          PopupMenuItem(value:Color(0xFFE8E8E8),child:Text('Светло-серая'))
-        ])
-      ])),
-      Expanded(child:Container(color:pageColor,child:ColorFiltered(colorFilter:ColorFilter.mode(pageColor,BlendMode.multiply),child:ColorFiltered(
-        colorFilter:ColorFilter.matrix([brightness,0,0,0,0,0,brightness,0,0,0,0,0,brightness,0,0,0,0,0,1,0]),
-        child:PdfViewer.asset(widget.book.file,controller:controller,initialPageNumber:page,params:PdfViewerParams(onPageChanged:(p){
-          if(p==null||!mounted)return;setState(()=>page=p);ResourceStore.instance.saveBookPage(widget.book.id,p);note.text=ResourceStore.instance.noteForBookPage(widget.book.id,p);
-        }))
-      )))),
+      Expanded(child:PdfViewer.asset(
+        widget.book.file,
+        key: ValueKey(widget.book.id),
+        controller: controller,
+        initialPageNumber: page,
+        params: PdfViewerParams(
+          backgroundColor: VirilColors.voidBlack,
+          onPageChanged: (p) {
+            if (p == null || !mounted) return;
+            setState(() => page = p);
+            ResourceStore.instance.saveBookPage(widget.book.id, p);
+            note.text = ResourceStore.instance.noteForBookPage(widget.book.id, p);
+          },
+        ),
+      )),
       SafeArea(top:false,child:Padding(padding:const EdgeInsets.symmetric(horizontal:16,vertical:8),child:Row(children:[
         IconButton(onPressed:page>1?()=>controller.goToPage(pageNumber:page-1):null,icon:const Icon(Icons.chevron_left_rounded)),
         Expanded(child:Center(child:Text('Страница $page',style:const TextStyle(color:VirilColors.muted,fontSize:12)))),

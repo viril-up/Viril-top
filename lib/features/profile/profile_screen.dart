@@ -55,48 +55,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _profileCover(ProfileStore profile, VirilStore stats, _League league) {
     return Container(
-      height: 205,
+      height: 252,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: VirilColors.gold.withValues(alpha: .38)),
-        boxShadow: [BoxShadow(color: VirilColors.gold.withValues(alpha: .08), blurRadius: 22, spreadRadius: 1)],
+        border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
+        boxShadow: [BoxShadow(color: VirilColors.gold.withValues(alpha: .10), blurRadius: 24)],
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(fit: StackFit.expand, children: [
-        Image.asset('assets/profile_cover/cover.jpg', fit: BoxFit.cover,
+        Image.asset('assets/profile_cover/profile-cover.jpg', fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => const DecoratedBox(decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
               colors: [Color(0xFF38402F), Color(0xFF171B20), Color(0xFF4A3022)])))),
         const DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          colors: [Color(0x5510141D), Color(0xCC090B12)], stops: [0.05, 1]))),
-        Positioned(right: 13, top: 12, child: IconButton(
+          colors: [Color(0x3310141D), Color(0xEE090B12)], stops: [0.0, 1]))),
+        Positioned(right: 12, top: 10, child: IconButton(
           tooltip: 'Настройки профиля',
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileSettingsScreen())),
-          style: IconButton.styleFrom(backgroundColor: Colors.black.withValues(alpha: .34),
+          style: IconButton.styleFrom(backgroundColor: Colors.black.withValues(alpha: .35),
             side: BorderSide(color: VirilColors.gold.withValues(alpha: .45))),
           icon: const Icon(Icons.settings_rounded, color: VirilColors.gold))),
-        Positioned(left: 17, right: 16, bottom: 18, child: Row(children: [
-          Container(width: 70, height: 70, decoration: BoxDecoration(
-            shape: BoxShape.circle, color: VirilColors.stone,
-            border: Border.all(color: VirilColors.gold, width: 2),
-            boxShadow: [BoxShadow(color: VirilColors.gold.withValues(alpha: .25), blurRadius: 14)]),
-            child: Icon(_avatarFor(profile.avatarIndex), size: 36, color: VirilColors.gold)),
-          const SizedBox(width: 13),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-            Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w900, color: Colors.white)),
-            const SizedBox(height: 4),
-            Text('УРОВЕНЬ ${stats.level}  ·  ${league.name.toUpperCase()}',
-              style: const TextStyle(fontSize: 9, letterSpacing: 1.25, color: VirilColors.gold, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 5),
-            InkWell(onTap: _editNickname, child: const Row(mainAxisSize: MainAxisSize.min, children: [
-              Icon(Icons.edit_rounded, size: 12, color: VirilColors.ice),
-              SizedBox(width: 5),
-              Text('Изменить никнейм', style: TextStyle(fontSize: 10, color: VirilColors.ice)),
-            ])),
-          ])),
-        ])),
+        Positioned(left: 17, right: 14, bottom: 15, child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: .92, end: 1),
+                duration: const Duration(milliseconds: 850),
+                curve: Curves.easeInOut,
+                builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 450),
+                  curve: Curves.easeInOut,
+                  width: 68, height: 68,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
+                      colors: [VirilColors.gold.withValues(alpha: .42), VirilColors.stone, VirilColors.ice.withValues(alpha: .2)]),
+                    border: Border.all(color: VirilColors.gold, width: 2),
+                    boxShadow: [BoxShadow(color: VirilColors.gold.withValues(alpha: .35), blurRadius: 17)],
+                  ),
+                  child: Center(child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 350),
+                    transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: FadeTransition(opacity: animation, child: child)),
+                    child: Icon(_avatarFor(profile.avatarIndex), key: ValueKey(profile.avatarIndex),
+                      size: 34, color: VirilColors.gold),
+                  )),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white)),
+                const SizedBox(height: 4),
+                Text('УРОВЕНЬ ${stats.level}  ·  ${league.name.toUpperCase()}',
+                  style: const TextStyle(fontSize: 9, letterSpacing: 1.15, color: VirilColors.gold, fontWeight: FontWeight.w800)),
+              ])),
+              IconButton(
+                tooltip: 'Изменить никнейм, цитату и аватар',
+                onPressed: _editProfile,
+                style: IconButton.styleFrom(backgroundColor: Colors.black.withValues(alpha: .36),
+                  side: BorderSide(color: VirilColors.ice.withValues(alpha: .5))),
+                icon: const Icon(Icons.edit_rounded, color: VirilColors.ice, size: 19),
+              ),
+            ]),
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: .32),
+                borderRadius: BorderRadius.circular(13),
+                border: Border.all(color: Colors.white.withValues(alpha: .15)),
+              ),
+              child: Text(profile.bio.isEmpty ? 'Добавь свою личную цитату…' : '«${profile.bio}»',
+                maxLines: 2, overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Colors.white, fontSize: 11, height: 1.35, fontStyle: FontStyle.italic)),
+            ),
+          ],
+        )),
       ]),
     );
   }
@@ -174,21 +212,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _sectionLabel(String text) => Text(text, style: const TextStyle(
     color: VirilColors.gold, fontSize: 10, letterSpacing: 1.8, fontWeight: FontWeight.w900));
 
-  Future<void> _editNickname() async {
-    final controller = TextEditingController(text: ProfileStore.instance.name);
-    final value = await showDialog<String>(context: context, builder: (ctx) => AlertDialog(
-      backgroundColor: VirilColors.stone,
-      title: const Text('Твой никнейм'),
-      content: TextField(controller: controller, autofocus: true, maxLength: 24,
-        decoration: const InputDecoration(hintText: 'Введи никнейм')),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Отмена')),
-        FilledButton(onPressed: () => Navigator.pop(ctx, controller.text), child: const Text('Сохранить')),
-      ],
+  Future<void> _editProfile() async {
+    final profile = ProfileStore.instance;
+    final nameController = TextEditingController(text: profile.name);
+    final quoteController = TextEditingController(text: profile.bio);
+    var avatar = profile.avatarIndex;
+    const avatarIcons = <IconData>[
+      Icons.psychology_rounded, Icons.auto_awesome_rounded, Icons.fitness_center_rounded,
+      Icons.self_improvement_rounded, Icons.menu_book_rounded, Icons.school_rounded,
+      Icons.lightbulb_rounded, Icons.explore_rounded, Icons.shield_rounded,
+      Icons.bolt_rounded, Icons.favorite_rounded, Icons.spa_rounded,
+      Icons.track_changes_rounded, Icons.military_tech_rounded, Icons.waves_rounded,
+      Icons.rocket_launch_rounded, Icons.nights_stay_rounded, Icons.public_rounded,
+      Icons.diamond_rounded, Icons.emoji_events_rounded,
+    ];
+    final result = await showDialog<bool>(context: context, builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setDialogState) => AlertDialog(
+        backgroundColor: VirilColors.stone,
+        title: const Text('Мой профиль'),
+        content: SizedBox(width: double.maxFinite, child: SingleChildScrollView(child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+            const Text('НИКНЕЙМ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 6),
+            TextField(controller: nameController, maxLength: 24, decoration: const InputDecoration(hintText: 'Твой никнейм')),
+            const SizedBox(height: 12),
+            const Text('ЛИЧНАЯ ЦИТАТА', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 6),
+            TextField(controller: quoteController, maxLength: 110, maxLines: 2,
+              decoration: const InputDecoration(hintText: 'Фраза, которая отражает твой путь')),
+            const SizedBox(height: 14),
+            const Text('ВЫБЕРИ СИМВОЛ АВАТАРА', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 9),
+            GridView.builder(
+              shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, mainAxisSpacing: 8, crossAxisSpacing: 8),
+              itemCount: avatarIcons.length,
+              itemBuilder: (_, i) => InkWell(
+                borderRadius: BorderRadius.circular(13),
+                onTap: () => setDialogState(() => avatar = i),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 260),
+                  decoration: BoxDecoration(
+                    color: avatar == i ? VirilColors.gold.withValues(alpha: .2) : VirilColors.stoneLight,
+                    borderRadius: BorderRadius.circular(13),
+                    border: Border.all(color: avatar == i ? VirilColors.gold : VirilColors.line, width: avatar == i ? 1.6 : 1),
+                  ),
+                  child: Icon(avatarIcons[i], color: avatar == i ? VirilColors.gold : VirilColors.muted, size: 25),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text('20 тематических образов: интеллект, физическая сила, осознанность, духовность, знания и другие направления.',
+              style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
+          ],
+        ))),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Отмена')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Сохранить')),
+        ],
+      ),
     ));
-    if (value != null) await ProfileStore.instance.updateProfile(name: value,
-      bio: ProfileStore.instance.bio, avatarIndex: ProfileStore.instance.avatarIndex);
-    controller.dispose();
+    if (result == true) {
+      await profile.updateProfile(name: nameController.text, bio: quoteController.text, avatarIndex: avatar);
+    }
+    nameController.dispose();
+    quoteController.dispose();
   }
 
   Future<void> _openFaq(BuildContext context) async => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const _FaqScreen()));
@@ -204,10 +292,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _openTelegram(BuildContext context) async =>
       launchExternal(context, Uri.parse('https://t.me/Virilgo'));
 
-  static IconData _avatarFor(int index) => [
-    Icons.person_rounded, Icons.psychology_alt_rounded, Icons.shield_rounded,
-    Icons.auto_awesome_rounded, Icons.emoji_events_rounded, Icons.explore_rounded,
-  ][index.clamp(0, 5)];
+  static IconData _avatarFor(int index) => const <IconData>[
+    Icons.psychology_rounded, Icons.auto_awesome_rounded, Icons.fitness_center_rounded,
+    Icons.self_improvement_rounded, Icons.menu_book_rounded, Icons.school_rounded,
+    Icons.lightbulb_rounded, Icons.explore_rounded, Icons.shield_rounded,
+    Icons.bolt_rounded, Icons.favorite_rounded, Icons.spa_rounded,
+    Icons.track_changes_rounded, Icons.military_tech_rounded, Icons.waves_rounded,
+    Icons.rocket_launch_rounded, Icons.nights_stay_rounded, Icons.public_rounded,
+    Icons.diamond_rounded, Icons.emoji_events_rounded,
+  ][index.clamp(0, 19)];
   static _League _leagueFor(int xp) {
     if (xp >= 2000) return const _League('Обсидиан', 'Элитный этап личного пути', VirilColors.violet);
     if (xp >= 1000) return const _League('Золото', 'Высокая стабильность и дисциплина', VirilColors.gold);

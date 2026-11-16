@@ -23,6 +23,11 @@ class VirilStore extends ChangeNotifier {
   final List<Map<String, String>> _gratitudeEntries = [];
   bool _ready = false;
   List<VirilTask> get tasks => List.unmodifiable(_tasks);
+  List<VirilTask> dailyTasksFor(DateTime date) {
+    final key = dayKey(date);
+    return _tasks.where((task) => task.period == 'day' && task.dayKey == key).toList();
+  }
+  List<VirilTask> tasksForDay(DateTime date) => dailyTasksFor(date);
   int get xp => _xp;
   int get completedCount => _tasks.where((task) => task.completed).length;
   int get pendingCount => _tasks.where((task) => !task.completed).length;
@@ -94,13 +99,29 @@ class VirilStore extends ChangeNotifier {
     await _preferences?.setStringList(_activeDaysKey, _activeDays.toList()..sort());
     await _preferences?.setString(_dailyXpKey, jsonEncode(_dailyXp));
   }
-  Future<void> addTask(String title, String domain, {String period = 'day', int xpReward = 5}) async {
+  Future<void> addTask(String title, String domain, {String period = 'day', int xpReward = 5, bool isPriority = false}) async {
     final cleanTitle = title.trim();
     if (cleanTitle.isEmpty) return;
     await initialize();
-    _tasks = [VirilTask(id: DateTime.now().microsecondsSinceEpoch.toString(), title: cleanTitle,
-      domain: domain, createdAt: DateTime.now(), period: period, xpReward: xpReward), ..._tasks];
+    final now = DateTime.now();
+    if (period == 'day' && isPriority) {
+      _tasks = _tasks.map((task) => task.period == 'day' && task.dayKey == dayKey(now)
+        ? task.copyWith(isPriority: false) : task).toList();
+    }
+    _tasks = [VirilTask(id: now.microsecondsSinceEpoch.toString(), title: cleanTitle,
+      domain: domain, createdAt: now, period: period, xpReward: xpReward, isPriority: isPriority), ..._tasks];
     await _saveTasks(); notifyListeners();
+  }
+  Future<void> setPriorityTask(String id) async {
+    await initialize();
+    final index = _tasks.indexWhere((task) => task.id == id);
+    if (index < 0 || _tasks[index].period != 'day') return;
+    final key = _tasks[index].dayKey;
+    final makePriority = !_tasks[index].isPriority;
+    _tasks = _tasks.map((task) => task.period == 'day' && task.dayKey == key
+      ? task.copyWith(isPriority: makePriority && task.id == id) : task).toList();
+    await _saveTasks();
+    notifyListeners();
   }
   Future<void> toggleTask(String id) async {
     await initialize();

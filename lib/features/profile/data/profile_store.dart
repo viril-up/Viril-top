@@ -28,7 +28,7 @@ class ProfileStore extends ChangeNotifier {
     final cleanName = name.trim();
     _name = cleanName.isEmpty ? 'Путник' : cleanName;
     _bio = bio.trim();
-    _avatarIndex = avatarIndex.clamp(0, 5).toInt();
+    _avatarIndex = avatarIndex.clamp(0, 19).toInt();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_nameKey, _name);
     await prefs.setString(_bioKey, _bio);

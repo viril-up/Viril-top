@@ -5,7 +5,6 @@ import '../habits/data/habit_store.dart';
 import '../goals/data/goal_store.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
-import '../../core/widgets/section_title.dart';
 import '../../core/widgets/metric_tile.dart';
 
 enum _ProgressRange { week, month, year }
@@ -70,6 +69,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         }
         final selected = _dateOnly(_selectedDay);
         final selectedTasks = store.completedOn(selected);
+        final selectedDailyTasks = store.dailyTasksFor(selected);
         final selectedXp = store.xpForDay(selected);
         final week = _periodPercent(store, now, 7);
         final monthStart = DateTime(now.year, now.month, 1);
@@ -79,42 +79,30 @@ class _ProgressScreenState extends State<ProgressScreen> {
         return ListView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
           children: [
-            const SectionTitle('Прогресс', subtitle: 'Твой путь в цифрах — день за днём'),
             GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                const Expanded(child: Text('Сегодня', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800))),
-                Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(color: VirilColors.ice.withValues(alpha: .12), borderRadius: BorderRadius.circular(20)),
-                  child: Text('${store.todayPercent}% дня', style: const TextStyle(color: VirilColors.ice, fontSize: 11, fontWeight: FontWeight.w800))),
+                const Expanded(child: Text('Динамика развития', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900))),
+                Text('${store.todayPercent}% сегодня', style: const TextStyle(color: VirilColors.ice, fontSize: 11, fontWeight: FontWeight.w800)),
               ]),
-              const SizedBox(height: 14),
-              Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('${store.todayXp}', style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w900, height: 1)),
-                  const SizedBox(height: 4),
-                  const Text('XP заработано сегодня', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
-                ])),
-                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                  Text('УРОВЕНЬ ${store.level}', style: const TextStyle(color: VirilColors.gold, fontWeight: FontWeight.w800, fontSize: 11)),
-                  const SizedBox(height: 5),
-                  Text(league, style: const TextStyle(color: VirilColors.ice, fontWeight: FontWeight.w700, fontSize: 12)),
-                ]),
+              const SizedBox(height: 12),
+              Row(children: [
+                Expanded(child: _ProgressMetric(value: '${store.todayXp} XP', label: 'СЕГОДНЯ')),
+                const SizedBox(width: 7),
+                Expanded(child: _ProgressMetric(value: 'Ур. ${store.level}', label: 'УРОВЕНЬ')),
+                const SizedBox(width: 7),
+                Expanded(child: _ProgressMetric(value: league, label: 'ЛИГА')),
               ]),
-              const SizedBox(height: 13),
+              const SizedBox(height: 12),
               ClipRRect(borderRadius: BorderRadius.circular(8), child: LinearProgressIndicator(
-                value: store.todayPercent / 100, minHeight: 9,
+                value: store.todayPercent / 100, minHeight: 6,
                 backgroundColor: VirilColors.line,
                 valueColor: const AlwaysStoppedAnimation(VirilColors.ice),
               )),
-              const SizedBox(height: 7),
-              const Text('1 XP = 1% успешности дня, максимум 100%.', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
-            ])),
-            const SizedBox(height: 14),
-            GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Динамика активности', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
-              const SizedBox(height: 4),
-              const Text('Нажми на столбец, чтобы открыть итоги дня', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
-              const SizedBox(height: 14),
+              const SizedBox(height: 15),
+              const Text('РЫНОЧНАЯ ДИНАМИКА АКТИВНОСТИ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 5),
+              const Text('Рост, снижение и периоды стабильности твоей активности', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
+              const SizedBox(height: 12),
               SegmentedButton<_ProgressRange>(
                 segments: const [
                   ButtonSegment(value: _ProgressRange.week, label: Text('7 дней')),
@@ -128,8 +116,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   _selectedDay = _dateOnly(DateTime.now());
                 }),
               ),
-              const SizedBox(height: 18),
-              SizedBox(height: 158, child: _ActivityChart(
+              const SizedBox(height: 14),
+              SizedBox(height: 166, child: _ActivityChart(
                 dates: days,
                 values: [for (final date in days) _range == _ProgressRange.year
                   ? _monthAverage(store, date, now)
@@ -138,7 +126,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 monthly: _range == _ProgressRange.year,
                 onSelect: (date) => setState(() => _selectedDay = date),
               )),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               Row(children: [
                 Expanded(child: _PeriodScore(label: 'Неделя', value: week)),
                 const SizedBox(width: 8),
@@ -146,40 +134,56 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 const SizedBox(width: 8),
                 Expanded(child: _PeriodScore(label: 'Год', value: yearValue)),
               ]),
-              const SizedBox(height: 12),
-              Text(_range == _ProgressRange.year
-                ? 'Годовая оценка — среднее значение завершённых календарных дней с января по сегодня.'
-                : 'Оценка периода — среднее значение дневных процентов. День без XP учитывается как 0%.',
-                style: const TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
-            ])),
-            const SizedBox(height: 14),
-            GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Divider(color: VirilColors.line, height: 24),
               Row(children: [
-                const Expanded(child: Text('Итоги выбранного дня', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
+                const Expanded(child: Text('История выбранного дня', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800))),
                 TextButton(onPressed: () => setState(() => _selectedDay = _dateOnly(DateTime.now())),
                   child: const Text('Сегодня', style: TextStyle(fontSize: 10))),
               ]),
               Text(_formatDate(_selectedDay), style: const TextStyle(color: VirilColors.ice, fontSize: 11, fontWeight: FontWeight.w700)),
-              const SizedBox(height: 9),
+              const SizedBox(height: 8),
               Row(children: [
-                Expanded(child: MetricTile(value: '$selectedXp XP', label: 'ЗАРАБОТАНО')),
-                const SizedBox(width: 8),
-                Expanded(child: MetricTile(value: '${selectedXp.clamp(0, 100)}%', label: 'УСПЕШНОСТЬ')),
-                const SizedBox(width: 8),
-                Expanded(child: MetricTile(value: '${selectedTasks.length}', label: 'ЗАДАНИЙ')),
+                Expanded(child: _ProgressMetric(value: '$selectedXp XP', label: 'ОПЫТ')),
+                const SizedBox(width: 7),
+                Expanded(child: _ProgressMetric(value: '${selectedDailyTasks.where((t) => t.completed).length}/${selectedDailyTasks.length}', label: 'ЦЕЛИ')),
+                const SizedBox(width: 7),
+                Expanded(child: _ProgressMetric(value: '${selectedDailyTasks.isEmpty ? 0 : (selectedDailyTasks.where((t) => t.completed).length * 100 ~/ selectedDailyTasks.length)}%', label: 'ВЫПОЛНЕНО')),
               ]),
-              const SizedBox(height: 12),
-              if (selectedTasks.isEmpty && selectedXp == 0)
-                const Text('За этот день пока нет записанной активности.', style: TextStyle(color: VirilColors.muted, fontSize: 11))
-              else ...[
-                const Text('ВЫПОЛНЕНО', style: TextStyle(color: VirilColors.muted, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w800)),
-                const SizedBox(height: 6),
-                ...selectedTasks.map((task) => _HistoryRow(
-                  icon: Icons.check_circle_rounded, title: task.title,
-                  subtitle: '${task.domain} · +${task.xpReward} XP')),
-                if (selectedXp > selectedTasks.fold<int>(0, (sum, task) => sum + task.xpReward))
-                  const _HistoryRow(icon: Icons.bolt_rounded, title: 'Дополнительный опыт', subtitle: 'В том числе награды за привычки'),
-              ],
+              if (selectedDailyTasks.isNotEmpty) ...[
+                const SizedBox(height: 9),
+                for (final task in selectedDailyTasks)
+                  _HistoryRow(
+                    icon: task.completed ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                    color: task.completed ? const Color(0xFF43C58A) : VirilColors.lava,
+                    title: task.title,
+                    subtitle: task.completed ? 'Выполнено · +${task.xpReward} XP' : 'Не выполнено',
+                  ),
+              ] else if (selectedTasks.isNotEmpty) ...[
+                const SizedBox(height: 9),
+                for (final task in selectedTasks)
+                  _HistoryRow(icon: Icons.check_circle_rounded, title: task.title, subtitle: '${task.domain} · +${task.xpReward} XP'),
+              ] else
+                const Padding(padding: EdgeInsets.only(top: 8), child: Text('За этот день пока нет целей.', style: TextStyle(color: VirilColors.muted, fontSize: 10))),
+              const SizedBox(height: 8),
+              const Divider(color: VirilColors.line, height: 18),
+              const Text('ЛИЧНЫЕ ЗАПИСИ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.3, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 6),
+              ...store.journalEntries.where((entry) {
+                final date = DateTime.tryParse(entry['createdAt'] ?? '');
+                return date != null && store.dayKey(date) == store.dayKey(selected);
+              }).map((entry) => _HistoryRow(icon: Icons.menu_book_rounded, title: 'Дневник мыслей', subtitle: (entry['text'] ?? '').replaceAll('\n', ' '))),
+              ...store.gratitudeEntries.where((entry) {
+                final date = DateTime.tryParse(entry['createdAt'] ?? '');
+                return date != null && store.dayKey(date) == store.dayKey(selected);
+              }).map((entry) => _HistoryRow(icon: Icons.favorite_rounded, title: 'Благодарность', subtitle: (entry['text'] ?? '').replaceAll('\n', ' '))),
+              if (!store.journalEntries.any((entry) {
+                final date = DateTime.tryParse(entry['createdAt'] ?? '');
+                return date != null && store.dayKey(date) == store.dayKey(selected);
+              }) && !store.gratitudeEntries.any((entry) {
+                final date = DateTime.tryParse(entry['createdAt'] ?? '');
+                return date != null && store.dayKey(date) == store.dayKey(selected);
+              }))
+                const Padding(padding: EdgeInsets.only(top: 6), child: Text('Нет записей за выбранную дату.', style: TextStyle(color: VirilColors.muted, fontSize: 10))),
             ])),
             const SizedBox(height: 14),
             GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -281,44 +285,104 @@ class _ActivityChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (dates.isEmpty) return const SizedBox.shrink();
-    final step = monthly ? 1 : (dates.length > 14 ? 4 : 1);
-    return LayoutBuilder(builder: (context, constraints) {
-      final width = constraints.maxWidth;
-      final slot = width / dates.length;
-      return Column(children: [
-        Expanded(child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          for (var i = 0; i < dates.length; i++)
-            Expanded(child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => onSelect(dates[i]),
-              child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                Text('${values[i]}', style: TextStyle(fontSize: dates.length > 14 ? 7 : 9, color: _sameDay(dates[i], selected) ? VirilColors.gold : VirilColors.muted, fontWeight: FontWeight.w700)),
-                const SizedBox(height: 4),
-                Expanded(child: Align(alignment: Alignment.bottomCenter, child: Container(
-                  width: math.max(3.0, slot * (dates.length > 14 ? .58 : .52)),
-                  height: math.max(3.0, 92 * values[i] / 100),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
-                    color: _sameDay(dates[i], selected) ? VirilColors.gold : (values[i] == 0 ? VirilColors.line : VirilColors.ice.withValues(alpha: .75)),
-                  ),
-                ))),
-                const SizedBox(height: 5),
-                Text(monthly ? '${dates[i].month}' : (i % step == 0 ? '${dates[i].day}' : ''),
-                  style: const TextStyle(fontSize: 8, color: VirilColors.muted)),
-              ]),
-            )),
-        ])),
-        const SizedBox(height: 4),
-        Row(children: const [
-          Text('0%', style: TextStyle(color: VirilColors.muted, fontSize: 8)),
-          Spacer(),
-          Text('100%', style: TextStyle(color: VirilColors.muted, fontSize: 8)),
-        ]),
-      ]);
-    });
+    return LayoutBuilder(builder: (context, constraints) => GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (details) {
+        final index = ((details.localPosition.dx / constraints.maxWidth) * dates.length)
+          .floor().clamp(0, dates.length - 1).toInt();
+        onSelect(dates[index]);
+      },
+      child: CustomPaint(
+        size: Size(constraints.maxWidth, 166),
+        painter: _MarketLinePainter(dates: dates, values: values, selected: selected, monthly: monthly),
+      ),
+    ));
+  }
+}
+
+class _MarketLinePainter extends CustomPainter {
+  _MarketLinePainter({required this.dates, required this.values, required this.selected, required this.monthly});
+  final List<DateTime> dates;
+  final List<int> values;
+  final DateTime selected;
+  final bool monthly;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const left = 8.0, right = 8.0, top = 12.0, bottom = 25.0;
+    final plot = Rect.fromLTRB(left, top, size.width - right, size.height - bottom);
+    final grid = Paint()..color = VirilColors.line.withValues(alpha: .8)..strokeWidth = 1;
+    for (var i = 0; i <= 4; i++) {
+      final y = plot.top + plot.height * i / 4;
+      canvas.drawLine(Offset(plot.left, y), Offset(plot.right, y), grid);
+      final label = TextPainter(
+        text: TextSpan(text: '${100 - i * 25}', style: const TextStyle(color: VirilColors.muted, fontSize: 8)),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      label.paint(canvas, Offset(0, y - 5));
+    }
+    if (values.isEmpty) return;
+    final points = <Offset>[];
+    for (var i = 0; i < values.length; i++) {
+      final x = values.length == 1 ? plot.center.dx : plot.left + plot.width * i / (values.length - 1);
+      final y = plot.bottom - plot.height * values[i].clamp(0, 100) / 100;
+      points.add(Offset(x, y));
+    }
+    final line = Path()..moveTo(points.first.dx, points.first.dy);
+    for (var i = 1; i < points.length; i++) {
+      final previous = points[i - 1], current = points[i];
+      final mid = (previous.dx + current.dx) / 2;
+      line.cubicTo(mid, previous.dy, mid, current.dy, current.dx, current.dy);
+    }
+    final area = Path.from(line)..lineTo(points.last.dx, plot.bottom)..lineTo(points.first.dx, plot.bottom)..close();
+    canvas.drawPath(area, Paint()..shader = LinearGradient(
+      begin: Alignment.topCenter, end: Alignment.bottomCenter,
+      colors: [VirilColors.ice.withValues(alpha: .24), VirilColors.ice.withValues(alpha: .01)],
+    ).createShader(plot));
+    canvas.drawPath(line, Paint()
+      ..color = VirilColors.ice
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.6
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round);
+    for (var i = 0; i < points.length; i++) {
+      final isSelected = dates[i].year == selected.year && dates[i].month == selected.month && dates[i].day == selected.day;
+      canvas.drawCircle(points[i], isSelected ? 5 : 2.4, Paint()..color = isSelected ? VirilColors.gold : VirilColors.ice);
+      if (isSelected) canvas.drawCircle(points[i], 8, Paint()
+        ..color = VirilColors.gold.withValues(alpha: .18)..style = PaintingStyle.stroke..strokeWidth = 2);
+    }
+    final labelCount = math.min(monthly ? 12 : 7, dates.length);
+    for (var i = 0; i < labelCount; i++) {
+      final index = labelCount == 1 ? 0 : (i * (dates.length - 1) / (labelCount - 1)).round();
+      final date = dates[index];
+      final text = monthly ? '${date.month}' : '${date.day}';
+      final painter = TextPainter(text: TextSpan(text: text,
+        style: const TextStyle(color: VirilColors.muted, fontSize: 8)), textDirection: TextDirection.ltr)..layout();
+      final x = points[index].dx - painter.width / 2;
+      painter.paint(canvas, Offset(x.clamp(0, size.width - painter.width).toDouble(), size.height - 17));
+    }
   }
 
-  bool _sameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
+  @override
+  bool shouldRepaint(covariant _MarketLinePainter old) =>
+    old.values != values || old.selected != selected || old.dates != dates || old.monthly != monthly;
+}
+
+class _ProgressMetric extends StatelessWidget {
+  const _ProgressMetric({required this.value, required this.label});
+  final String value, label;
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
+    decoration: BoxDecoration(color: VirilColors.stoneLight.withValues(alpha: .55),
+      borderRadius: BorderRadius.circular(12), border: Border.all(color: VirilColors.line)),
+    child: Column(children: [
+      Text(value, maxLines: 1, overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: VirilColors.ice)),
+      const SizedBox(height: 3),
+      Text(label, style: const TextStyle(color: VirilColors.muted, fontSize: 7, letterSpacing: .7, fontWeight: FontWeight.w800)),
+    ]),
+  );
 }
 
 class _PeriodScore extends StatelessWidget {
@@ -360,15 +424,16 @@ class _DomainLevel extends StatelessWidget {
 }
 
 class _HistoryRow extends StatelessWidget {
-  const _HistoryRow({required this.icon, required this.title, required this.subtitle});
+  const _HistoryRow({required this.icon, required this.title, required this.subtitle, this.color = VirilColors.ice});
   final IconData icon;
   final String title;
   final String subtitle;
+  final Color color;
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 5),
     child: Row(children: [
-      Icon(icon, color: VirilColors.ice, size: 16),
+      Icon(icon, color: color, size: 16),
       const SizedBox(width: 8),
       Expanded(child: Text(title, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600))),
       Text(subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 9)),
