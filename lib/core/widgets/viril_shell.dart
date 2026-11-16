@@ -43,8 +43,17 @@ class _VirilShellState extends State<VirilShell> {
     )),
   );
   Widget _header() {
+    if (_index == 1) return const Padding(
+      padding: EdgeInsets.fromLTRB(22, 12, 22, 12),
+      child: Align(alignment: Alignment.centerLeft, child: Text('Развитие',
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: VirilColors.text))),
+    );
     if (_index == 3) return AnimatedBuilder(animation: VirilStore.instance, builder: (context, _) =>
       Padding(padding: const EdgeInsets.fromLTRB(20, 8, 20, 10), child: Row(children: [
+        IconButton(onPressed: _openProfile, tooltip: 'Профиль',
+          style: IconButton.styleFrom(backgroundColor: VirilColors.stone, side: const BorderSide(color: VirilColors.line)),
+          icon: const Icon(Icons.person_outline_rounded, color: VirilColors.gold)),
+        const Spacer(),
         Container(padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
           decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15), border: Border.all(color: VirilColors.line)),
           child: Row(children: [const Icon(Icons.local_fire_department_rounded, color: VirilColors.gold, size: 19),
@@ -54,12 +63,8 @@ class _VirilShellState extends State<VirilShell> {
           const SnackBar(content: Text('Уведомления появятся в одном из следующих обновлений.'))),
           tooltip: 'Уведомления', style: IconButton.styleFrom(backgroundColor: VirilColors.stone, side: const BorderSide(color: VirilColors.line)),
           icon: const Icon(Icons.notifications_none_rounded, color: VirilColors.ice)),
-        const Spacer(),
-        IconButton(onPressed: _openProfile, tooltip: 'Профиль',
-          style: IconButton.styleFrom(backgroundColor: VirilColors.stone, side: const BorderSide(color: VirilColors.line)),
-          icon: const Icon(Icons.person_outline_rounded, color: VirilColors.gold)),
       ])));
-    return Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 12), child: Row(children: [
+    return Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 12), child: Row([
       Container(width: 48, height: 48, decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),
         gradient: const LinearGradient(colors: [Color(0xFF34415D), Color(0xFF27223D)]),
         border: Border.all(color: VirilColors.ice.withValues(alpha: .45))),
