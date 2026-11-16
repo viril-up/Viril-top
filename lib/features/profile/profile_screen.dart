@@ -54,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _profileCover(ProfileStore profile, VirilStore stats, _League league) {
     return Container(
-      height: 365,
+      height: 310,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
@@ -75,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: IconButton.styleFrom(backgroundColor: Colors.black.withValues(alpha: .35),
             side: BorderSide(color: VirilColors.gold.withValues(alpha: .45))),
           icon: const Icon(Icons.settings_rounded, color: VirilColors.gold))),
-        Positioned(left: 17, right: 14, top: 88, child: Column(
+        Positioned(left: 15, right: 12, top: 62, child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
@@ -119,10 +119,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: const Icon(Icons.edit_rounded, color: VirilColors.ice, size: 19),
               ),
             ]),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: .32),
                 borderRadius: BorderRadius.circular(13),
@@ -141,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _lifetimeStats(VirilStore stats) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
+    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
     decoration: BoxDecoration(color: Colors.black.withValues(alpha: .48),
       borderRadius: BorderRadius.circular(15), border: Border.all(color: VirilColors.gold.withValues(alpha: .25))),
     child: Row(children: [
@@ -158,12 +158,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _statDivider() => Container(width: 1, height: 32, color: Colors.white24);
 
   Widget _leagueCard(BuildContext context, VirilStore stats, _League league) => InkWell(
-    borderRadius: BorderRadius.circular(23),
+    borderRadius: BorderRadius.circular(18),
     onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GlobalLeagueScreen())),
     child: Container(
-      padding: const EdgeInsets.all(17),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(23),
+        borderRadius: BorderRadius.circular(18),
         gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
           colors: [Color(0xFF302B20), Color(0xFF171923), Color(0xFF111722)]),
         border: Border.all(color: VirilColors.gold.withValues(alpha: .58)),
@@ -177,20 +177,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             letterSpacing: 1.7, fontWeight: FontWeight.w900))),
           const Icon(Icons.open_in_new_rounded, color: VirilColors.gold, size: 16),
         ]),
-        const SizedBox(height: 16),
+        const SizedBox(height: 10),
         Row(children: [
-          Container(width: 55, height: 55, decoration: BoxDecoration(shape: BoxShape.circle,
+          Container(width: 44, height: 44, decoration: BoxDecoration(shape: BoxShape.circle,
             border: Border.all(color: league.color, width: 1.7),
             gradient: const LinearGradient(colors: [Color(0xFF4B402D), Color(0xFF171923)])),
-            child: Icon(Icons.military_tech_rounded, color: league.color, size: 30)),
-          const SizedBox(width: 12),
+            child: Icon(Icons.military_tech_rounded, color: league.color, size: 24)),
+          const SizedBox(width: 9),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(league.name, style: TextStyle(color: league.color, fontSize: 23, fontWeight: FontWeight.w900)),
+            Text(league.name, style: TextStyle(color: league.color, fontSize: 19, fontWeight: FontWeight.w900)),
             Text(league.description, style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
           ])),
           const Text('СЕЗОН', style: TextStyle(color: VirilColors.muted, fontSize: 9, letterSpacing: 1.1)),
         ]),
-        const SizedBox(height: 15),
+        const SizedBox(height: 10),
         Row(children: [
           _LeagueValue(label: 'МЕСТО В ЛИГЕ', value: '—'),
           const SizedBox(width: 20),
@@ -198,10 +198,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(width: 20),
           const _LeagueValue(label: 'ПРОШЛЫЙ СЕЗОН', value: '—'),
         ]),
-        const SizedBox(height: 11),
+        const SizedBox(height: 7),
         Text('* Пока показывается локальный XP. Мировое место и сезонная история появятся после подключения аккаунтов и сервера.',
           style: TextStyle(color: VirilColors.muted.withValues(alpha: .9), fontSize: 9, height: 1.4)),
-        const SizedBox(height: 10),
+        const SizedBox(height: 6),
         const Row(mainAxisAlignment: MainAxisAlignment.end, children: [
           Text('ОТКРЫТЬ ЛИГУ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
           SizedBox(width: 5), Icon(Icons.arrow_forward_rounded, color: VirilColors.gold, size: 15),
