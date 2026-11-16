@@ -7,6 +7,7 @@ import '../../features/development/development_screen.dart';
 import '../../features/resources/resources_screen.dart';
 import '../../features/progress/progress_screen.dart';
 import '../../features/profile/profile_screen.dart';
+import '../../features/profile/data/profile_store.dart';
 
 class VirilShell extends StatefulWidget {
   const VirilShell({super.key});
@@ -48,11 +49,14 @@ class _VirilShellState extends State<VirilShell> {
       child: Align(alignment: Alignment.centerLeft, child: Text('Развитие',
         style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: VirilColors.text))),
     );
-    if (_index == 3) return AnimatedBuilder(animation: VirilStore.instance, builder: (context, _) =>
+    if (_index == 3) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) =>
       Padding(padding: const EdgeInsets.fromLTRB(20, 8, 20, 10), child: Row(children: [
         IconButton(onPressed: _openProfile, tooltip: 'Профиль',
           style: IconButton.styleFrom(backgroundColor: VirilColors.stone, side: const BorderSide(color: VirilColors.line)),
           icon: const Icon(Icons.person_outline_rounded, color: VirilColors.gold)),
+        const SizedBox(width: 8),
+        Flexible(child: Text(ProfileStore.instance.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))),
         const Spacer(),
         Container(padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
           decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15), border: Border.all(color: VirilColors.line)),
