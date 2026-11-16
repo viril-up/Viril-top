@@ -33,8 +33,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
   }
   @override Widget build(BuildContext context)=>AnimatedBuilder(animation:ResourceStore.instance,builder:(context,_){
     final store=ResourceStore.instance;final q=search.text.trim().toLowerCase();
-    final topics=filters.where((e)=>!e.startsWith('Тип:')).toSet();
-    final items=ResourceItem.catalog.where((i)=>(category=='Все'||i.category==category)&&(topics.isEmpty||topics.contains(i.category))&&(!favoritesOnly||store.isFavorite(i.id))&&(q.isEmpty||i.title.toLowerCase().contains(q)||i.subtitle.toLowerCase().contains(q)||i.description.toLowerCase().contains(q))).toList();
+    final topics=filters.where((e)=>!e.startsWith('Тип:')).toSet();\n    final types=filters.where((e)=>e.startsWith('Тип:')).map((e)=>e.substring(4)).toSet();
+    final items=ResourceItem.catalog.where((i)=>(category=='Все'||i.category==category)&&(topics.isEmpty||topics.contains(i.category))&&(types.isEmpty||types.contains(i.category)||types.contains('Упражнения')&&i.category=='Практики')&&(!favoritesOnly||store.isFavorite(i.id))&&(q.isEmpty||i.title.toLowerCase().contains(q)||i.subtitle.toLowerCase().contains(q)||i.description.toLowerCase().contains(q))).toList();
     return ListView(padding:const EdgeInsets.fromLTRB(20,8,20,120),children:[
       const SectionTitle('Ресурсы',subtitle:'Твоя личная библиотека инструментов и знаний'),
       Row(children:[
@@ -68,4 +68,40 @@ class _ResourceCard extends StatelessWidget{
       if(hasNote)const Padding(padding:EdgeInsets.only(top:5),child:Text('ЕСТЬ ТВОЯ ЗАМЕТКА',style:TextStyle(color:VirilColors.ice,fontSize:8,letterSpacing:1)))
     ])),IconButton(onPressed:onFavorite,icon:Icon(favorite?Icons.bookmark_rounded:Icons.bookmark_border_rounded,color:favorite?VirilColors.gold:VirilColors.muted))
   ])));
+}
+
+class ResourceDetailScreen extends StatefulWidget {
+  const ResourceDetailScreen({super.key,required this.item});
+  final ResourceItem item;
+  @override State<ResourceDetailScreen> createState()=>_ResourceDetailScreenState();
+}
+class _ResourceDetailScreenState extends State<ResourceDetailScreen>{
+  late final TextEditingController note=TextEditingController(text:ResourceStore.instance.noteFor(widget.item.id));
+  @override void dispose(){note.dispose();super.dispose();}
+  @override Widget build(BuildContext context){
+    final item=widget.item;
+    return Scaffold(backgroundColor:VirilColors.voidBlack,appBar:AppBar(title:const Text('Материал'),backgroundColor:Colors.transparent),
+      body:ListView(padding:const EdgeInsets.fromLTRB(20,8,20,30),children:[
+        GlassCard(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+          Container(width:56,height:56,decoration:BoxDecoration(color:item.color.withValues(alpha:.14),borderRadius:BorderRadius.circular(17)),child:Icon(item.icon,color:item.color,size:29)),
+          const SizedBox(height:16),Text(item.category.toUpperCase(),style:TextStyle(color:item.color,fontSize:9,letterSpacing:1.7,fontWeight:FontWeight.w800)),
+          const SizedBox(height:6),Text(item.title,style:const TextStyle(fontSize:22,fontWeight:FontWeight.w900)),
+          const SizedBox(height:8),Text(item.description,style:const TextStyle(color:VirilColors.muted,fontSize:12,height:1.55)),
+          if(item.duration!=null)Padding(padding:const EdgeInsets.only(top:12),child:Text(item.duration!,style:const TextStyle(color:VirilColors.gold,fontSize:11,fontWeight:FontWeight.w700)))
+        ])),
+        const SizedBox(height:20),const Text('ПОРЯДОК РАБОТЫ',style:TextStyle(color:VirilColors.gold,fontSize:10,letterSpacing:1.8,fontWeight:FontWeight.w800)),
+        const SizedBox(height:10),for(var i=0;i<item.steps.length;i++)GlassCard(margin:const EdgeInsets.only(bottom:9),padding:const EdgeInsets.all(14),child:Row(crossAxisAlignment:CrossAxisAlignment.start,children:[
+          Container(width:27,height:27,alignment:Alignment.center,decoration:BoxDecoration(color:item.color.withValues(alpha:.15),borderRadius:BorderRadius.circular(9)),child:Text('${i+1}',style:TextStyle(color:item.color,fontWeight:FontWeight.w900))),
+          const SizedBox(width:11),Expanded(child:Text(item.steps[i],style:const TextStyle(fontSize:12,height:1.45)))
+        ])),
+        const SizedBox(height:12),GlassCard(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+          const Text('ТВОИ ЗАМЕТКИ',style:TextStyle(color:VirilColors.gold,fontSize:10,letterSpacing:1.6,fontWeight:FontWeight.w800)),
+          const SizedBox(height:9),TextField(controller:note,minLines:3,maxLines:7,style:const TextStyle(color:VirilColors.text,fontSize:12,height:1.45),decoration:InputDecoration(hintText:'Запиши свои мысли, выводы или вопросы...',hintStyle:const TextStyle(color:VirilColors.muted,fontSize:11),filled:true,fillColor:VirilColors.voidBlack.withValues(alpha:.45),border:OutlineInputBorder(borderRadius:BorderRadius.circular(14)))),
+          const SizedBox(height:12),Row(children:[
+            Expanded(child:OutlinedButton.icon(onPressed:()=>ResourceStore.instance.toggleFavorite(item.id),icon:const Icon(Icons.bookmark_border_rounded),label:const Text('В избранное'))),
+            const SizedBox(width:9),Expanded(child:FilledButton.icon(onPressed:()async{await ResourceStore.instance.saveNote(item.id,note.text);if(context.mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Заметка сохранена на устройстве')));},icon:const Icon(Icons.save_rounded),label:const Text('Сохранить')))
+          ])
+        ]))
+      ]));
+  }
 }
