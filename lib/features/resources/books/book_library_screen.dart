@@ -85,12 +85,12 @@ class _BookReaderScreenState extends State<BookReaderScreen> {
           PopupMenuItem(value:Color(0xFFE8E8E8),child:Text('Светло-серая'))
         ])
       ])),
-      Expanded(child:Container(color:pageColor,child:ColorFiltered(
+      Expanded(child:Container(color:pageColor,child:ColorFiltered(colorFilter:ColorFilter.mode(pageColor,BlendMode.multiply),child:ColorFiltered(
         colorFilter:ColorFilter.matrix([brightness,0,0,0,0,0,brightness,0,0,0,0,0,brightness,0,0,0,0,0,1,0]),
         child:PdfViewer.asset(widget.book.file,controller:controller,initialPageNumber:page,params:PdfViewerParams(onPageChanged:(p){
           if(p==null||!mounted)return;setState(()=>page=p);ResourceStore.instance.saveBookPage(widget.book.id,p);note.text=ResourceStore.instance.noteForBookPage(widget.book.id,p);
         }))
-      ))),
+      )))),
       SafeArea(top:false,child:Padding(padding:const EdgeInsets.symmetric(horizontal:16,vertical:8),child:Row(children:[
         IconButton(onPressed:page>1?()=>controller.goToPage(pageNumber:page-1):null,icon:const Icon(Icons.chevron_left_rounded)),
         Expanded(child:Center(child:Text('Страница $page',style:const TextStyle(color:VirilColors.muted,fontSize:12)))),
