@@ -443,13 +443,19 @@ class _GoalTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = VirilStore.instance;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+      decoration: BoxDecoration(
+        color: task.isPriority ? VirilColors.gold.withValues(alpha: .12) : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        border: task.isPriority ? Border.all(color: VirilColors.gold.withValues(alpha: .55)) : null,
+      ),
       child: Row(children: [
         if (task.isPriority) const Padding(padding: EdgeInsets.only(right: 3), child: Icon(Icons.star_rounded, color: VirilColors.gold, size: 17)),
         Checkbox(
           value: task.completed,
-          activeColor: VirilColors.ice,
+          activeColor: const Color(0xFF43C58A),
           visualDensity: VisualDensity.compact,
           onChanged: (_) => store.toggleTask(task.id),
         ),
