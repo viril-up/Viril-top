@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "book-001",
+    "title": "Самый богатый человек в Вавилоне",
+    "author": "Джордж С. Клейсон",
+    "description": "Мировая классика личных финансов в формате увлекательных притч древнего Вавилона. Книга знакомит с основами планирования расходов, накоплений и ответственного отношения к деньгам.",
+    "genre": "Финансы",
+    "cover": "assets/resources/book_covers/book-001.jpg",
+    "file": "assets/resources/books/book-001.pdf",
+    "descriptionFile": "assets/resources/book_descriptions/book-001.txt"
+  }
+]
