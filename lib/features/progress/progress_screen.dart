@@ -154,7 +154,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 for (final task in selectedDailyTasks)
                   _HistoryRow(
                     icon: task.completed ? Icons.check_circle_rounded : Icons.cancel_rounded,
-                    color: task.completed ? VirilColors.success : VirilColors.lava,
+                    color: task.completed ? const Color(0xFF43C58A) : VirilColors.lava,
                     title: task.title,
                     subtitle: task.completed ? 'Выполнено · +${task.xpReward} XP' : 'Не выполнено',
                   ),
