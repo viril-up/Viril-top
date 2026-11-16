@@ -32,7 +32,7 @@ class VirilStore extends ChangeNotifier {
   int get completedCount => _tasks.where((task) => task.completed).length;
   int get pendingCount => _tasks.where((task) => !task.completed).length;
   bool get isReady => _ready;
-  int get level => (_xp ~/ 100) + 1;
+  int get level => ((_xp ~/ 100) + 1).clamp(1, 180).toInt();
   int get levelProgress => _xp % 100;
   int get todayXp => xpForDay(DateTime.now());
   int get todayPercent => todayXp.clamp(0, 100).toInt();
