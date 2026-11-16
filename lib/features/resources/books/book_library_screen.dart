@@ -16,7 +16,8 @@ class BookLibraryScreen extends StatefulWidget {
 }
 class _BookLibraryScreenState extends State<BookLibraryScreen> {
   late final Future<List<BookItem>> books= _load();
-  Future<List<BookItem>> _load() async {\n    await ResourceStore.instance.initialize();
+  Future<List<BookItem>> _load() async {
+    await ResourceStore.instance.initialize();
     final raw=await rootBundle.loadString('assets/resources/catalog/books.json');
     final rows=jsonDecode(raw) as List;
     final result=<BookItem>[];
