@@ -73,7 +73,7 @@ class _BookReaderScreenState extends State<BookReaderScreen> {
           TextField(controller:note,minLines:3,maxLines:6,decoration:const InputDecoration(hintText:'Что важно запомнить?')),
           const SizedBox(height:12),FilledButton(onPressed:(){saveNote();Navigator.pop(ctx);},child:const Text('Сохранить'))
         ])))),
-      IconButton(tooltip:'Закладка',icon:const Icon(Icons.bookmark_add_outlined),onPressed:()async{await ResourceStore.instance.toggleBookBookmark(widget.book.id,page);if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Закладка обновлена')));})
+      PopupMenuButton<int>(tooltip:'Закладки',icon:const Icon(Icons.bookmark_add_outlined),onSelected:(value)async{if(value==-1){await ResourceStore.instance.toggleBookBookmark(widget.book.id,page);if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Закладка обновлена')));}else{await controller.goToPage(pageNumber:value);}},itemBuilder:(_){final saved=ResourceStore.instance.bookmarksForBook(widget.book.id);return [PopupMenuItem<int>(value:-1,child:Text('Добавить / убрать страницу $page')),if(saved.isNotEmpty)const PopupMenuDivider(),for(final savedPage in saved)PopupMenuItem<int>(value:savedPage,child:Text('Перейти к странице $savedPage'))];})
     ]),
     body:Column(children:[
       Padding(padding:const EdgeInsets.fromLTRB(14,8,14,10),child:Row(children:[
