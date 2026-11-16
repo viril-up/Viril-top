@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class ResourceStore extends ChangeNotifier{
   ResourceStore._();static final instance=ResourceStore._();
-  static const _favoritesKey='viril.resource_favorites.v1',_notesKey='viril.resource_notes.v1',_progressKey='viril.book_progress.v1',_bookmarksKey='viril.bookmarks.v1',_bookNotesKey='viril.book_notes.v1';
+  static const _journalKey='viril.reading_journal.v1',_favoritesKey='viril.resource_favorites.v1',_notesKey='viril.resource_notes.v1',_progressKey='viril.book_progress.v1',_bookmarksKey='viril.bookmarks.v1',_bookNotesKey='viril.book_notes.v1';
   Set<String> _favorites={};Map<String,String> _notes={};Map<String,int> _progress={};Map<String,List<int>> _bookmarks={};Map<String,String> _bookNotes={};String _journal='';bool _ready=false;
   bool get isReady=>_ready;Set<String> get favorites=>Set.unmodifiable(_favorites);Map<String,String> get notes=>Map.unmodifiable(_notes);
   bool isFavorite(String id)=>_favorites.contains(id);String noteFor(String id)=>_notes[id]??'';
