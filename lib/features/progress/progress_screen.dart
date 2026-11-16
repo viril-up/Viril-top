@@ -289,7 +289,7 @@ class _ActivityChart extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTapDown: (details) {
         final index = ((details.localPosition.dx / constraints.maxWidth) * dates.length)
-          .floor().clamp(0, dates.length - 1);
+          .floor().clamp(0, dates.length - 1).toInt();
         onSelect(dates[index]);
       },
       child: CustomPaint(
@@ -359,7 +359,7 @@ class _MarketLinePainter extends CustomPainter {
       final painter = TextPainter(text: TextSpan(text: text,
         style: const TextStyle(color: VirilColors.muted, fontSize: 8)), textDirection: TextDirection.ltr)..layout();
       final x = points[index].dx - painter.width / 2;
-      painter.paint(canvas, Offset(x.clamp(0, size.width - painter.width), size.height - 17));
+      painter.paint(canvas, Offset(x.clamp(0, size.width - painter.width).toDouble(), size.height - 17));
     }
   }
 
