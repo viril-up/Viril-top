@@ -7,7 +7,8 @@ class ResourceStore extends ChangeNotifier{
   bool get isReady=>_ready;Set<String> get favorites=>Set.unmodifiable(_favorites);Map<String,String> get notes=>Map.unmodifiable(_notes);
   bool isFavorite(String id)=>_favorites.contains(id);String noteFor(String id)=>_notes[id]??'';
   int pageForBook(String id)=>_progress[id]??1;List<int> bookmarksForBook(String id)=>List.unmodifiable(_bookmarks[id]??const []);
-  String noteForBookPage(String id,int page)=>_bookNotes['$id:$page']??'';\n  String get journal=>_journal;
+  String noteForBookPage(String id,int page)=>_bookNotes['$id:$page']??'';
+  String get journal=>_journal;
   Future<void> initialize()async{
     if(_ready)return;final p=await SharedPreferences.getInstance();_favorites=(p.getStringList(_favoritesKey)??[]).toSet();_notes={};
     for(final k in p.getKeys().where((k)=>k.startsWith(_notesKey))){final v=p.getString(k);if(v!=null)_notes[k.substring(_notesKey.length)]=v;}
@@ -20,5 +21,6 @@ class ResourceStore extends ChangeNotifier{
   Future<void> saveNote(String id,String note)async{final s=note.trim(),p=await SharedPreferences.getInstance();if(s.isEmpty){_notes.remove(id);await p.remove('$_notesKey$id');}else{_notes[id]=s;await p.setString('$_notesKey$id',s);}notifyListeners();}
   Future<void> saveBookPage(String id,int page)async{_progress[id]=page<1?1:page;final p=await SharedPreferences.getInstance();await p.setStringList(_progressKey,_progress.entries.map((e)=>'${e.key}|${e.value}').toList());notifyListeners();}
   Future<void> toggleBookBookmark(String id,int page)async{final a=_bookmarks[id]??=[];a.contains(page)?a.remove(page):a.add(page);a.sort();final p=await SharedPreferences.getInstance();await p.setStringList(_bookmarksKey,_bookmarks.entries.expand((e)=>e.value.map((n)=>'${e.key}|$n')).toList());notifyListeners();}
-  Future<void> saveJournal(String value)async{_journal=value;final p=await SharedPreferences.getInstance();await p.setString(_journalKey,value);notifyListeners();}\n  Future<void> saveBookPageNote(String id,int page,String note)async{final k='$id:$page',s=note.trim(),p=await SharedPreferences.getInstance();if(s.isEmpty){_bookNotes.remove(k);await p.remove('$_bookNotesKey$k');}else{_bookNotes[k]=s;await p.setString('$_bookNotesKey$k',s);}notifyListeners();}
+  Future<void> saveJournal(String value)async{_journal=value;final p=await SharedPreferences.getInstance();await p.setString(_journalKey,value);notifyListeners();}
+  Future<void> saveBookPageNote(String id,int page,String note)async{final k='$id:$page',s=note.trim(),p=await SharedPreferences.getInstance();if(s.isEmpty){_bookNotes.remove(k);await p.remove('$_bookNotesKey$k');}else{_bookNotes[k]=s;await p.setString('$_bookNotesKey$k',s);}notifyListeners();}
 }
