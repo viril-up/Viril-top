@@ -20,7 +20,8 @@ flutter:
   assets:
     - assets/profile_cover/
     - assets/resources/books/
-    - assets/resources/book_covers/\n    - assets/resources/book_descriptions/
+    - assets/resources/book_covers/
+    - assets/resources/book_descriptions/
     - assets/resources/catalog/
     - assets/resources/videos/
     - assets/resources/articles/
