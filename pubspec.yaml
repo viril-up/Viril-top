@@ -21,4 +21,6 @@ flutter:
     - assets/profile_cover/
     - assets/resources/books/
     - assets/resources/book_covers/
-    - assets/resources/catalog/\n    - assets/resources/videos/\n    - assets/resources/articles/
+    - assets/resources/catalog/
+    - assets/resources/videos/
+    - assets/resources/articles/
