@@ -4,7 +4,8 @@ import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/section_title.dart';
 import 'data/resource_store.dart';
 import 'models/resource_item.dart';
-import 'books/book_library_screen.dart';\nimport 'videos/video_library_screen.dart';
+import 'books/book_library_screen.dart';
+import 'videos/video_library_screen.dart';
 
 class ResourcesScreen extends StatefulWidget {
   const ResourcesScreen({super.key});
@@ -33,7 +34,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
   }
   @override Widget build(BuildContext context)=>AnimatedBuilder(animation:ResourceStore.instance,builder:(context,_){
     final store=ResourceStore.instance;final q=search.text.trim().toLowerCase();
-    final topics=filters.where((e)=>!e.startsWith('Тип:')).toSet();\n    final types=filters.where((e)=>e.startsWith('Тип:')).map((e)=>e.substring(4)).toSet();
+    final topics=filters.where((e)=>!e.startsWith('Тип:')).toSet();
+    final types=filters.where((e)=>e.startsWith('Тип:')).map((e)=>e.substring(4)).toSet();
     final items=ResourceItem.catalog.where((i)=>(category=='Все'||i.category==category)&&(topics.isEmpty||topics.contains(i.category))&&(types.isEmpty||types.contains(i.category)||types.contains('Упражнения')&&i.category=='Практики')&&(!favoritesOnly||store.isFavorite(i.id))&&(q.isEmpty||i.title.toLowerCase().contains(q)||i.subtitle.toLowerCase().contains(q)||i.description.toLowerCase().contains(q))).toList();
     return ListView(padding:const EdgeInsets.fromLTRB(20,8,20,120),children:[
       const SectionTitle('Ресурсы',subtitle:'Твоя личная библиотека инструментов и знаний'),
