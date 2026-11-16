@@ -4,6 +4,7 @@ import '../../core/data/viril_store.dart';
 import '../../core/models/viril_task.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
+import '../profile/data/profile_store.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.onOpenProfile});
@@ -54,13 +55,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _topBar(VirilStore store) => Row(
+  Widget _topBar(VirilStore store) => AnimatedBuilder(
+    animation: ProfileStore.instance,
+    builder: (context, _) => Row(
     children: [
       _roundAction(
         icon: Icons.person_rounded,
-        label: 'Профиль',
+        label: 'Профиль · ${ProfileStore.instance.name}',
         onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
       ),
+      const SizedBox(width: 8),
+      Flexible(child: Text(ProfileStore.instance.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))),
       const Spacer(),
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
@@ -84,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: () => _showInfo('Уведомления', 'Центр уведомлений будет подключён на следующем этапе.'),
       ),
     ],
-  );
+  ));
 
   Widget _roundAction({required IconData icon, required String label, required VoidCallback onTap}) =>
     Tooltip(
@@ -135,7 +141,9 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   Widget _goalsCard(VirilStore store, bool compact) {
-    final goals = store.tasks.where((task) => task.period == _period).toList();
+    final goals = _period == 'day'
+      ? store.dailyTasksFor(DateTime.now())
+      : store.tasks.where((task) => task.period == _period).toList();
     return GlassCard(
       radius: 22,
       padding: EdgeInsets.all(compact ? 11 : 14),
@@ -291,6 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final controller = TextEditingController();
     var reward = 5;
     var goalPeriod = _period;
+    var priority = false;
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
@@ -315,6 +324,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   onSelected: (_) => setDialogState(() => goalPeriod = entry.key),
                 ),
             ]),
+            if (goalPeriod == 'day') ...[
+              const SizedBox(height: 10),
+              SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                value: priority,
+                activeColor: VirilColors.gold,
+                title: const Text('Главная приоритетная цель', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                subtitle: const Text('Будет выделена в списке дня', style: TextStyle(fontSize: 10, color: VirilColors.muted)),
+                onChanged: (value) => setDialogState(() => priority = value),
+              ),
+            ],
             const SizedBox(height: 12),
             const Text('Награда за выполнение', style: TextStyle(color: VirilColors.muted, fontSize: 12)),
             const SizedBox(height: 7),
@@ -329,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () async {
                 if (controller.text.trim().isEmpty) return;
                 await VirilStore.instance.addTask(
-                  controller.text, 'Личная цель', period: goalPeriod, xpReward: reward,
+                  controller.text, 'Личная цель', period: goalPeriod, xpReward: reward, isPriority: goalPeriod == 'day' && priority,
                 );
                 if (dialogContext.mounted) Navigator.pop(dialogContext);
               },
@@ -358,6 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: InputDecoration(hintText: hint, alignLabelWithHint: true),
         ),
         actions: [
+          TextButton(onPressed: () { Navigator.pop(dialogContext); _showEntryHistory(gratitude); }, child: const Text('История')),
           TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Отмена')),
           FilledButton(
             onPressed: () async {
@@ -378,6 +399,24 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     controller.dispose();
+  }
+
+  void _showEntryHistory(bool gratitude) {
+    final entries = gratitude ? VirilStore.instance.gratitudeEntries : VirilStore.instance.journalEntries;
+    showDialog<void>(context: context, builder: (ctx) => AlertDialog(
+      backgroundColor: VirilColors.stone,
+      title: Text(gratitude ? 'История благодарностей' : 'История дневника'),
+      content: SizedBox(width: double.maxFinite, height: 360, child: entries.isEmpty
+        ? const Center(child: Text('Пока нет сохранённых записей', style: TextStyle(color: VirilColors.muted)))
+        : ListView.separated(itemCount: entries.length, separatorBuilder: (_, __) => const Divider(color: VirilColors.line),
+          itemBuilder: (_, i) {
+            final entry = entries[i];
+            final date = DateTime.tryParse(entry['createdAt'] ?? '');
+            final stamp = date == null ? '' : '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} · ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+            return ListTile(dense: true, title: Text(entry['text'] ?? '', maxLines: 4, overflow: TextOverflow.ellipsis), subtitle: Text(stamp, style: const TextStyle(color: VirilColors.gold, fontSize: 10)));
+          })),
+      actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Закрыть'))],
+    ));
   }
 
   void _openPomodoro() {
@@ -407,6 +446,7 @@ class _GoalTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(children: [
+        if (task.isPriority) const Padding(padding: EdgeInsets.only(right: 3), child: Icon(Icons.star_rounded, color: VirilColors.gold, size: 17)),
         Checkbox(
           value: task.completed,
           activeColor: VirilColors.ice,
@@ -419,6 +459,15 @@ class _GoalTile extends StatelessWidget {
             decoration: task.completed ? TextDecoration.lineThrough : null,
             color: task.completed ? VirilColors.muted : VirilColors.text,
           ))),
+        if (task.period == 'day') IconButton(
+          visualDensity: VisualDensity.compact,
+          constraints: const BoxConstraints.tightFor(width: 28, height: 30),
+          padding: EdgeInsets.zero,
+          tooltip: task.isPriority ? 'Снять приоритет' : 'Сделать главной целью',
+          onPressed: () => store.setPriorityTask(task.id),
+          icon: Icon(task.isPriority ? Icons.star_rounded : Icons.star_border_rounded, size: 16,
+            color: task.isPriority ? VirilColors.gold : VirilColors.muted),
+        ),
         const SizedBox(width: 5),
         Text('${task.xpReward} XP', style: TextStyle(
           color: task.completed ? VirilColors.ice : VirilColors.muted,
