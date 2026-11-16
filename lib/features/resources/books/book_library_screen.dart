@@ -82,7 +82,7 @@ class _BookReaderScreenState extends State<BookReaderScreen> {
         PopupMenuButton<Color>(tooltip:'Цвет страницы',icon:const Icon(Icons.palette_outlined,color:VirilColors.ice),onSelected:(c)=>setState(()=>pageColor=c),itemBuilder:(_)=>const[
           PopupMenuItem(value:Color(0xFFFFFFFF),child:Text('Белая')),
           PopupMenuItem(value:Color(0xFFF4EBD8),child:Text('Тёплая')),
-          PopupMenuItem(value:Color(0xFF242832),child:Text('Тёмная'))
+          PopupMenuItem(value:Color(0xFFE8E8E8),child:Text('Светло-серая'))
         ])
       ])),
       Expanded(child:Container(color:pageColor,child:ColorFiltered(
