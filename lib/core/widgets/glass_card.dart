@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/viril_colors.dart';
 
-/// Crisp charcoal-black card with a fine antique-gold outline.
+/// Matte graphite card with a subtle antique-brass edge and warm depth.
 class GlassCard extends StatelessWidget {
   const GlassCard({super.key, required this.child, this.padding = const EdgeInsets.all(18), this.margin, this.radius = 20});
   final Widget child;
@@ -18,13 +18,13 @@ class GlassCard extends StatelessWidget {
       gradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        stops: [0, .52, 1],
-        colors: [Color(0xFF29282D), Color(0xFF17171B), Color(0xFF202025)],
+        stops: [0, .56, 1],
+        colors: [Color(0xFF252A31), Color(0xFF191D23), Color(0xFF151A22)],
       ),
-      border: Border.all(color: VirilColors.gold, width: 1.15),
+      border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .62), width: 1),
       boxShadow: const [
-        BoxShadow(color: Color(0xAA000000), blurRadius: 20, offset: Offset(0, 9)),
-        BoxShadow(color: Color(0x18C6A568), blurRadius: 10, spreadRadius: -5),
+        BoxShadow(color: Color(0x77000000), blurRadius: 18, offset: Offset(0, 8)),
+        BoxShadow(color: Color(0x12B99A62), blurRadius: 12, spreadRadius: -5),
       ],
     ),
     child: child,
