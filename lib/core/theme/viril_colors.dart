@@ -1,36 +1,35 @@
 import 'package:flutter/material.dart';
 
-/// Viril Obsidian Eclipse — black-violet space, obsidian surfaces and antique gold.
+/// Viril Obsidian Cosmos — a three-tone dark space with antique-gold surfaces.
 abstract final class VirilColors {
-  // Deep black / violet cosmic background.
-  static const voidBlack = Color(0xFF07060D);
-  static const black = Color(0xFF111018);
+  // Cosmic backdrop: black, deep violet and midnight blue.
+  static const voidBlack = Color(0xFF050509);
+  static const black = Color(0xFF0B0A10);
   static const midnight = Color(0xFF100D1B);
-  static const navy = Color(0xFF171329);
-  static const navyLight = Color(0xFF28213D);
+  static const navy = Color(0xFF101A32);
+  static const navyLight = Color(0xFF1C2948);
+  static const cosmicBlue = Color(0xFF342452);
+  static const nebulaBlue = Color(0xFF1C3156);
+  static const starlightBlue = Color(0xFF9C9BCB);
 
-  // Opaque obsidian panels.
-  static const stone = Color(0xFF191722);
-  static const stoneLight = Color(0xFF24212F);
-  static const stoneEdge = Color(0xFF665235);
-  static const line = Color(0xFF493C2B);
+  // Blackened obsidian surfaces with restrained gold warmth.
+  static const stone = Color(0xFF17151A);
+  static const stoneLight = Color(0xFF211D20);
+  static const stoneEdge = Color(0xFF9B7840);
+  static const line = Color(0xFF4A3925);
 
-  // Antique gold framing and selected headings.
+  // Antique gold.
   static const gold = Color(0xFFC6A568);
-  static const goldSoft = Color(0xFF806744);
+  static const goldSoft = Color(0xFF9B7840);
+  static const goldDeep = Color(0xFF60451F);
   static const ice = Color(0xFFE8D8B8);
 
-  // Blue is reserved for progress, charts and calm indicators.
-  static const cosmicBlue = Color(0xFF55418C);
-  static const nebulaBlue = Color(0xFF382B62);
-  static const starlightBlue = Color(0xFFB5A5E8);
+  // Progress chart remains blue; lava is a rare accent.
   static const chartBlue = Color(0xFF4D9BFA);
   static const chartBlueLight = Color(0xFF82BCFF);
-
-  // Bright lava used sparingly for high-energy accents.
   static const lava = Color(0xFFFF4D5A);
   static const lavaDeep = Color(0xFF9D293F);
-  static const violet = Color(0xFF9273C7);
+  static const violet = Color(0xFF72539A);
 
   static const text = Color(0xFFF7F5FA);
   static const muted = Color(0xFFBDB8C8);
