@@ -286,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: LinearProgressIndicator(
           value: store.levelProgress / 100,
           minHeight: 6,
-          backgroundColor: const Color(0xFF30394B),
+          backgroundColor: VirilColors.line,
           valueColor: const AlwaysStoppedAnimation(VirilColors.ice),
         ),
       ),
