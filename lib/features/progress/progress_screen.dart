@@ -99,7 +99,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 valueColor: const AlwaysStoppedAnimation(VirilColors.ice),
               )),
               const SizedBox(height: 15),
-              const Text('РЫНОЧНАЯ ДИНАМИКА АКТИВНОСТИ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
+              const Text('ДИНАМИКА РАЗВИТИЯ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
               const SizedBox(height: 5),
               const Text('Рост, снижение и периоды стабильности твоей активности', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
               const SizedBox(height: 12),
@@ -337,17 +337,17 @@ class _MarketLinePainter extends CustomPainter {
     final area = Path.from(line)..lineTo(points.last.dx, plot.bottom)..lineTo(points.first.dx, plot.bottom)..close();
     canvas.drawPath(area, Paint()..shader = LinearGradient(
       begin: Alignment.topCenter, end: Alignment.bottomCenter,
-      colors: [VirilColors.ice.withValues(alpha: .24), VirilColors.ice.withValues(alpha: .01)],
+      colors: [VirilColors.chartBlue.withValues(alpha: .34), VirilColors.chartBlue.withValues(alpha: .015)],
     ).createShader(plot));
     canvas.drawPath(line, Paint()
-      ..color = VirilColors.ice
+      ..color = VirilColors.chartBlue
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.6
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round);
     for (var i = 0; i < points.length; i++) {
       final isSelected = dates[i].year == selected.year && dates[i].month == selected.month && dates[i].day == selected.day;
-      canvas.drawCircle(points[i], isSelected ? 5 : 2.4, Paint()..color = isSelected ? VirilColors.gold : VirilColors.ice);
+      canvas.drawCircle(points[i], isSelected ? 5 : 2.4, Paint()..color = isSelected ? VirilColors.lava : VirilColors.chartBlueLight);
       if (isSelected) canvas.drawCircle(points[i], 8, Paint()
         ..color = VirilColors.gold.withValues(alpha: .18)..style = PaintingStyle.stroke..strokeWidth = 2);
     }
