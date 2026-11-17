@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/data/viril_store.dart';
 import '../../core/models/viril_task.dart';
 import '../../core/theme/viril_colors.dart';
@@ -18,6 +19,114 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _period = 'day';
+  static const _widgetsPreferenceKey = 'viril.home.widgets.v1';
+  bool _showLevel = true;
+  bool _showGoals = true;
+  bool _showDiary = true;
+  bool _showTools = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWidgetPreferences();
+  }
+
+  Future<void> _loadWidgetPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getStringList(_widgetsPreferenceKey);
+    if (!mounted || saved == null) return;
+    setState(() {
+      _showLevel = saved.contains('level');
+      _showGoals = saved.contains('goals');
+      _showDiary = saved.contains('diary');
+      _showTools = saved.contains('tools');
+    });
+  }
+
+  Future<void> _saveWidgetPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final enabled = <String>[
+      if (_showLevel) 'level',
+      if (_showGoals) 'goals',
+      if (_showDiary) 'diary',
+      if (_showTools) 'tools',
+    ];
+    await prefs.setStringList(_widgetsPreferenceKey, enabled);
+  }
+
+  Future<void> _showWidgetsSheet() async {
+    var level = _showLevel;
+    var goals = _showGoals;
+    var diary = _showDiary;
+    var tools = _showTools;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: VirilColors.stone,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+        side: BorderSide(color: VirilColors.line),
+      ),
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, refresh) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Container(width: 38, height: 4, decoration: BoxDecoration(
+                color: VirilColors.goldSoft, borderRadius: BorderRadius.circular(4))),
+              const SizedBox(height: 16),
+              Row(children: [
+                const Icon(Icons.dashboard_customize_rounded, color: VirilColors.gold),
+                const SizedBox(width: 9),
+                const Expanded(child: Text('Виджеты главной', style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.w900))),
+                TextButton(onPressed: () => refresh(() {
+                  level = true; goals = true; diary = true; tools = true;
+                }), child: const Text('Сбросить')),
+              ]),
+              const SizedBox(height: 5),
+              const Align(alignment: Alignment.centerLeft, child: Text(
+                'Выбери, какие блоки показывать на рабочем столе',
+                style: TextStyle(color: VirilColors.muted, fontSize: 11))),
+              const SizedBox(height: 10),
+              _widgetSwitch('Уровень, лига и эпоха', 'XP и текущий уровень',
+                Icons.military_tech_rounded, level, (v) => refresh(() => level = v)),
+              _widgetSwitch('Мои цели', 'Задачи на день, неделю, месяц и год',
+                Icons.flag_rounded, goals, (v) => refresh(() => goals = v)),
+              _widgetSwitch('Дневник', 'Личные записи и рефлексия',
+                Icons.menu_book_rounded, diary, (v) => refresh(() => diary = v)),
+              _widgetSwitch('Инструменты', 'Дополнительные инструменты Viril',
+                Icons.build_circle_rounded, tools, (v) => refresh(() => tools = v)),
+              const SizedBox(height: 12),
+              SizedBox(width: double.infinity, child: FilledButton(
+                onPressed: () async {
+                  setState(() {
+                    _showLevel = level;
+                    _showGoals = goals;
+                    _showDiary = diary;
+                    _showTools = tools;
+                  });
+                  await _saveWidgetPreferences();
+                  if (sheetContext.mounted) Navigator.pop(sheetContext);
+                },
+                child: const Text('Сохранить настройки'),
+              )),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _widgetSwitch(String title, String subtitle, IconData icon,
+      bool value, ValueChanged<bool> onChanged) => SwitchListTile.adaptive(
+    contentPadding: EdgeInsets.zero,
+    value: value,
+    onChanged: onChanged,
+    secondary: Icon(icon, color: VirilColors.gold, size: 21),
+    title: Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
+    subtitle: Text(subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
+  );
 
   static const _periods = <String, String>{
     'day': 'День',
@@ -41,18 +150,30 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _topBar(store),
-                SizedBox(height: gap),
-                _levelBar(store),
-                SizedBox(height: gap),
-                Expanded(child: _goalsCard(store, compact)),
-                SizedBox(height: gap),
-                Row(
-                  children: [
-                    Expanded(child: DiaryToolsCard(onTap: _openDiary)),
-                    const SizedBox(width: 8),
-                    Expanded(child: ToolsLauncherCard(onTap: _openTools)),
-                  ],
-                ),
+                if (_showLevel) ...[
+                  SizedBox(height: gap),
+                  _levelBar(store),
+                ],
+                if (_showGoals) ...[
+                  SizedBox(height: gap),
+                  Expanded(child: _goalsCard(store, compact)),
+                ] else
+                  Expanded(child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(Icons.dashboard_customize_rounded, color: VirilColors.gold.withValues(alpha: .7), size: 32),
+                    const SizedBox(height: 8),
+                    const Text('Рабочий стол настроен', style: TextStyle(fontWeight: FontWeight.w800)),
+                    const SizedBox(height: 4),
+                    const Text('Добавь нужные блоки через «Виджеты»', textAlign: TextAlign.center,
+                      style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+                  ]))),
+                if (_showDiary || _showTools) ...[
+                  SizedBox(height: gap),
+                  Row(children: [
+                    if (_showDiary) Expanded(child: DiaryToolsCard(onTap: _openDiary)),
+                    if (_showDiary && _showTools) const SizedBox(width: 8),
+                    if (_showTools) Expanded(child: ToolsLauncherCard(onTap: _openTools)),
+                  ]),
+                ],
               ],
             ),
           );
@@ -94,6 +215,22 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 4),
               Text('${store.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
             ]),
+          ),
+          const SizedBox(width: 6),
+          const SizedBox(width: 6),
+          Tooltip(
+            message: 'Виджеты главной',
+            child: Material(
+              color: VirilColors.stone,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),
+                side: const BorderSide(color: VirilColors.goldSoft)),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(15),
+                onTap: _showWidgetsSheet,
+                child: const SizedBox(width: 40, height: 40,
+                  child: Icon(Icons.dashboard_customize_rounded, color: VirilColors.gold, size: 19)),
+              ),
+            ),
           ),
           const SizedBox(width: 6),
           Tooltip(
