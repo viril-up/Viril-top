@@ -54,6 +54,24 @@ jobs:
           path.write_text(content)
           PY
       - run: flutter pub get
+      # Preinstall the NDK required by the generated Android project.
+      # Retry transient/partial downloads before Gradle starts the APK build.
+      - name: Install Android NDK with retries
+        shell: bash
+        run: |
+          SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          NDK_VERSION="28.2.13676358"
+          for attempt in 1 2 3; do
+            echo "Installing Android NDK $NDK_VERSION (attempt $attempt/3)"
+            if yes | "$SDKMANAGER" --sdk_root="$ANDROID_SDK_ROOT" --licenses >/dev/null && "$SDKMANAGER" --sdk_root="$ANDROID_SDK_ROOT" --install "ndk;$NDK_VERSION"; then
+              exit 0
+            fi
+            echo "NDK installation attempt $attempt failed."
+            rm -rf "$ANDROID_SDK_ROOT/ndk/$NDK_VERSION"
+            sleep 12
+          done
+          echo "Android NDK installation failed after 3 attempts."
+          exit 1
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
