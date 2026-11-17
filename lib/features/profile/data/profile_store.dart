@@ -23,7 +23,7 @@ class ProfileStore extends ChangeNotifier {
     Icons.track_changes_rounded, Icons.military_tech_rounded, Icons.waves_rounded,
     Icons.rocket_launch_rounded, Icons.nights_stay_rounded, Icons.public_rounded,
     Icons.diamond_rounded, Icons.emoji_events_rounded,
-  ][_avatarIndex.clamp(0, 19)];
+  ][_avatarIndex.clamp(0, 19).toInt()];
   Future<void> initialize() async {
     if (_ready) return;
     final prefs = await SharedPreferences.getInstance();
