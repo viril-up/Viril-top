@@ -331,24 +331,6 @@ class _HomeScreenState extends State<HomeScreen> {
     controller.dispose();
   }
 
-  void _showEntryHistory(bool gratitude) {
-    final entries = gratitude ? VirilStore.instance.gratitudeEntries : VirilStore.instance.journalEntries;
-    showDialog<void>(context: context, builder: (ctx) => AlertDialog(
-      backgroundColor: VirilColors.stone,
-      title: Text(gratitude ? 'История благодарностей' : 'История дневника'),
-      content: SizedBox(width: double.maxFinite, height: 360, child: entries.isEmpty
-        ? const Center(child: Text('Пока нет сохранённых записей', style: TextStyle(color: VirilColors.muted)))
-        : ListView.separated(itemCount: entries.length, separatorBuilder: (_, __) => const Divider(color: VirilColors.line),
-          itemBuilder: (_, i) {
-            final entry = entries[i];
-            final date = DateTime.tryParse(entry['createdAt'] ?? '');
-            final stamp = date == null ? '' : '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} · ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-            return ListTile(dense: true, title: Text(entry['text'] ?? '', maxLines: 4, overflow: TextOverflow.ellipsis), subtitle: Text(stamp, style: const TextStyle(color: VirilColors.gold, fontSize: 10)));
-          })),
-      actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Закрыть'))],
-    ));
-  }
-
   void _openPomodoro() {
     showDialog<void>(context: context, builder: (_) => const _PomodoroDialog());
   }
