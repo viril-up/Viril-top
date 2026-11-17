@@ -142,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Icon(Icons.shield_moon_rounded, color: VirilColors.gold, size: 18),
         const SizedBox(width: 6),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('${epoch.name.split('—').first.trim()} ЭПОХА',
+          Text('${epoch.name.split('—').first.trim()}',
             maxLines: 1, overflow: TextOverflow.ellipsis,
             style: const TextStyle(color: VirilColors.gold, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: .8)),
           Text('${leagueName.toUpperCase()} ЛИГА',
