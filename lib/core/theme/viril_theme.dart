@@ -35,7 +35,7 @@ abstract final class VirilTheme {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: const BorderSide(color: VirilColors.gold, width: 1.1),
+        side: BorderSide(color: VirilColors.goldSoft.withValues(alpha: .62), width: 1),
       ),
     ),
     dialogTheme: DialogThemeData(
@@ -43,13 +43,13 @@ abstract final class VirilTheme {
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(22),
-        side: const BorderSide(color: VirilColors.gold, width: 1),
+        side: BorderSide(color: VirilColors.goldSoft.withValues(alpha: .72), width: 1),
       ),
     ),
     chipTheme: ChipThemeData(
       backgroundColor: VirilColors.black,
       selectedColor: VirilColors.navyLight,
-      side: const BorderSide(color: VirilColors.gold),
+      side: BorderSide(color: VirilColors.goldSoft.withValues(alpha: .55)),
       labelStyle: const TextStyle(color: VirilColors.text),
       secondaryLabelStyle: const TextStyle(color: VirilColors.ice),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
