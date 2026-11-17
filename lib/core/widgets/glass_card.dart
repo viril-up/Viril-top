@@ -14,10 +14,14 @@ class GlassCard extends StatelessWidget {
     padding: padding,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(radius),
+      color: VirilColors.black.withValues(alpha: .94),
       gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-        colors: [Color(0xE02E2B2A), Color(0xE0121215), Color(0xF01A1A1D)]),
-      border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .32)),
-      boxShadow: const [BoxShadow(color: Color(0x55000000), blurRadius: 24, offset: Offset(0, 12))],
+        colors: [Color(0xF21A202B), Color(0xF20A0C11), Color(0xF216191F)]),
+      border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .22), width: 0.8),
+      boxShadow: const [
+        BoxShadow(color: Color(0x66000000), blurRadius: 24, offset: Offset(0, 12)),
+        BoxShadow(color: Color(0x161A2B45), blurRadius: 18, spreadRadius: -5),
+      ],
     ),
     child: child,
   );
