@@ -12,7 +12,7 @@ class ParticleBackdrop extends StatefulWidget {
 
 class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
-    vsync: this, duration: const Duration(seconds: 42),
+    vsync: this, duration: const Duration(seconds: 52),
   )..repeat();
 
   @override
@@ -28,18 +28,16 @@ class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerPr
           const DecoratedBox(decoration: BoxDecoration(
             color: VirilColors.voidBlack,
             gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-              colors: [Color(0xFF172A45), Color(0xFF101D32), Color(0xFF090F1B), Color(0xFF080A10)],
-              stops: [0, .32, .72, 1]),
+              colors: [Color(0xFF172B45), Color(0xFF102139), Color(0xFF0D192A), Color(0xFF111A27)],
+              stops: [0, .34, .72, 1]),
           )),
-          // Slow-moving blue nebula clouds create a calm cosmic atmosphere.
-          Positioned(left: -145 + math.sin(t * .55) * 42, top: -155 + math.cos(t * .42) * 34,
-            child: _glow(390, VirilColors.cosmicBlue.withValues(alpha: .30))),
-          Positioned(right: -175 + math.cos(t * .48) * 46, top: 150 + math.sin(t * .38) * 38,
-            child: _glow(360, VirilColors.nebulaBlue.withValues(alpha: .28))),
-          Positioned(left: 5 + math.sin(t * .32) * 35, bottom: -210 + math.cos(t * .4) * 22,
-            child: _glow(390, VirilColors.navyLight.withValues(alpha: .23))),
-          Positioned(right: -170 + math.sin(t * .28) * 30, bottom: 40 + math.cos(t * .34) * 28,
-            child: _glow(300, VirilColors.lavaDeep.withValues(alpha: .09))),
+          // Restrained antique warmth is blended into the navy atmosphere, not laid over the cards.
+          Positioned(left: -170 + math.sin(t * .28) * 28, top: -180 + math.cos(t * .25) * 24,
+            child: _glow(430, VirilColors.cosmicBlue.withValues(alpha: .24))),
+          Positioned(right: -180 + math.cos(t * .24) * 32, top: 100 + math.sin(t * .22) * 26,
+            child: _glow(390, VirilColors.nebulaBlue.withValues(alpha: .20))),
+          Positioned(left: 20 + math.sin(t * .18) * 24, bottom: -235 + math.cos(t * .2) * 18,
+            child: _glow(420, VirilColors.goldSoft.withValues(alpha: .075))),
           CustomPaint(painter: _ParticlePainter(_controller.value), child: const SizedBox.expand()),
           widget.child,
         ]);
@@ -50,7 +48,7 @@ class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerPr
   Widget _glow(double size, Color color) => IgnorePointer(child: Container(
     width: size, height: size,
     decoration: BoxDecoration(shape: BoxShape.circle, color: color,
-      boxShadow: [BoxShadow(color: color, blurRadius: 135, spreadRadius: 34)]),
+      boxShadow: [BoxShadow(color: color, blurRadius: 145, spreadRadius: 36)]),
   ));
 }
 
@@ -62,24 +60,18 @@ class _ParticlePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..style = PaintingStyle.fill;
     const colors = [VirilColors.starlightBlue, VirilColors.cosmicBlue,
-      VirilColors.navyLight, VirilColors.ice, VirilColors.gold, VirilColors.lava];
-    for (var i = 0; i < 82; i++) {
+      VirilColors.navyLight, VirilColors.ice, VirilColors.gold];
+    for (var i = 0; i < 64; i++) {
       final seed = i * 97.31;
       final x = ((math.sin(seed) + 1) / 2) * size.width
-        + math.sin(progress * math.pi * 2 + seed) * (7 + i % 11);
+        + math.sin(progress * math.pi * 2 + seed) * (5 + i % 8);
       final baseY = ((math.cos(seed * .7) + 1) / 2) * size.height;
-      final speed = 8 + (i % 7) * 4;
+      final speed = 6 + (i % 6) * 3;
       final y = (baseY - progress * speed + size.height) % size.height;
-      final radius = i % 9 == 0 ? 1.35 : .65 + (i % 4) * .25;
-      final alpha = i % 9 == 0 ? .62 : (i % 3 == 0 ? .30 : .17);
+      final radius = i % 11 == 0 ? 1.2 : .55 + (i % 3) * .22;
+      final alpha = i % 11 == 0 ? .42 : (i % 3 == 0 ? .19 : .11);
       paint.color = colors[i % colors.length].withValues(alpha: alpha);
       canvas.drawCircle(Offset(x, y), radius, paint);
-      // A few tiny stars softly pulse without flashing.
-      if (i % 13 == 0) {
-        final pulse = .25 + ((math.sin(progress * math.pi * 2 + seed) + 1) / 2) * .35;
-        paint.color = VirilColors.starlightBlue.withValues(alpha: pulse);
-        canvas.drawCircle(Offset(x, y), radius + 1.1, paint);
-      }
     }
   }
 
