@@ -43,16 +43,14 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
-
           path = Path("android/settings.gradle.kts")
           content = path.read_text()
-          pattern = r"(pluginManagement\\s*\\{[\\s\\S]*?repositories\\s*\\{)"
-          match = re.search(pattern, content)
-          if not match:
+          start = content.find("pluginManagement {")
+          repo = content.find("repositories {", start)
+          if start < 0 or repo < 0:
               raise SystemExit("Could not find pluginManagement.repositories in android/settings.gradle.kts")
-          block_start = match.end()
-          content = content[:block_start] + "\\n        google()\\n        mavenCentral()" + content[block_start:]
+          insert_at = repo + len("repositories {")
+          content = content[:insert_at] + "\n        google()\n        mavenCentral()" + content[insert_at:]
           path.write_text(content)
           PY
       - run: flutter pub get
