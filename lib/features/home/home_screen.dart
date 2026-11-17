@@ -4,6 +4,7 @@ import '../../core/data/viril_store.dart';
 import '../../core/models/viril_task.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
+import 'diary_tools_card.dart';
 import '../profile/data/profile_store.dart';
 import '../profile/data/global_league_data.dart';
 
@@ -35,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final compact = constraints.maxHeight < 650;
           final gap = compact ? 7.0 : 10.0;
           return Padding(
-            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 16, 8),
+            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 0, 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -45,9 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: gap),
                 Expanded(child: _goalsCard(store, compact)),
                 SizedBox(height: gap),
-                _personalTools(compact),
+                DiaryToolsCard(compact: compact),
                 SizedBox(height: gap),
-                _pomodoroCard(compact),
+                _toolsCard(compact),
               ],
             ),
           );
@@ -237,53 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _personalTools(bool compact) => Row(children: [
-    Expanded(child: _actionCard(
-      icon: Icons.menu_book_rounded, label: 'Дневник\nмыслей', color: VirilColors.ice,
-      onTap: () => _showTextEntry('Дневник мыслей', 'Запиши свои мысли, чувства, эмоции, переживания или идеи...', gratitude: false),
-      compact: compact,
-    )),
-    const SizedBox(width: 7),
-    Expanded(child: _actionCard(
-      icon: Icons.mic_none_rounded, label: 'Записать\nаудио', color: VirilColors.violet,
-      onTap: () => _showInfo('Голосовой дневник', 'Кнопка и место для функции предусмотрены. Запись и сохранение аудио подключу отдельным техническим этапом с разрешением на микрофон.'),
-      compact: compact,
-    )),
-    const SizedBox(width: 7),
-    Expanded(child: _actionCard(
-      icon: Icons.favorite_border_rounded, label: 'Благодарность\nза всё', color: VirilColors.gold,
-      onTap: () => _showTextEntry('Благодарность за всё', 'За что ты благодарен сегодня?', gratitude: true),
-      compact: compact,
-    )),
-  ]);
-
-  Widget _actionCard({
-    required IconData icon, required String label, required Color color,
-    required VoidCallback onTap, required bool compact,
-  }) => Material(
-    color: VirilColors.stone.withValues(alpha: .92),
-    borderRadius: BorderRadius.circular(17),
-    child: InkWell(
-      borderRadius: BorderRadius.circular(17),
-      onTap: onTap,
-      child: Container(
-        height: compact ? 72 : 82,
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(17),
-          border: Border.all(color: color.withValues(alpha: .35)),
-        ),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Icon(icon, color: color, size: compact ? 21 : 23),
-          const SizedBox(height: 5),
-          Text(label, textAlign: TextAlign.center, maxLines: 2,
-            style: const TextStyle(fontSize: 9, height: 1.15, fontWeight: FontWeight.w700)),
-        ]),
-      ),
-    ),
-  );
-
-  Widget _pomodoroCard(bool compact) => Material(
+  Widget _toolsCard(bool compact) => Material(
     color: VirilColors.stone.withValues(alpha: .95),
     borderRadius: BorderRadius.circular(16),
     child: InkWell(
@@ -296,11 +251,12 @@ class _HomeScreenState extends State<HomeScreen> {
           border: Border.all(color: VirilColors.lava.withValues(alpha: .34)),
         ),
         child: Row(children: [
-          const Icon(Icons.timer_outlined, color: VirilColors.lava, size: 23),
+          const Icon(Icons.grid_view_rounded, color: VirilColors.ice, size: 22),
           const SizedBox(width: 10),
           const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Инструменты · Pomodoro', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
-            Text('Таймер для работы и концентрации', style: TextStyle(color: VirilColors.muted, fontSize: 9)),
+            Text('Инструменты', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+            Text('Pomodoro · 25 минут работы / 5 минут отдыха',
+              style: TextStyle(color: VirilColors.muted, fontSize: 9)),
           ])),
           const Icon(Icons.chevron_right_rounded, color: VirilColors.muted),
         ]),
@@ -373,63 +329,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     controller.dispose();
-  }
-
-  Future<void> _showTextEntry(String title, String hint, {required bool gratitude}) async {
-    final controller = TextEditingController();
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: VirilColors.stone,
-        title: Text(title),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          minLines: 4,
-          maxLines: 7,
-          maxLength: 3000,
-          decoration: InputDecoration(hintText: hint, alignLabelWithHint: true),
-        ),
-        actions: [
-          TextButton(onPressed: () { Navigator.pop(dialogContext); _showEntryHistory(gratitude); }, child: const Text('История')),
-          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Отмена')),
-          FilledButton(
-            onPressed: () async {
-              if (controller.text.trim().isEmpty) return;
-              if (gratitude) {
-                await VirilStore.instance.saveGratitude(controller.text);
-              } else {
-                await VirilStore.instance.saveJournalEntry(controller.text);
-              }
-              if (dialogContext.mounted) Navigator.pop(dialogContext);
-              if (mounted) ScaffoldMessenger.of(this.context).showSnackBar(
-                const SnackBar(content: Text('Запись сохранена')),
-              );
-            },
-            child: const Text('Сохранить'),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
-  }
-
-  void _showEntryHistory(bool gratitude) {
-    final entries = gratitude ? VirilStore.instance.gratitudeEntries : VirilStore.instance.journalEntries;
-    showDialog<void>(context: context, builder: (ctx) => AlertDialog(
-      backgroundColor: VirilColors.stone,
-      title: Text(gratitude ? 'История благодарностей' : 'История дневника'),
-      content: SizedBox(width: double.maxFinite, height: 360, child: entries.isEmpty
-        ? const Center(child: Text('Пока нет сохранённых записей', style: TextStyle(color: VirilColors.muted)))
-        : ListView.separated(itemCount: entries.length, separatorBuilder: (_, __) => const Divider(color: VirilColors.line),
-          itemBuilder: (_, i) {
-            final entry = entries[i];
-            final date = DateTime.tryParse(entry['createdAt'] ?? '');
-            final stamp = date == null ? '' : '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} · ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-            return ListTile(dense: true, title: Text(entry['text'] ?? '', maxLines: 4, overflow: TextOverflow.ellipsis), subtitle: Text(stamp, style: const TextStyle(color: VirilColors.gold, fontSize: 10)));
-          })),
-      actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Закрыть'))],
-    ));
   }
 
   void _openPomodoro() {
@@ -513,10 +412,13 @@ class _PomodoroDialog extends StatefulWidget {
 }
 
 class _PomodoroDialogState extends State<_PomodoroDialog> {
-  static const _duration = Duration(minutes: 25);
+  static const _workDuration = Duration(minutes: 25);
+  static const _restDuration = Duration(minutes: 5);
   Timer? _timer;
-  Duration _remaining = _duration;
+  Duration _remaining = _workDuration;
   bool _running = false;
+  bool _isWorkSession = true;
+  int _completedWorkSessions = 0;
 
   void _toggle() {
     if (_running) {
@@ -524,11 +426,17 @@ class _PomodoroDialogState extends State<_PomodoroDialog> {
       setState(() => _running = false);
       return;
     }
+    if (_remaining == Duration.zero) {
+      _remaining = _isWorkSession ? _workDuration : _restDuration;
+    }
     setState(() => _running = true);
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remaining.inSeconds <= 1) {
-        timer.cancel();
-        if (mounted) setState(() { _remaining = Duration.zero; _running = false; });
+        if (_isWorkSession) _completedWorkSessions++;
+        setState(() {
+          _isWorkSession = !_isWorkSession;
+          _remaining = _isWorkSession ? _workDuration : _restDuration;
+        });
         return;
       }
       if (mounted) setState(() => _remaining -= const Duration(seconds: 1));
@@ -537,7 +445,12 @@ class _PomodoroDialogState extends State<_PomodoroDialog> {
 
   void _reset() {
     _timer?.cancel();
-    setState(() { _remaining = _duration; _running = false; });
+    setState(() {
+      _remaining = _workDuration;
+      _running = false;
+      _isWorkSession = true;
+      _completedWorkSessions = 0;
+    });
   }
 
   @override
@@ -550,21 +463,26 @@ class _PomodoroDialogState extends State<_PomodoroDialog> {
   Widget build(BuildContext context) {
     final minutes = _remaining.inMinutes.toString().padLeft(2, '0');
     final seconds = (_remaining.inSeconds % 60).toString().padLeft(2, '0');
+    final phase = _isWorkSession ? 'Время для работы' : 'Время для отдыха';
+    final phaseColor = _isWorkSession ? VirilColors.ice : VirilColors.gold;
     return AlertDialog(
       backgroundColor: VirilColors.stone,
       title: const Text('Pomodoro'),
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Text('Время для сосредоточенной работы', style: TextStyle(color: VirilColors.muted, fontSize: 12)),
+        Text(phase, style: TextStyle(color: phaseColor, fontSize: 13, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 5),
+        const Text('25 минут работы · 5 минут отдыха · повторять по кругу',
+          textAlign: TextAlign.center, style: TextStyle(color: VirilColors.muted, fontSize: 10)),
         const SizedBox(height: 20),
         Text('$minutes:$seconds', style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w900, letterSpacing: 2)),
         const SizedBox(height: 8),
-        Text(_remaining == Duration.zero ? 'Сессия завершена!' : '25 минут работы',
-          style: const TextStyle(color: VirilColors.ice, fontSize: 12)),
+        Text('Завершено рабочих циклов: $_completedWorkSessions',
+          style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
       ]),
       actions: [
         TextButton(onPressed: _reset, child: const Text('Сбросить')),
-        FilledButton(onPressed: _remaining == Duration.zero ? _reset : _toggle,
-          child: Text(_remaining == Duration.zero ? 'Ещё раз' : _running ? 'Пауза' : 'Старт')),
+        FilledButton(onPressed: _toggle,
+          child: Text(_running ? 'Пауза' : 'Старт')),
       ],
     );
   }
