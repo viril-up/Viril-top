@@ -1,34 +1,38 @@
 import 'package:flutter/material.dart';
 
-/// Viril Obsidian Navy — masculine, crisp and calm with restrained antique-metal accents.
+/// Viril Obsidian Eclipse — black-violet space, obsidian surfaces and antique gold.
 abstract final class VirilColors {
-  // Atmospheric background: midnight blue with a subtle warm undertone.
-  static const voidBlack = Color(0xFF091321);
-  static const black = Color(0xFF101B2A);
-  static const midnight = Color(0xFF0D1929);
-  static const navy = Color(0xFF14243A);
-  static const navyLight = Color(0xFF1D3552);
+  // Deep black / violet cosmic background.
+  static const voidBlack = Color(0xFF07060D);
+  static const black = Color(0xFF111018);
+  static const midnight = Color(0xFF100D1B);
+  static const navy = Color(0xFF171329);
+  static const navyLight = Color(0xFF28213D);
 
-  // Solid, clearly separated surfaces.
-  static const stone = Color(0xFF1A293A);
-  static const stoneLight = Color(0xFF24364A);
-  static const stoneEdge = Color(0xFF40536A);
-  static const line = Color(0xFF34465B);
+  // Opaque obsidian panels.
+  static const stone = Color(0xFF191722);
+  static const stoneLight = Color(0xFF24212F);
+  static const stoneEdge = Color(0xFF665235);
+  static const line = Color(0xFF493C2B);
 
-  // Functional accents.
-  static const gold = Color(0xFFC1A16A);
-  static const goldSoft = Color(0xFF8E754D);
-  static const ice = Color(0xFFE5D5B4);
-  static const cosmicBlue = Color(0xFF4D83BE);
-  static const nebulaBlue = Color(0xFF315B8A);
-  static const starlightBlue = Color(0xFF8FC2F2);
-  static const chartBlue = Color(0xFF5799E6);
-  static const lava = Color(0xFFE45D52);
-  static const lavaDeep = Color(0xFF8D403B);
-  static const violet = Color(0xFF786D91);
+  // Antique gold framing and selected headings.
+  static const gold = Color(0xFFC6A568);
+  static const goldSoft = Color(0xFF806744);
+  static const ice = Color(0xFFE8D8B8);
 
-  // High-contrast typography.
-  static const text = Color(0xFFF5F7FA);
-  static const muted = Color(0xFFB3BECC);
-  static const subdued = Color(0xFF8291A3);
+  // Blue is reserved for progress, charts and calm indicators.
+  static const cosmicBlue = Color(0xFF55418C);
+  static const nebulaBlue = Color(0xFF382B62);
+  static const starlightBlue = Color(0xFFB5A5E8);
+  static const chartBlue = Color(0xFF4D9BFA);
+  static const chartBlueLight = Color(0xFF82BCFF);
+
+  // Bright lava used sparingly for high-energy accents.
+  static const lava = Color(0xFFFF4D5A);
+  static const lavaDeep = Color(0xFF9D293F);
+  static const violet = Color(0xFF9273C7);
+
+  static const text = Color(0xFFF7F5FA);
+  static const muted = Color(0xFFBDB8C8);
+  static const subdued = Color(0xFF898397);
 }
