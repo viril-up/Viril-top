@@ -36,7 +36,7 @@ class _VirilShellState extends State<VirilShell> {
     ]))),
     bottomNavigationBar: SafeArea(top: false, child: Padding(
       padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-      child: Container(decoration: BoxDecoration(color: const Color(0xF0101420),
+      child: Container(decoration: BoxDecoration(color: const Color(0xF0191818),
         borderRadius: BorderRadius.circular(25), border: Border.all(color: VirilColors.line.withValues(alpha: .8)),
         boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 22, offset: Offset(0, 8))]),
         child: NavigationBar(height: 72, selectedIndex: _index,
@@ -87,7 +87,7 @@ class _VirilShellState extends State<VirilShell> {
     });
     return Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 12), child: Row(children: [
       Container(width: 48, height: 48, decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),
-        gradient: const LinearGradient(colors: [Color(0xFF34415D), Color(0xFF27223D)]),
+        gradient: const LinearGradient(colors: [Color(0xFF514638), Color(0xFF171619)]),
         border: Border.all(color: VirilColors.ice.withValues(alpha: .45))),
         child: const Center(child: Text('🧠', style: TextStyle(fontSize: 23)))),
       const SizedBox(width: 12),
