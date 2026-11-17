@@ -4,7 +4,7 @@ import 'viril_colors.dart';
 abstract final class VirilTheme {
   static ThemeData get dark => ThemeData(
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: VirilColors.voidBlack,
+    scaffoldBackgroundColor: Colors.transparent,
     colorScheme: const ColorScheme.dark(
       primary: VirilColors.gold,
       secondary: VirilColors.chartBlue,
