@@ -5,6 +5,7 @@ import '../../core/models/viril_task.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import '../profile/data/profile_store.dart';
+import '../profile/data/global_league_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.onOpenProfile});
@@ -79,19 +80,29 @@ class _HomeScreenState extends State<HomeScreen> {
           const Spacer(),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
-            decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(16),
+            decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15),
               border: Border.all(color: VirilColors.line)),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
-              const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
+              const Icon(Icons.local_fire_department_rounded, color: VirilColors.gold, size: 18),
               const SizedBox(width: 4),
-              Text('${store.activeDaysStreak}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
-              const SizedBox(width: 3),
-              const Text('дн.', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
+              Text('${store.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
             ]),
           ),
-          const SizedBox(width: 7),
-          _roundAction(icon: Icons.notifications_none_rounded, label: 'Уведомления',
-            onTap: () => _showInfo('Уведомления', 'Центр уведомлений будет подключён на следующем этапе.')),
+          const SizedBox(width: 6),
+          Tooltip(
+            message: 'Уведомления',
+            child: Material(
+              color: VirilColors.stone,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),
+                side: const BorderSide(color: VirilColors.line)),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(15),
+                onTap: () => _showInfo('Уведомления', 'Центр уведомлений будет подключён на следующем этапе.'),
+                child: const SizedBox(width: 40, height: 40,
+                  child: Icon(Icons.notifications_none_rounded, color: VirilColors.ice, size: 20)),
+              ),
+            ),
+          ),
         ],
       );
     },
@@ -118,16 +129,33 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
 
-  Widget _levelBar(VirilStore store) => GlassCard(
+  Widget _levelBar(VirilStore store) {
+    final leagueIndex = GlobalLeagueData.leagueIndexForXp(store.xp);
+    final epochIndex = GlobalLeagueData.epochIndexForLeague(leagueIndex);
+    final epoch = GlobalLeagueData.epochs[epochIndex];
+    final leagueName = GlobalLeagueData.allLeagues[leagueIndex];
+    return GlassCard(
     radius: 18,
-    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
-        Text('УРОВЕНЬ ${store.level}', style: const TextStyle(
-          color: VirilColors.ice, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1,
-        )),
-        const Spacer(),
-        Text('${store.xp} XP', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+        Icon(Icons.shield_moon_rounded, color: VirilColors.gold, size: 18),
+        const SizedBox(width: 6),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('${epoch.name.split('—').first.trim()} ЭПОХА',
+            maxLines: 1, overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: VirilColors.gold, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: .8)),
+          Text('${leagueName.toUpperCase()} ЛИГА',
+            maxLines: 1, overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: VirilColors.text, fontSize: 11, fontWeight: FontWeight.w900)),
+        ])),
+        const SizedBox(width: 8),
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text('УРОВЕНЬ ${store.level}', style: const TextStyle(
+            color: VirilColors.ice, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1,
+          )),
+          Text('${store.xp} XP', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800)),
+        ]),
       ]),
       const SizedBox(height: 7),
       ClipRRect(
@@ -144,6 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
         style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
     ]),
   );
+  }
 
   Widget _goalsCard(VirilStore store, bool compact) {
     final goals = _period == 'day'
