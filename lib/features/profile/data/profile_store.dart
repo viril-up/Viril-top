@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileStore extends ChangeNotifier {
@@ -15,6 +15,15 @@ class ProfileStore extends ChangeNotifier {
   String get bio => _bio;
   int get avatarIndex => _avatarIndex;
   bool get isReady => _ready;
+  IconData get avatarIcon => const <IconData>[
+    Icons.psychology_rounded, Icons.auto_awesome_rounded, Icons.fitness_center_rounded,
+    Icons.self_improvement_rounded, Icons.menu_book_rounded, Icons.school_rounded,
+    Icons.lightbulb_rounded, Icons.explore_rounded, Icons.shield_rounded,
+    Icons.bolt_rounded, Icons.favorite_rounded, Icons.spa_rounded,
+    Icons.track_changes_rounded, Icons.military_tech_rounded, Icons.waves_rounded,
+    Icons.rocket_launch_rounded, Icons.nights_stay_rounded, Icons.public_rounded,
+    Icons.diamond_rounded, Icons.emoji_events_rounded,
+  ][_avatarIndex.clamp(0, 19)];
   Future<void> initialize() async {
     if (_ready) return;
     final prefs = await SharedPreferences.getInstance();
