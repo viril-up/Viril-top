@@ -331,45 +331,6 @@ class _HomeScreenState extends State<HomeScreen> {
     controller.dispose();
   }
 
-  Future<void> _showTextEntry(String title, String hint, {required bool gratitude}) async {
-    final controller = TextEditingController();
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: VirilColors.stone,
-        title: Text(title),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          minLines: 4,
-          maxLines: 7,
-          maxLength: 3000,
-          decoration: InputDecoration(hintText: hint, alignLabelWithHint: true),
-        ),
-        actions: [
-          TextButton(onPressed: () { Navigator.pop(dialogContext); _showEntryHistory(gratitude); }, child: const Text('История')),
-          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Отмена')),
-          FilledButton(
-            onPressed: () async {
-              if (controller.text.trim().isEmpty) return;
-              if (gratitude) {
-                await VirilStore.instance.saveGratitude(controller.text);
-              } else {
-                await VirilStore.instance.saveJournalEntry(controller.text);
-              }
-              if (dialogContext.mounted) Navigator.pop(dialogContext);
-              if (mounted) ScaffoldMessenger.of(this.context).showSnackBar(
-                const SnackBar(content: Text('Запись сохранена')),
-              );
-            },
-            child: const Text('Сохранить'),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
-  }
-
   void _showEntryHistory(bool gratitude) {
     final entries = gratitude ? VirilStore.instance.gratitudeEntries : VirilStore.instance.journalEntries;
     showDialog<void>(context: context, builder: (ctx) => AlertDialog(
