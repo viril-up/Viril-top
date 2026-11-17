@@ -7,12 +7,23 @@ abstract final class VirilTheme {
     scaffoldBackgroundColor: VirilColors.voidBlack,
     colorScheme: const ColorScheme.dark(
       primary: VirilColors.gold,
-      secondary: VirilColors.navyLight,
+      secondary: VirilColors.chartBlue,
       surface: VirilColors.black,
       error: VirilColors.lava,
+      onSurface: VirilColors.text,
     ),
     fontFamily: 'Roboto',
     useMaterial3: true,
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: VirilColors.text),
+      bodyMedium: TextStyle(color: VirilColors.text),
+      bodySmall: TextStyle(color: VirilColors.muted),
+      titleLarge: TextStyle(color: VirilColors.ice, fontWeight: FontWeight.w800, letterSpacing: .15),
+      titleMedium: TextStyle(color: VirilColors.text, fontWeight: FontWeight.w700),
+      titleSmall: TextStyle(color: VirilColors.text, fontWeight: FontWeight.w700),
+      headlineSmall: TextStyle(color: VirilColors.ice, fontWeight: FontWeight.w900, letterSpacing: .25),
+      labelLarge: TextStyle(color: VirilColors.text, fontWeight: FontWeight.w700),
+    ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
       foregroundColor: VirilColors.text,
@@ -21,6 +32,7 @@ abstract final class VirilTheme {
     cardTheme: CardThemeData(
       color: VirilColors.black,
       surfaceTintColor: Colors.transparent,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
         side: const BorderSide(color: VirilColors.line, width: 1),
@@ -29,24 +41,26 @@ abstract final class VirilTheme {
     dialogTheme: DialogThemeData(
       backgroundColor: VirilColors.stone,
       surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22),
-        side: const BorderSide(color: VirilColors.stoneEdge)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(22),
+        side: const BorderSide(color: VirilColors.stoneEdge, width: 1),
+      ),
     ),
     chipTheme: ChipThemeData(
       backgroundColor: VirilColors.stone,
-      selectedColor: VirilColors.navyLight.withValues(alpha: .48),
+      selectedColor: VirilColors.navyLight,
       side: const BorderSide(color: VirilColors.line),
       labelStyle: const TextStyle(color: VirilColors.text),
       secondaryLabelStyle: const TextStyle(color: VirilColors.ice),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: const Color(0xF20A0D13),
-      indicatorColor: VirilColors.navyLight.withValues(alpha: .52),
+      backgroundColor: VirilColors.black,
+      indicatorColor: VirilColors.navyLight,
       labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
         color: states.contains(WidgetState.selected) ? VirilColors.ice : VirilColors.muted,
         fontSize: 10,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
       )),
       iconTheme: WidgetStateProperty.resolveWith((states) => IconThemeData(
         color: states.contains(WidgetState.selected) ? VirilColors.gold : VirilColors.muted,
@@ -54,14 +68,15 @@ abstract final class VirilTheme {
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) =>
-        states.contains(WidgetState.selected) ? VirilColors.ice : VirilColors.muted),
+        states.contains(WidgetState.selected) ? VirilColors.text : VirilColors.muted),
       trackColor: WidgetStateProperty.resolveWith((states) =>
         states.contains(WidgetState.selected) ? VirilColors.navyLight : VirilColors.line),
     ),
     progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: VirilColors.gold,
+      color: VirilColors.chartBlue,
       linearTrackColor: VirilColors.line,
     ),
     dividerTheme: const DividerThemeData(color: VirilColors.line, thickness: 1),
+    iconTheme: const IconThemeData(color: VirilColors.muted),
   );
 }
