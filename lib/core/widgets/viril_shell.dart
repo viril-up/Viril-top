@@ -53,7 +53,7 @@ class _VirilShellState extends State<VirilShell> {
     );
     if (_index == 3) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) {
       final profile = ProfileStore.instance;
-      return Padding(padding: const EdgeInsets.fromLTRB(16, 7, 0, 8), child: Row(children: [
+      return Padding(padding: const EdgeInsets.fromLTRB(16, 7, 0, 8), child: SizedBox(width: double.infinity, child: Row(mainAxisSize: MainAxisSize.max, children: [
         Material(
           color: VirilColors.stone,
           shape: const CircleBorder(side: BorderSide(color: VirilColors.gold)),
@@ -83,7 +83,7 @@ class _VirilShellState extends State<VirilShell> {
               child: Icon(Icons.notifications_none_rounded, color: VirilColors.ice, size: 20)),
           ),
         )),
-      ]));
+      ])));
     });
     return Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 12), child: Row(children: [
       Container(width: 48, height: 48, decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),

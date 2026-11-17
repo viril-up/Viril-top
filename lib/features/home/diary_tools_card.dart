@@ -11,17 +11,75 @@ import '../../core/data/viril_store.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 
-enum _DiarySection { thoughts, audio, gratitude }
-
-class DiaryToolsCard extends StatefulWidget {
-  const DiaryToolsCard({super.key, required this.compact});
-  final bool compact;
+class DiaryToolsCard extends StatelessWidget {
+  const DiaryToolsCard({super.key, required this.onTap});
+  final VoidCallback onTap;
 
   @override
-  State<DiaryToolsCard> createState() => _DiaryToolsCardState();
+  Widget build(BuildContext context) => _CompactHomeLauncher(
+    title: 'Дневник мыслей',
+    subtitle: 'Личные записи и заметки',
+    icon: Icons.auto_stories_rounded,
+    onTap: onTap,
+  );
 }
 
-class _DiaryToolsCardState extends State<DiaryToolsCard> {
+class _CompactHomeLauncher extends StatelessWidget {
+  const _CompactHomeLauncher({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.onTap,
+  });
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: VirilColors.stone.withValues(alpha: .95),
+    borderRadius: BorderRadius.circular(14),
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        height: 58,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: VirilColors.line),
+        ),
+        child: Row(children: [
+          Icon(icon, color: VirilColors.ice, size: 20),
+          const SizedBox(width: 8),
+          Expanded(child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
+              Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: VirilColors.muted, fontSize: 8)),
+            ],
+          )),
+          const Icon(Icons.chevron_right_rounded, color: VirilColors.muted, size: 17),
+        ]),
+      ),
+    ),
+  );
+}
+
+enum _DiarySection { thoughts, audio, gratitude }
+
+class DiaryToolsPage extends StatefulWidget {
+  const DiaryToolsPage({super.key});
+
+  @override
+  State<DiaryToolsPage> createState() => _DiaryToolsPageState();
+}
+
+class _DiaryToolsPageState extends State<DiaryToolsPage> {
   static const _audioKey = 'viril.audio_entries.v1';
   final _textController = TextEditingController();
   final _recorder = AudioRecorder();
@@ -216,43 +274,55 @@ class _DiaryToolsCardState extends State<DiaryToolsCard> {
   }
 
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: VirilStore.instance,
-    builder: (context, _) => GlassCard(
-      radius: 20,
-      padding: EdgeInsets.all(widget.compact ? 10 : 12),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Row(children: [
-          const Expanded(child: Text('Дневник мыслей', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900))),
-          IconButton(
-            visualDensity: VisualDensity.compact,
-            tooltip: 'История записей за выбранный день',
-            onPressed: _chooseDate,
-            icon: const Icon(Icons.calendar_month_rounded, color: VirilColors.ice, size: 19),
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: const Text('Дневник мыслей'),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ),
+    body: SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        child: AnimatedBuilder(
+          animation: VirilStore.instance,
+          builder: (context, _) => GlassCard(
+            radius: 20,
+            padding: const EdgeInsets.all(12),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              Row(children: [
+                const Expanded(child: Text('Твои личные записи', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900))),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  tooltip: 'История записей за выбранный день',
+                  onPressed: _chooseDate,
+                  icon: const Icon(Icons.calendar_month_rounded, color: VirilColors.ice, size: 19),
+                ),
+              ]),
+              Row(children: [
+                for (final section in _DiarySection.values)
+                  Expanded(child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: _sectionTab(section),
+                  )),
+              ]),
+              const SizedBox(height: 8),
+              Row(children: [
+                Expanded(child: Text(
+                  '${_sectionName(_section)} · ${_selectedDate.day.toString().padLeft(2, '0')}.${_selectedDate.month.toString().padLeft(2, '0')}.${_selectedDate.year}',
+                  style: const TextStyle(color: VirilColors.muted, fontSize: 9, fontWeight: FontWeight.w700),
+                )),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  tooltip: 'Для чего этот раздел?',
+                  onPressed: _showInfo,
+                  icon: const Icon(Icons.priority_high_rounded, color: VirilColors.gold, size: 19),
+                ),
+              ]),
+              if (_section == _DiarySection.audio) _audioContent() else _textContent(),
+            ]),
           ),
-        ]),
-        Row(children: [
-          for (final section in _DiarySection.values)
-            Expanded(child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: _sectionTab(section),
-            )),
-        ]),
-        const SizedBox(height: 8),
-        Row(children: [
-          Expanded(child: Text(
-            '${_sectionName(_section)} · ${_selectedDate.day.toString().padLeft(2, '0')}.${_selectedDate.month.toString().padLeft(2, '0')}.${_selectedDate.year}',
-            style: const TextStyle(color: VirilColors.muted, fontSize: 9, fontWeight: FontWeight.w700),
-          )),
-          IconButton(
-            visualDensity: VisualDensity.compact,
-            tooltip: 'Для чего этот раздел?',
-            onPressed: _showInfo,
-            icon: const Icon(Icons.priority_high_rounded, color: VirilColors.gold, size: 19),
-          ),
-        ]),
-        if (_section == _DiarySection.audio) _audioContent() else _textContent(),
-      ]),
+        ),
+      ),
     ),
   );
 

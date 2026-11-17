@@ -1,10 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/data/viril_store.dart';
 import '../../core/models/viril_task.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import 'diary_tools_card.dart';
+import 'tools_screen.dart';
 import '../profile/data/profile_store.dart';
 import '../profile/data/global_league_data.dart';
 
@@ -46,9 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: gap),
                 Expanded(child: _goalsCard(store, compact)),
                 SizedBox(height: gap),
-                DiaryToolsCard(compact: compact),
-                SizedBox(height: gap),
-                _toolsCard(compact),
+                Row(
+                  children: [
+                    Expanded(child: DiaryToolsCard(onTap: _openDiary)),
+                    const SizedBox(width: 8),
+                    Expanded(child: ToolsLauncherCard(onTap: _openTools)),
+                  ],
+                ),
               ],
             ),
           );
@@ -61,7 +65,9 @@ class _HomeScreenState extends State<HomeScreen> {
     animation: ProfileStore.instance,
     builder: (context, _) {
       final profile = ProfileStore.instance;
-      return Row(
+      return SizedBox(
+        width: double.infinity,
+        child: Row(
         children: [
           Tooltip(
             message: 'Профиль · ${profile.name}',
@@ -105,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-      );
+      ));
     },
   );
 
@@ -238,31 +244,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _toolsCard(bool compact) => Material(
-    color: VirilColors.stone.withValues(alpha: .95),
-    borderRadius: BorderRadius.circular(16),
-    child: InkWell(
-      borderRadius: BorderRadius.circular(16),
-      onTap: _openPomodoro,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 13, vertical: compact ? 9 : 11),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: VirilColors.lava.withValues(alpha: .34)),
-        ),
-        child: Row(children: [
-          const Icon(Icons.grid_view_rounded, color: VirilColors.ice, size: 22),
-          const SizedBox(width: 10),
-          const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Инструменты', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
-            Text('Pomodoro · 25 минут работы / 5 минут отдыха',
-              style: TextStyle(color: VirilColors.muted, fontSize: 9)),
-          ])),
-          const Icon(Icons.chevron_right_rounded, color: VirilColors.muted),
-        ]),
-      ),
-    ),
-  );
 
   Future<void> _showAddGoalDialog() async {
     final controller = TextEditingController();
@@ -331,8 +312,16 @@ class _HomeScreenState extends State<HomeScreen> {
     controller.dispose();
   }
 
-  void _openPomodoro() {
-    showDialog<void>(context: context, builder: (_) => const _PomodoroDialog());
+  void _openDiary() {
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => const DiaryToolsPage(),
+    ));
+  }
+
+  void _openTools() {
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => const ToolsScreen(),
+    ));
   }
 
   void _showInfo(String title, String message) {
@@ -404,86 +393,3 @@ class _GoalTile extends StatelessWidget {
   }
 }
 
-class _PomodoroDialog extends StatefulWidget {
-  const _PomodoroDialog();
-
-  @override
-  State<_PomodoroDialog> createState() => _PomodoroDialogState();
-}
-
-class _PomodoroDialogState extends State<_PomodoroDialog> {
-  static const _workDuration = Duration(minutes: 25);
-  static const _restDuration = Duration(minutes: 5);
-  Timer? _timer;
-  Duration _remaining = _workDuration;
-  bool _running = false;
-  bool _isWorkSession = true;
-  int _completedWorkSessions = 0;
-
-  void _toggle() {
-    if (_running) {
-      _timer?.cancel();
-      setState(() => _running = false);
-      return;
-    }
-    if (_remaining == Duration.zero) {
-      _remaining = _isWorkSession ? _workDuration : _restDuration;
-    }
-    setState(() => _running = true);
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remaining.inSeconds <= 1) {
-        if (_isWorkSession) _completedWorkSessions++;
-        setState(() {
-          _isWorkSession = !_isWorkSession;
-          _remaining = _isWorkSession ? _workDuration : _restDuration;
-        });
-        return;
-      }
-      if (mounted) setState(() => _remaining -= const Duration(seconds: 1));
-    });
-  }
-
-  void _reset() {
-    _timer?.cancel();
-    setState(() {
-      _remaining = _workDuration;
-      _running = false;
-      _isWorkSession = true;
-      _completedWorkSessions = 0;
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final minutes = _remaining.inMinutes.toString().padLeft(2, '0');
-    final seconds = (_remaining.inSeconds % 60).toString().padLeft(2, '0');
-    final phase = _isWorkSession ? 'Время для работы' : 'Время для отдыха';
-    final phaseColor = _isWorkSession ? VirilColors.ice : VirilColors.gold;
-    return AlertDialog(
-      backgroundColor: VirilColors.stone,
-      title: const Text('Pomodoro'),
-      content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(phase, style: TextStyle(color: phaseColor, fontSize: 13, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 5),
-        const Text('25 минут работы · 5 минут отдыха · повторять по кругу',
-          textAlign: TextAlign.center, style: TextStyle(color: VirilColors.muted, fontSize: 10)),
-        const SizedBox(height: 20),
-        Text('$minutes:$seconds', style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w900, letterSpacing: 2)),
-        const SizedBox(height: 8),
-        Text('Завершено рабочих циклов: $_completedWorkSessions',
-          style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
-      ]),
-      actions: [
-        TextButton(onPressed: _reset, child: const Text('Сбросить')),
-        FilledButton(onPressed: _toggle,
-          child: Text(_running ? 'Пауза' : 'Старт')),
-      ],
-    );
-  }
-}
