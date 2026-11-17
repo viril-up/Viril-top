@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../theme/viril_colors.dart';
 
-/// Slow, subtle particles over a black / violet / midnight-blue cosmic field.
+/// Clearly visible but slow-moving particles over an almost-black violet cosmos.
 class ParticleBackdrop extends StatefulWidget {
   const ParticleBackdrop({super.key, required this.child});
   final Widget child;
@@ -13,7 +13,7 @@ class ParticleBackdrop extends StatefulWidget {
 
 class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
-    vsync: this, duration: const Duration(seconds: 64),
+    vsync: this, duration: const Duration(seconds: 42),
   )..repeat();
 
   @override
@@ -28,33 +28,31 @@ class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerPr
         const DecoratedBox(decoration: BoxDecoration(
           color: VirilColors.voidBlack,
           gradient: RadialGradient(
-            center: Alignment(-.58, -.72),
-            radius: 1.42,
+            center: Alignment(-.55, -.68),
+            radius: 1.38,
             colors: [
-              Color(0xFF211632), // deep violet nebula
-              Color(0xFF11182D), // midnight blue
-              Color(0xFF090A12), // near-black space
-              Color(0xFF030306), // black outer space
+              Color(0xFF100A18), // almost-black violet
+              Color(0xFF0B0B16), // violet-black / midnight
+              Color(0xFF06070D), // deep space
+              Color(0xFF020205), // absolute black
             ],
-            stops: [0, .39, .73, 1],
+            stops: [0, .38, .72, 1],
           ),
         )),
         Positioned(
-          left: -205 + math.sin(t * .18) * 32,
-          top: -195 + math.cos(t * .16) * 25,
-          child: _glow(450, const Color(0xFF493064).withValues(alpha: .24)),
+          left: -230 + math.sin(t * .16) * 28,
+          top: -210 + math.cos(t * .14) * 22,
+          child: _glow(470, const Color(0xFF281633).withValues(alpha: .15)),
         ),
         Positioned(
-          right: -215 + math.cos(t * .17) * 34,
-          top: 90 + math.sin(t * .14) * 28,
-          child: _glow(440, const Color(0xFF233D70).withValues(alpha: .23)),
+          right: -230 + math.cos(t * .15) * 30,
+          top: 80 + math.sin(t * .13) * 24,
+          child: _glow(460, const Color(0xFF17213D).withValues(alpha: .13)),
         ),
-        Positioned(
-          left: 12 + math.sin(t * .13) * 26,
-          bottom: -245 + math.cos(t * .15) * 24,
-          child: _glow(440, const Color(0xFF251A3D).withValues(alpha: .22)),
+        CustomPaint(
+          painter: _ParticlePainter(_controller.value),
+          child: const SizedBox.expand(),
         ),
-        CustomPaint(painter: _ParticlePainter(_controller.value), child: const SizedBox.expand()),
         widget.child,
       ]);
     },
@@ -63,7 +61,7 @@ class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerPr
   Widget _glow(double size, Color color) => IgnorePointer(child: Container(
     width: size, height: size,
     decoration: BoxDecoration(shape: BoxShape.circle, color: color,
-      boxShadow: [BoxShadow(color: color, blurRadius: 155, spreadRadius: 42)]),
+      boxShadow: [BoxShadow(color: color, blurRadius: 150, spreadRadius: 38)]),
   ));
 }
 
@@ -73,19 +71,30 @@ class _ParticlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (size.isEmpty) return;
     final paint = Paint()..style = PaintingStyle.fill;
-    const colors = [Color(0xFF8D7AB8), Color(0xFF6686C2), Color(0xFF51416F), Color(0xFF9AA6C8)];
-    for (var i = 0; i < 82; i++) {
-      final seed = i * 97.31;
-      final x = ((math.sin(seed) + 1) / 2) * size.width
-        + math.sin(progress * math.pi * 2 + seed) * (5 + i % 8);
-      final baseY = ((math.cos(seed * .7) + 1) / 2) * size.height;
-      final speed = 6 + (i % 7) * 2.6;
-      final y = (baseY - progress * speed + size.height) % size.height;
-      final radius = i % 13 == 0 ? 1.25 : .5 + (i % 4) * .18;
-      final alpha = i % 13 == 0 ? .43 : (i % 3 == 0 ? .19 : .10);
+    const colors = [
+      Color(0xFFC2B2E8), Color(0xFF9BAEDB),
+      Color(0xFF8C78B5), Color(0xFFB8C5E8),
+    ];
+
+    // Particles travel a meaningful distance across the screen, not just a few pixels.
+    for (var i = 0; i < 96; i++) {
+      final seed = i * 91.713;
+      final phase = (progress + (i * .6180339887)) % 1.0;
+      final xBase = ((math.sin(seed) + 1) * .5) * size.width;
+      final x = (xBase + math.sin(progress * math.pi * 2 + seed) * 13) % size.width;
+      final y = ((math.cos(seed * .73) + 1) * .5 * size.height
+        - phase * (size.height * (.22 + (i % 5) * .10)) + size.height) % size.height;
+      final twinkle = .62 + .38 * math.sin(progress * math.pi * 2 * (1 + i % 3) + seed).abs();
+      final radius = i % 11 == 0 ? 1.8 : (i % 4 == 0 ? 1.25 : .85);
+      final alpha = (i % 11 == 0 ? .78 : (i % 3 == 0 ? .48 : .30)) * twinkle;
       paint.color = colors[i % colors.length].withValues(alpha: alpha);
       canvas.drawCircle(Offset(x, y), radius, paint);
+      if (i % 11 == 0) {
+        paint.color = colors[i % colors.length].withValues(alpha: alpha * .18);
+        canvas.drawCircle(Offset(x, y), radius * 3.2, paint);
+      }
     }
   }
 
