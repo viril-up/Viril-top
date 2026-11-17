@@ -9,6 +9,9 @@ abstract final class VirilColors {
   static const midnight = Color(0xFF101725);
   static const navy = Color(0xFF1A2B45);
   static const navyLight = Color(0xFF263D5D);
+  static const cosmicBlue = Color(0xFF315F98);
+  static const nebulaBlue = Color(0xFF244A78);
+  static const starlightBlue = Color(0xFF8BB8E8);
   static const lava = Color(0xFFE05B43);
   static const lavaDeep = Color(0xFF71372F);
   static const gold = Color(0xFFB99A60);
