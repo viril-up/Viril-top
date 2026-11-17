@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/viril_colors.dart';
 
-/// Opaque black-to-antique-gold obsidian panel with a crisp gold frame.
+/// Crisp charcoal-black card with a fine antique-gold outline.
 class GlassCard extends StatelessWidget {
   const GlassCard({super.key, required this.child, this.padding = const EdgeInsets.all(18), this.margin, this.radius = 20});
   final Widget child;
@@ -18,13 +18,13 @@ class GlassCard extends StatelessWidget {
       gradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        stops: [0, .48, 1],
-        colors: [Color(0xFF302719), Color(0xFF17151A), Color(0xFF211B17)],
+        stops: [0, .52, 1],
+        colors: [Color(0xFF29282D), Color(0xFF17171B), Color(0xFF202025)],
       ),
       border: Border.all(color: VirilColors.gold, width: 1.15),
       boxShadow: const [
-        BoxShadow(color: Color(0x99000000), blurRadius: 22, offset: Offset(0, 10)),
-        BoxShadow(color: Color(0x24C6A568), blurRadius: 13, spreadRadius: -4),
+        BoxShadow(color: Color(0xAA000000), blurRadius: 20, offset: Offset(0, 9)),
+        BoxShadow(color: Color(0x18C6A568), blurRadius: 10, spreadRadius: -5),
       ],
     ),
     child: child,
