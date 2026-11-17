@@ -70,12 +70,17 @@ class _VirilShellState extends State<VirilShell> {
           child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.local_fire_department_rounded, color: VirilColors.gold, size: 18),
             const SizedBox(width: 4), Text('${VirilStore.instance.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))])),
         const SizedBox(width: 6),
-        IconButton(onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Уведомления появятся в одном из следующих обновлений.'))),
-          tooltip: 'Уведомления', constraints: const BoxConstraints.tightFor(width: 40, height: 40),
-          padding: EdgeInsets.zero,
-          style: IconButton.styleFrom(backgroundColor: VirilColors.stone, side: const BorderSide(color: VirilColors.line)),
-          icon: const Icon(Icons.notifications_none_rounded, color: VirilColors.ice, size: 20)),
+        Tooltip(message: 'Уведомления', child: Material(
+          color: VirilColors.stone,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: const BorderSide(color: VirilColors.line)),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(15),
+            onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Уведомления появятся в одном из следующих обновлений.'))),
+            child: const SizedBox(width: 40, height: 40,
+              child: Icon(Icons.notifications_none_rounded, color: VirilColors.ice, size: 20)),
+          ),
+        )),
       ]));
     });
     return Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 12), child: Row(children: [
