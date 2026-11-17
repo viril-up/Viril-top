@@ -25,7 +25,7 @@ class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerPr
       builder: (context, _) => Stack(fit: StackFit.expand, children: [
         const DecoratedBox(decoration: BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-            colors: [Color(0xFF101A2B), VirilColors.voidBlack, Color(0xFF171226)]),
+            colors: [Color(0xFF292522), VirilColors.voidBlack, Color(0xFF15171D)]),
         )),
         Positioned(top: -100, left: -90, child: _glow(270, VirilColors.navy.withValues(alpha: .34))),
         Positioned(bottom: 90, right: -110, child: _glow(300, VirilColors.violet.withValues(alpha: .12))),
