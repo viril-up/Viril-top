@@ -12,7 +12,7 @@ class ParticleBackdrop extends StatefulWidget {
 
 class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
-    vsync: this, duration: const Duration(seconds: 24),
+    vsync: this, duration: const Duration(seconds: 34),
   )..repeat();
 
   @override
@@ -22,42 +22,58 @@ class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerPr
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
-      builder: (context, _) => Stack(fit: StackFit.expand, children: [
-        const DecoratedBox(decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-            colors: [Color(0xFF292522), VirilColors.voidBlack, Color(0xFF15171D)]),
-        )),
-        Positioned(top: -100, left: -90, child: _glow(270, VirilColors.navy.withValues(alpha: .34))),
-        Positioned(bottom: 90, right: -110, child: _glow(300, VirilColors.violet.withValues(alpha: .12))),
-        CustomPaint(painter: _ParticlePainter(_controller.value), child: const SizedBox.expand()),
-        widget.child,
-      ]),
+      builder: (context, _) {
+        final t = _controller.value * math.pi * 2;
+        return Stack(fit: StackFit.expand, children: [
+          const DecoratedBox(decoration: BoxDecoration(
+            color: VirilColors.voidBlack,
+            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
+              colors: [Color(0xFF171D29), Color(0xFF090B10), Color(0xFF111016), Color(0xFF080A0E)],
+              stops: [0, .38, .72, 1]),
+          )),
+          Positioned(left: -115 + math.sin(t) * 28, top: -135 + math.cos(t * .7) * 20,
+            child: _glow(310, VirilColors.navy.withValues(alpha: .23))),
+          Positioned(right: -145 + math.cos(t * .8) * 24, bottom: 55 + math.sin(t) * 24,
+            child: _glow(330, VirilColors.lavaDeep.withValues(alpha: .16))),
+          Positioned(left: 30 + math.sin(t * .55) * 16, bottom: -190,
+            child: _glow(290, VirilColors.goldSoft.withValues(alpha: .075))),
+          CustomPaint(painter: _ParticlePainter(_controller.value), child: const SizedBox.expand()),
+          widget.child,
+        ]);
+      },
     );
   }
 
-  Widget _glow(double size, Color color) => Container(
+  Widget _glow(double size, Color color) => IgnorePointer(child: Container(
     width: size, height: size,
     decoration: BoxDecoration(shape: BoxShape.circle, color: color,
-      boxShadow: [BoxShadow(color: color, blurRadius: 100, spreadRadius: 24)]),
-  );
+      boxShadow: [BoxShadow(color: color, blurRadius: 115, spreadRadius: 30)]),
+  ));
 }
 
 class _ParticlePainter extends CustomPainter {
   _ParticlePainter(this.progress);
   final double progress;
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..style = PaintingStyle.fill;
-    for (var i = 0; i < 42; i++) {
+    const colors = [VirilColors.gold, VirilColors.ice, VirilColors.navyLight,
+      VirilColors.lava, VirilColors.stoneEdge];
+    for (var i = 0; i < 54; i++) {
       final seed = i * 97.31;
-      final x = ((math.sin(seed) + 1) / 2) * size.width;
+      final x = ((math.sin(seed) + 1) / 2) * size.width
+        + math.sin(progress * math.pi * 2 + seed) * (5 + i % 8);
       final baseY = ((math.cos(seed * .7) + 1) / 2) * size.height;
-      final y = (baseY - progress * (18 + (i % 5) * 8) + size.height) % size.height;
-      final radius = 0.6 + (i % 4) * .35;
-      paint.color = (i % 7 == 0 ? VirilColors.gold : VirilColors.ice).withValues(alpha: .13 + (i % 3) * .07);
+      final speed = 10 + (i % 6) * 5;
+      final y = (baseY - progress * speed + size.height) % size.height;
+      final radius = .55 + (i % 4) * .28;
+      final alpha = i % 5 == 0 ? .28 : .11 + (i % 3) * .035;
+      paint.color = colors[i % colors.length].withValues(alpha: alpha);
       canvas.drawCircle(Offset(x, y), radius, paint);
     }
   }
+
   @override
   bool shouldRepaint(covariant _ParticlePainter oldDelegate) => oldDelegate.progress != progress;
 }
