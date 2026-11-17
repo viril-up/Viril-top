@@ -28,7 +28,9 @@ class _VirilShellState extends State<VirilShell> {
   @override void initState() { super.initState(); VirilStore.instance.initialize(); }
   @override Widget build(BuildContext context) => Scaffold(
     extendBody: false,
-    body: ParticleBackdrop(child: SafeArea(bottom: false, child: Column(children: [
+    body: ParticleBackdrop(child: SafeArea(bottom: false, child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
       if (_index != 0 && _index != 2 && _index != 4) _header(),
       Expanded(child: IndexedStack(index: _index, children: _screens)),
     ]))),
@@ -51,7 +53,7 @@ class _VirilShellState extends State<VirilShell> {
     );
     if (_index == 3) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) {
       final profile = ProfileStore.instance;
-      return Padding(padding: const EdgeInsets.fromLTRB(16, 7, 10, 8), child: Row(children: [
+      return Padding(padding: const EdgeInsets.fromLTRB(16, 7, 0, 8), child: Row(children: [
         Material(
           color: VirilColors.stone,
           shape: const CircleBorder(side: BorderSide(color: VirilColors.gold)),
