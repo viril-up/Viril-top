@@ -108,27 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   );
 
-  Widget _roundAction({required IconData icon, required String label, required VoidCallback onTap}) =>
-    Tooltip(
-      message: label,
-      child: Material(
-        color: VirilColors.stone,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-          side: const BorderSide(color: VirilColors.line),
-        ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(15),
-          onTap: onTap,
-          child: SizedBox(
-            width: 42,
-            height: 42,
-            child: Icon(icon, color: VirilColors.text, size: 21),
-          ),
-        ),
-      ),
-    );
-
   Widget _levelBar(VirilStore store) {
     final leagueIndex = GlobalLeagueData.leagueIndexForXp(store.xp);
     final epochIndex = GlobalLeagueData.epochIndexForLeague(leagueIndex);
