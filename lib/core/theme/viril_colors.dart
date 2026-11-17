@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 
-/// Единая палитра приложения Viril — Ancient Dark.
+/// Viril Ancient Dark: deep neutrals with restrained mineral and metal accents.
 abstract final class VirilColors {
-  static const voidBlack = Color(0xFF0A0A0C);
-  static const stone = Color(0xFF242326);
-  static const stoneLight = Color(0xFF302D2D);
-  static const midnight = Color(0xFF15171D);
-  static const navy = Color(0xFF1C2638);
-  static const lava = Color(0xFF9A5140);
-  static const lavaDeep = Color(0xFF63352E);
-  static const gold = Color(0xFFC6A15B);
-  static const goldSoft = Color(0xFF92774A);
-  static const ice = Color(0xFFD8C7A0);
-  static const violet = Color(0xFF9A806A);
-  static const text = Color(0xFFF1EEE8);
-  static const muted = Color(0xFFA49D91);
-  static const line = Color(0xFF48413A);
+  static const voidBlack = Color(0xFF07090D);
+  static const black = Color(0xFF0B0D12);
+  static const stone = Color(0xFF202329);
+  static const stoneLight = Color(0xFF2B3038);
+  static const midnight = Color(0xFF101725);
+  static const navy = Color(0xFF1A2B45);
+  static const navyLight = Color(0xFF263D5D);
+  static const lava = Color(0xFFE05B43);
+  static const lavaDeep = Color(0xFF71372F);
+  static const gold = Color(0xFFB99A60);
+  static const goldSoft = Color(0xFF806B48);
+  static const ice = Color(0xFFD8C9A8);
+  static const violet = Color(0xFF71647D);
+  static const text = Color(0xFFF0EEE9);
+  static const muted = Color(0xFF9A9DA5);
+  static const line = Color(0xFF343943);
+  static const stoneEdge = Color(0xFF55545A);
 }
