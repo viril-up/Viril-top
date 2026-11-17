@@ -8,7 +8,7 @@ abstract final class VirilTheme {
     colorScheme: const ColorScheme.dark(
       primary: VirilColors.gold,
       secondary: VirilColors.chartBlue,
-      surface: VirilColors.black,
+      surface: VirilColors.stone,
       error: VirilColors.lava,
       onSurface: VirilColors.text,
     ),
@@ -30,12 +30,12 @@ abstract final class VirilTheme {
       elevation: 0,
     ),
     cardTheme: CardThemeData(
-      color: VirilColors.black,
+      color: VirilColors.stone,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: const BorderSide(color: VirilColors.line, width: 1),
+        side: const BorderSide(color: VirilColors.goldSoft, width: 1),
       ),
     ),
     dialogTheme: DialogThemeData(
@@ -43,13 +43,13 @@ abstract final class VirilTheme {
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(22),
-        side: const BorderSide(color: VirilColors.stoneEdge, width: 1),
+        side: const BorderSide(color: VirilColors.gold, width: 1),
       ),
     ),
     chipTheme: ChipThemeData(
       backgroundColor: VirilColors.stone,
       selectedColor: VirilColors.navyLight,
-      side: const BorderSide(color: VirilColors.line),
+      side: const BorderSide(color: VirilColors.goldSoft),
       labelStyle: const TextStyle(color: VirilColors.text),
       secondaryLabelStyle: const TextStyle(color: VirilColors.ice),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
