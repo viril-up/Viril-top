@@ -57,40 +57,45 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _topBar(VirilStore store) => AnimatedBuilder(
     animation: ProfileStore.instance,
-    builder: (context, _) => Row(
-    children: [
-      _roundAction(
-        icon: Icons.person_rounded,
-        label: 'Профиль · ${ProfileStore.instance.name}',
-        onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
-      ),
-      const SizedBox(width: 8),
-      Flexible(child: Text(ProfileStore.instance.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))),
-      const Spacer(),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
-        decoration: BoxDecoration(
-          color: VirilColors.stone,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: VirilColors.line),
-        ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 19),
-          const SizedBox(width: 5),
-          Text('${store.activeDaysStreak}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
-          const SizedBox(width: 4),
-          const Text('дн.', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
-        ]),
-      ),
-      const SizedBox(width: 8),
-      _roundAction(
-        icon: Icons.notifications_none_rounded,
-        label: 'Уведомления',
-        onTap: () => _showInfo('Уведомления', 'Центр уведомлений будет подключён на следующем этапе.'),
-      ),
-    ],
-  ));
+    builder: (context, _) {
+      final profile = ProfileStore.instance;
+      return Row(
+        children: [
+          Tooltip(
+            message: 'Профиль · ${profile.name}',
+            child: Material(
+              color: VirilColors.stone,
+              shape: const CircleBorder(side: BorderSide(color: VirilColors.gold)),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
+                child: SizedBox(width: 42, height: 42, child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 22)),
+              ),
+            ),
+          ),
+          const SizedBox(width: 9),
+          Flexible(child: Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+            decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: VirilColors.line)),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
+              const SizedBox(width: 4),
+              Text('${store.activeDaysStreak}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
+              const SizedBox(width: 3),
+              const Text('дн.', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
+            ]),
+          ),
+          const SizedBox(width: 7),
+          _roundAction(icon: Icons.notifications_none_rounded, label: 'Уведомления',
+            onTap: () => _showInfo('Уведомления', 'Центр уведомлений будет подключён на следующем этапе.')),
+        ],
+      );
+    },
+  );
 
   Widget _roundAction({required IconData icon, required String label, required VoidCallback onTap}) =>
     Tooltip(
