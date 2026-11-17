@@ -4,6 +4,7 @@ import '../../core/data/viril_store.dart';
 import '../../core/models/viril_task.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
+import 'diary_tools_card.dart';
 import '../profile/data/profile_store.dart';
 import '../profile/data/global_league_data.dart';
 
@@ -45,9 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: gap),
                 Expanded(child: _goalsCard(store, compact)),
                 SizedBox(height: gap),
-                _personalTools(compact),
+                DiaryToolsCard(compact: compact),
                 SizedBox(height: gap),
-                _pomodoroCard(compact),
+                _toolsCard(compact),
               ],
             ),
           );
@@ -237,53 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _personalTools(bool compact) => Row(children: [
-    Expanded(child: _actionCard(
-      icon: Icons.menu_book_rounded, label: 'Дневник\nмыслей', color: VirilColors.ice,
-      onTap: () => _showTextEntry('Дневник мыслей', 'Запиши свои мысли, чувства, эмоции, переживания или идеи...', gratitude: false),
-      compact: compact,
-    )),
-    const SizedBox(width: 7),
-    Expanded(child: _actionCard(
-      icon: Icons.mic_none_rounded, label: 'Записать\nаудио', color: VirilColors.violet,
-      onTap: () => _showInfo('Голосовой дневник', 'Кнопка и место для функции предусмотрены. Запись и сохранение аудио подключу отдельным техническим этапом с разрешением на микрофон.'),
-      compact: compact,
-    )),
-    const SizedBox(width: 7),
-    Expanded(child: _actionCard(
-      icon: Icons.favorite_border_rounded, label: 'Благодарность\nза всё', color: VirilColors.gold,
-      onTap: () => _showTextEntry('Благодарность за всё', 'За что ты благодарен сегодня?', gratitude: true),
-      compact: compact,
-    )),
-  ]);
-
-  Widget _actionCard({
-    required IconData icon, required String label, required Color color,
-    required VoidCallback onTap, required bool compact,
-  }) => Material(
-    color: VirilColors.stone.withValues(alpha: .92),
-    borderRadius: BorderRadius.circular(17),
-    child: InkWell(
-      borderRadius: BorderRadius.circular(17),
-      onTap: onTap,
-      child: Container(
-        height: compact ? 72 : 82,
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(17),
-          border: Border.all(color: color.withValues(alpha: .35)),
-        ),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Icon(icon, color: color, size: compact ? 21 : 23),
-          const SizedBox(height: 5),
-          Text(label, textAlign: TextAlign.center, maxLines: 2,
-            style: const TextStyle(fontSize: 9, height: 1.15, fontWeight: FontWeight.w700)),
-        ]),
-      ),
-    ),
-  );
-
-  Widget _pomodoroCard(bool compact) => Material(
+  Widget _toolsCard(bool compact) => Material(
     color: VirilColors.stone.withValues(alpha: .95),
     borderRadius: BorderRadius.circular(16),
     child: InkWell(
@@ -296,11 +251,12 @@ class _HomeScreenState extends State<HomeScreen> {
           border: Border.all(color: VirilColors.lava.withValues(alpha: .34)),
         ),
         child: Row(children: [
-          const Icon(Icons.timer_outlined, color: VirilColors.lava, size: 23),
+          const Icon(Icons.grid_view_rounded, color: VirilColors.ice, size: 22),
           const SizedBox(width: 10),
           const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Инструменты · Pomodoro', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
-            Text('Таймер для работы и концентрации', style: TextStyle(color: VirilColors.muted, fontSize: 9)),
+            Text('Инструменты', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+            Text('Pomodoro · 25 минут работы / 5 минут отдыха',
+              style: TextStyle(color: VirilColors.muted, fontSize: 9)),
           ])),
           const Icon(Icons.chevron_right_rounded, color: VirilColors.muted),
         ]),
