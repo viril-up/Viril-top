@@ -49,25 +49,35 @@ class _VirilShellState extends State<VirilShell> {
       child: Align(alignment: Alignment.centerLeft, child: Text('Развитие',
         style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: VirilColors.text))),
     );
-    if (_index == 3) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) =>
-      Padding(padding: const EdgeInsets.fromLTRB(20, 8, 20, 10), child: Row(children: [
-        IconButton(onPressed: _openProfile, tooltip: 'Профиль',
-          style: IconButton.styleFrom(backgroundColor: VirilColors.stone, side: const BorderSide(color: VirilColors.line)),
-          icon: const Icon(Icons.person_outline_rounded, color: VirilColors.gold)),
+    if (_index == 3) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) {
+      final profile = ProfileStore.instance;
+      return Padding(padding: const EdgeInsets.fromLTRB(16, 7, 10, 8), child: Row(children: [
+        Material(
+          color: VirilColors.stone,
+          shape: const CircleBorder(side: BorderSide(color: VirilColors.gold)),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: _openProfile,
+            child: SizedBox(width: 40, height: 40, child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 21)),
+          ),
+        ),
         const SizedBox(width: 8),
-        Flexible(child: Text(ProfileStore.instance.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+        Flexible(child: Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))),
         const Spacer(),
-        Container(padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
+        Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
           decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15), border: Border.all(color: VirilColors.line)),
-          child: Row(children: [const Icon(Icons.local_fire_department_rounded, color: VirilColors.gold, size: 19),
-            const SizedBox(width: 5), Text('${VirilStore.instance.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))])),
-        const SizedBox(width: 9),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.local_fire_department_rounded, color: VirilColors.gold, size: 18),
+            const SizedBox(width: 4), Text('${VirilStore.instance.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))])),
+        const SizedBox(width: 6),
         IconButton(onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Уведомления появятся в одном из следующих обновлений.'))),
-          tooltip: 'Уведомления', style: IconButton.styleFrom(backgroundColor: VirilColors.stone, side: const BorderSide(color: VirilColors.line)),
-          icon: const Icon(Icons.notifications_none_rounded, color: VirilColors.ice)),
-      ])));
+          tooltip: 'Уведомления', constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+          padding: EdgeInsets.zero,
+          style: IconButton.styleFrom(backgroundColor: VirilColors.stone, side: const BorderSide(color: VirilColors.line)),
+          icon: const Icon(Icons.notifications_none_rounded, color: VirilColors.ice, size: 20)),
+      ]));
+    });
     return Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 12), child: Row(children: [
       Container(width: 48, height: 48, decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),
         gradient: const LinearGradient(colors: [Color(0xFF34415D), Color(0xFF27223D)]),
