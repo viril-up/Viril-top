@@ -54,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _profileCover(ProfileStore profile, VirilStore stats, _League league) {
     return Container(
-      height: 310,
+      height: 270,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
