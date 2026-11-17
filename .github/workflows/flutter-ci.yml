@@ -61,9 +61,12 @@ jobs:
         run: |
           SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
           NDK_VERSION="28.2.13676358"
+          # sdkmanager may close the license input early; tolerate the resulting
+          # Broken pipe because it does not mean license acceptance failed.
+          yes | "$SDKMANAGER" --sdk_root="$ANDROID_SDK_ROOT" --licenses >/dev/null 2>&1 || true
           for attempt in 1 2 3; do
             echo "Installing Android NDK $NDK_VERSION (attempt $attempt/3)"
-            if yes | "$SDKMANAGER" --sdk_root="$ANDROID_SDK_ROOT" --licenses >/dev/null && "$SDKMANAGER" --sdk_root="$ANDROID_SDK_ROOT" --install "ndk;$NDK_VERSION"; then
+            if "$SDKMANAGER" --sdk_root="$ANDROID_SDK_ROOT" --install "ndk;$NDK_VERSION"; then
               exit 0
             fi
             echo "NDK installation attempt $attempt failed."
