@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final compact = constraints.maxHeight < 650;
           final gap = compact ? 7.0 : 10.0;
           return Padding(
-            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 16, 8),
+            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 0, 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -469,10 +469,13 @@ class _PomodoroDialog extends StatefulWidget {
 }
 
 class _PomodoroDialogState extends State<_PomodoroDialog> {
-  static const _duration = Duration(minutes: 25);
+  static const _workDuration = Duration(minutes: 25);
+  static const _restDuration = Duration(minutes: 5);
   Timer? _timer;
-  Duration _remaining = _duration;
+  Duration _remaining = _workDuration;
   bool _running = false;
+  bool _isWorkSession = true;
+  int _completedWorkSessions = 0;
 
   void _toggle() {
     if (_running) {
@@ -480,11 +483,17 @@ class _PomodoroDialogState extends State<_PomodoroDialog> {
       setState(() => _running = false);
       return;
     }
+    if (_remaining == Duration.zero) {
+      _remaining = _isWorkSession ? _workDuration : _restDuration;
+    }
     setState(() => _running = true);
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remaining.inSeconds <= 1) {
-        timer.cancel();
-        if (mounted) setState(() { _remaining = Duration.zero; _running = false; });
+        if (_isWorkSession) _completedWorkSessions++;
+        setState(() {
+          _isWorkSession = !_isWorkSession;
+          _remaining = _isWorkSession ? _workDuration : _restDuration;
+        });
         return;
       }
       if (mounted) setState(() => _remaining -= const Duration(seconds: 1));
@@ -493,7 +502,12 @@ class _PomodoroDialogState extends State<_PomodoroDialog> {
 
   void _reset() {
     _timer?.cancel();
-    setState(() { _remaining = _duration; _running = false; });
+    setState(() {
+      _remaining = _workDuration;
+      _running = false;
+      _isWorkSession = true;
+      _completedWorkSessions = 0;
+    });
   }
 
   @override
@@ -506,21 +520,26 @@ class _PomodoroDialogState extends State<_PomodoroDialog> {
   Widget build(BuildContext context) {
     final minutes = _remaining.inMinutes.toString().padLeft(2, '0');
     final seconds = (_remaining.inSeconds % 60).toString().padLeft(2, '0');
+    final phase = _isWorkSession ? 'Время для работы' : 'Время для отдыха';
+    final phaseColor = _isWorkSession ? VirilColors.ice : VirilColors.gold;
     return AlertDialog(
       backgroundColor: VirilColors.stone,
       title: const Text('Pomodoro'),
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Text('Время для сосредоточенной работы', style: TextStyle(color: VirilColors.muted, fontSize: 12)),
+        Text(phase, style: TextStyle(color: phaseColor, fontSize: 13, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 5),
+        const Text('25 минут работы · 5 минут отдыха · повторять по кругу',
+          textAlign: TextAlign.center, style: TextStyle(color: VirilColors.muted, fontSize: 10)),
         const SizedBox(height: 20),
         Text('$minutes:$seconds', style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w900, letterSpacing: 2)),
         const SizedBox(height: 8),
-        Text(_remaining == Duration.zero ? 'Сессия завершена!' : '25 минут работы',
-          style: const TextStyle(color: VirilColors.ice, fontSize: 12)),
+        Text('Завершено рабочих циклов: $_completedWorkSessions',
+          style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
       ]),
       actions: [
         TextButton(onPressed: _reset, child: const Text('Сбросить')),
-        FilledButton(onPressed: _remaining == Duration.zero ? _reset : _toggle,
-          child: Text(_remaining == Duration.zero ? 'Ещё раз' : _running ? 'Пауза' : 'Старт')),
+        FilledButton(onPressed: _toggle,
+          child: Text(_running ? 'Пауза' : 'Старт')),
       ],
     );
   }
