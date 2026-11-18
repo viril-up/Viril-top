@@ -13,16 +13,16 @@ abstract final class VirilColors {
   static const starlightBlue = Color(0xFF9EACC0);
 
   // Solid graphite surfaces: clear contrast, no glass blur.
-  static const stone = Color(0xFF191D23);
-  static const stoneLight = Color(0xFF242A32);
-  static const stoneEdge = Color(0xFF4A4B49);
-  static const line = Color(0xFF343A42);
+  static const stone = Color(0xFF19212B);
+  static const stoneLight = Color(0xFF222B36);
+  static const stoneEdge = Color(0xFF3A4654);
+  static const line = Color(0xFF343E49);
 
   // Antique brass / aged gold, used as a quiet detail.
   static const gold = Color(0xFFB99A62);
-  static const goldSoft = Color(0xFF8F784F);
-  static const goldDeep = Color(0xFF594A34);
-  static const ice = Color(0xFFE2D3B6);
+  static const goldSoft = Color(0xFF46515F);
+  static const goldDeep = Color(0xFF293544);
+  static const ice = Color(0xFFE1E6EC);
 
   // Functional accents.
   static const chartBlue = Color(0xFF5798D8);
@@ -31,7 +31,7 @@ abstract final class VirilColors {
   static const lavaDeep = Color(0xFF8F3936);
   static const violet = Color(0xFF655779);
 
-  static const text = Color(0xFFF1F2F4);
-  static const muted = Color(0xFFB2B8C1);
+  static const text = Color(0xFFF1EEE7);
+  static const muted = Color(0xFFB6BEC8);
   static const subdued = Color(0xFF7F8995);
 }
