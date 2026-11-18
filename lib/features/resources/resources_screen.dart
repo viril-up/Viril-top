@@ -48,23 +48,65 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
           child:TextField(controller:search,style:const TextStyle(color:VirilColors.text,fontSize:13),decoration:InputDecoration(hintText:'Поиск по библиотеке...',hintStyle:const TextStyle(color:VirilColors.muted,fontSize:12),prefixIcon:const Icon(Icons.search_rounded,color:VirilColors.ice),suffixIcon:q.isEmpty?null:IconButton(onPressed:search.clear,icon:const Icon(Icons.close_rounded,color:VirilColors.muted)),border:InputBorder.none,contentPadding:const EdgeInsets.symmetric(vertical:15))))),
         const SizedBox(width:8),Container(decoration:BoxDecoration(color:VirilColors.stone,borderRadius:BorderRadius.circular(15),border:Border.all(color:filters.isEmpty?VirilColors.line:VirilColors.ice)),child:IconButton(onPressed:openFilters,tooltip:'Фильтры',icon:Icon(Icons.tune_rounded,color:filters.isEmpty?VirilColors.ice:VirilColors.gold)))
       ]),
-      const SizedBox(height:14),InkWell(onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const BookLibraryScreen())),borderRadius:BorderRadius.circular(22),child:Container(padding:const EdgeInsets.all(17),decoration:BoxDecoration(borderRadius:BorderRadius.circular(22),gradient:const LinearGradient(colors:[Color(0xFF202A36),Color(0xFF151C26)]),border:Border.all(color:VirilColors.line)),child:Row(children:[
-        Container(width:52,height:62,decoration:BoxDecoration(color:VirilColors.navyLight.withValues(alpha:.55),borderRadius:BorderRadius.circular(13)),child:const Icon(Icons.menu_book_rounded,color:VirilColors.gold,size:29)),
-        const SizedBox(width:14),const Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-          Text('Библиотека',style:TextStyle(color:VirilColors.text,fontSize:16,fontWeight:FontWeight.w900))
-        ])),const Icon(Icons.arrow_forward_ios_rounded,color:VirilColors.gold,size:16)
-      ]))),
-      const SizedBox(height:12),InkWell(onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const VideoLibraryScreen())),borderRadius:BorderRadius.circular(20),child:Container(padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:VirilColors.stone,borderRadius:BorderRadius.circular(20),border:Border.all(color:VirilColors.ice.withValues(alpha:.25))),child:Row(children:[
-        Container(width:44,height:44,decoration:BoxDecoration(color:VirilColors.ice.withValues(alpha:.12),borderRadius:BorderRadius.circular(13)),child:const Icon(Icons.play_circle_outline_rounded,color:VirilColors.ice,size:25)),
-        const SizedBox(width:12),const Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-          Text('Видеотека',style:TextStyle(color:VirilColors.text,fontSize:15,fontWeight:FontWeight.w900))
-        ])),const Icon(Icons.arrow_forward_ios_rounded,color:VirilColors.ice,size:14)
-      ]))),
+      const SizedBox(height:14),
+      _LibraryLauncherCard(
+        title: 'Библиотека',
+        icon: Icons.menu_book_rounded,
+        accent: VirilColors.gold,
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BookLibraryScreen())),
+      ),
+      _LibraryLauncherCard(
+        title: 'Видеотека',
+        icon: Icons.play_circle_outline_rounded,
+        accent: VirilColors.ice,
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VideoLibraryScreen())),
+      ),
       const SizedBox(height:14),Row(children:[Expanded(child:Text('${items.length} МАТЕРИАЛОВ',style:const TextStyle(color:VirilColors.gold,letterSpacing:1.6,fontSize:9,fontWeight:FontWeight.w800))),TextButton.icon(onPressed:()=>setState(()=>favoritesOnly=!favoritesOnly),icon:Icon(favoritesOnly?Icons.bookmark_rounded:Icons.bookmark_border_rounded,size:17),label:Text(favoritesOnly?'Избранное':'Все материалы'),style:TextButton.styleFrom(foregroundColor:favoritesOnly?VirilColors.gold:VirilColors.muted))]),
       if(items.isEmpty)GlassCard(child:Column(children:[const Icon(Icons.search_off_rounded,color:VirilColors.muted,size:30),const SizedBox(height:8),const Text('Ничего не найдено',style:TextStyle(fontWeight:FontWeight.w800)),const SizedBox(height:4),const Text('Измени запрос или выбери другую категорию.',style:TextStyle(color:VirilColors.muted,fontSize:11))])) else for(final item in items)_ResourceCard(item:item,favorite:store.isFavorite(item.id),hasNote:store.noteFor(item.id).isNotEmpty,onFavorite:()=>store.toggleFavorite(item.id),onOpen:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>ResourceDetailScreen(item:item))))
     ]);
   });
 }
+class _LibraryLauncherCard extends StatelessWidget {
+  const _LibraryLauncherCard({
+    required this.title,
+    required this.icon,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final String title;
+  final IconData icon;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(23),
+    child: GlassCard(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Row(children: [
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: accent.withValues(alpha: .13),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: accent.withValues(alpha: .3)),
+          ),
+          child: Icon(icon, color: accent, size: 25),
+        ),
+        const SizedBox(width: 13),
+        Expanded(child: Text(
+          title,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+        )),
+        Icon(Icons.arrow_forward_ios_rounded, color: accent, size: 16),
+      ]),
+    ),
+  );
+}
+
 class _ResourceCard extends StatelessWidget{
   const _ResourceCard({required this.item,required this.favorite,required this.hasNote,required this.onFavorite,required this.onOpen});
   final ResourceItem item;final bool favorite,hasNote;final VoidCallback onFavorite,onOpen;
