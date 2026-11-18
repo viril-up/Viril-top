@@ -53,11 +53,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   );
 
   Widget _profileCover(ProfileStore profile, VirilStore stats, _League league) {
-    return Container(
+    return CustomPaint(
+      foregroundPainter: _ProfileMaskPainter(25),
+      child: Container(
       height: 270,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withValues(alpha: .12)),
         boxShadow: const [BoxShadow(color: Color(0x66000000), blurRadius: 20, offset: Offset(0, 8))],
       ),
       clipBehavior: Clip.antiAlias,
@@ -134,6 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         )),
       ]),
+      ),
     );
   }
 
@@ -157,14 +159,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _leagueCard(BuildContext context, VirilStore stats, _League league) => InkWell(
     borderRadius: BorderRadius.circular(18),
     onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GlobalLeagueScreen())),
-    child: Container(
+    child: CustomPaint(
+      foregroundPainter: _ProfileMaskPainter(18),
+      child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
         gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
           stops: [0, .18, .48, 1],
           colors: [Color(0x663A3F47), Color(0x38252B34), Color(0x1C11161E), Color(0x0806080C)]),
-        border: Border.all(color: Colors.white.withValues(alpha: .10)),
         boxShadow: const [BoxShadow(color: Color(0x55000000), blurRadius: 18, offset: Offset(0, 7))],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -205,6 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(width: 5), Icon(Icons.arrow_forward_rounded, color: VirilColors.gold, size: 15),
         ]),
       ]),
+      ),
     ),
   );
 
@@ -378,4 +382,37 @@ class _FaqScreen extends StatelessWidget {
       )),
     ]),
   );
+}
+
+
+/// Top rim and upper side edges fade out smoothly toward the middle of each card.
+class _ProfileMaskPainter extends CustomPainter {
+  const _ProfileMaskPainter(this.radius);
+  final double radius;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final path = Path()..addRRect(RRect.fromRectAndRadius(rect.deflate(.65), Radius.circular(radius)));
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.15
+      ..shader = const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        stops: [0, .16, .34, .52, .72, 1],
+        colors: [
+          Color(0x9AA6B3C1),
+          Color(0x687D8998),
+          Color(0x354B5664),
+          Color(0x123D4855),
+          Color(0x043D4855),
+          Color(0x003D4855),
+        ],
+      ).createShader(rect);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ProfileMaskPainter oldDelegate) => oldDelegate.radius != radius;
 }
