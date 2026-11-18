@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/widgets/viril_staggered_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/data/viril_store.dart';
@@ -27,7 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final stats = VirilStore.instance;
       final profile = ProfileStore.instance;
       final league = _leagueFor(stats.xp);
-      return ListView(
+      return VirilStaggeredList(pageIndex: 4, 
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 118),
         children: [
           _profileCover(profile, stats, league),
