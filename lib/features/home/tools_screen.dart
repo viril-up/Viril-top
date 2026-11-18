@@ -31,9 +31,7 @@ class ToolsLauncherCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Инструменты', maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
-              Text('Полезные функции', maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: VirilColors.muted, fontSize: 8)),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
             ],
           )),
           const Icon(Icons.chevron_right_rounded, color: VirilColors.muted, size: 17),
