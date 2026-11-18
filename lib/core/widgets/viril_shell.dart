@@ -70,7 +70,7 @@ class _VirilShellState extends State<VirilShell> {
         const Spacer(),
         Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
           decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15), border: Border.all(color: VirilColors.line)),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.local_fire_department_rounded, color: VirilColors.gold, size: 18),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
             const SizedBox(width: 4), Text('${VirilStore.instance.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))])),
         const SizedBox(width: 6),
         Tooltip(message: 'Виджеты', child: Material(
