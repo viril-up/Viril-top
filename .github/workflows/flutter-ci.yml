@@ -54,6 +54,23 @@ jobs:
           path.write_text(content)
           PY
       - run: flutter pub get
+      - name: Normalize Viril logo images
+        run: |
+          python3 -m pip install --quiet --user Pillow
+          python3 - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+
+          for name in (
+              "assets/app_icon/viril-icon.png",
+              "assets/splash/viril-logo.png",
+          ):
+              path = Path(name)
+              with Image.open(path) as source:
+                  image = source.convert("RGBA")
+                  image.save(path, format="PNG", optimize=True)
+              print(f"Normalized {name}")
+          PY
       - name: Generate Android launcher icons
         run: dart run flutter_launcher_icons
       # Preinstall the NDK required by the generated Android project.
