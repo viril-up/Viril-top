@@ -75,7 +75,7 @@ class _ParticlePainter extends CustomPainter {
     final paint = Paint()..style = PaintingStyle.fill;
     const colors = [
       Color(0xFF9EACC0), Color(0xFF8A9CB4),
-      Color(0xFFB99A62), Color(0xFF7189A8),
+      Color(0xFF8393A8), Color(0xFF7189A8),
     ];
 
     // Sparse, low-contrast particles: atmospheric, never competing with text.
