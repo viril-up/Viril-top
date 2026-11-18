@@ -39,8 +39,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       content: Text('Языковое предпочтение сохранено. Полная локализация всех разделов будет подключаться поэтапно.')));
   }
   @override Widget build(BuildContext context) => Scaffold(
-    backgroundColor: VirilColors.voidBlack,
-    appBar: AppBar(title: const Text('Настройки'), backgroundColor: VirilColors.voidBlack),
+    
+    appBar: AppBar(title: const Text('Настройки'), ),
     body: ListView(padding: const EdgeInsets.fromLTRB(18, 10, 18, 40), children: [
       const _GroupTitle('ПЕРСОНАЛИЗАЦИЯ'),
       _SettingTile(icon: Icons.language_rounded, title: 'Язык', subtitle: _loaded ? _language : 'Загрузка…', onTap: _chooseLanguage),
@@ -118,8 +118,8 @@ class _SettingTile extends StatelessWidget {
 class _InfoPage extends StatelessWidget {
   const _InfoPage({required this.title, required this.sections});
   final String title; final List<(String,String)> sections;
-  @override Widget build(BuildContext context) => Scaffold(backgroundColor: VirilColors.voidBlack,
-    appBar: AppBar(title: Text(title), backgroundColor: VirilColors.voidBlack),
+  @override Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: Text(title), ),
     body: ListView(padding: const EdgeInsets.all(18), children: [
       for (final section in sections) Container(margin: const EdgeInsets.only(bottom: 12), padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(17), border: Border.all(color: VirilColors.line)),
