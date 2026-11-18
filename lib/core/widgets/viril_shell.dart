@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/viril_store.dart';
 import '../theme/viril_colors.dart';
-import 'particle_backdrop.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/development/development_screen.dart';
 import '../../features/resources/resources_screen.dart';
@@ -28,12 +27,12 @@ class _VirilShellState extends State<VirilShell> {
   @override void initState() { super.initState(); VirilStore.instance.initialize(); }
   @override Widget build(BuildContext context) => Scaffold(
     extendBody: false,
-    body: ParticleBackdrop(child: SafeArea(bottom: false, child: Column(
+    body: SafeArea(bottom: false, child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
       if (_index != 0 && _index != 2 && _index != 4) _header(),
       Expanded(child: IndexedStack(index: _index, children: _screens)),
-    ]))),
+    ])),
     bottomNavigationBar: SafeArea(top: false, child: Padding(
       padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
       child: Container(decoration: BoxDecoration(color: const Color(0xF20A0D13),
