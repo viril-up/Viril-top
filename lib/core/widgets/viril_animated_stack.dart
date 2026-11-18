@@ -60,16 +60,19 @@ class _VirilAnimatedStackState extends State<VirilAnimatedStack> {
               ignoring: i != widget.index,
               child: ExcludeSemantics(
                 excluding: i != widget.index,
-                child: TickerMode(
-                  enabled: i == widget.index,
-                  child: AnimatedOpacity(
-                    opacity: i == widget.index ? 1 : 0,
-                    duration: const Duration(milliseconds: 320),
-                    curve: Curves.easeInOutCubic,
-                    child: AnimatedSlide(
-                      offset: i == widget.index ? Offset.zero : const Offset(0, .012),
-                      duration: const Duration(milliseconds: 360),
-                      curve: Curves.easeOutCubic,
+                // Keep the transition widgets ticking even after the outgoing
+                // page is disabled. Otherwise its opacity freezes at 1 and
+                // every visited page remains painted in the stack.
+                child: AnimatedOpacity(
+                  opacity: i == widget.index ? 1 : 0,
+                  duration: const Duration(milliseconds: 320),
+                  curve: Curves.easeInOutCubic,
+                  child: AnimatedSlide(
+                    offset: i == widget.index ? Offset.zero : const Offset(0, .012),
+                    duration: const Duration(milliseconds: 360),
+                    curve: Curves.easeOutCubic,
+                    child: TickerMode(
+                      enabled: i == widget.index,
                       child: widget.children[i],
                     ),
                   ),
