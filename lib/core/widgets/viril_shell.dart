@@ -31,14 +31,8 @@ class _VirilShellState extends State<VirilShell> {
     body: SafeArea(bottom: false, child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-      // Stable header slot prevents content from jumping vertically
-      // when switching between tabs with and without a custom header.
-      SizedBox(
-        height: 64,
-        child: (_index == 1 || _index == 3)
-            ? _header()
-            : const SizedBox.shrink(),
-      ),
+      if (_index == 1 || _index == 3)
+        SizedBox(height: 64, child: _header()),
       Expanded(child: VirilAnimatedStack(index: _index, children: _screens)),
     ])),
     bottomNavigationBar: SafeArea(top: false, child: Padding(
