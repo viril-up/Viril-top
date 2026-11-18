@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/viril_store.dart';
 import '../theme/viril_colors.dart';
+import 'viril_animated_stack.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/development/development_screen.dart';
 import '../../features/resources/resources_screen.dart';
@@ -30,8 +31,23 @@ class _VirilShellState extends State<VirilShell> {
     body: SafeArea(bottom: false, child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-      if (_index != 0 && _index != 2 && _index != 4) _header(),
-      Expanded(child: IndexedStack(index: _index, children: _screens)),
+      AnimatedSwitcher(
+        duration: const Duration(milliseconds: 260),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        transitionBuilder: (child, animation) => FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(begin: const Offset(0, .025), end: Offset.zero)
+                .animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+            child: child,
+          ),
+        ),
+        child: _index != 0 && _index != 2 && _index != 4
+            ? KeyedSubtree(key: ValueKey('header-$_index'), child: _header())
+            : const SizedBox.shrink(key: ValueKey('empty-header')),
+      ),
+      Expanded(child: VirilAnimatedStack(index: _index, children: _screens)),
     ])),
     bottomNavigationBar: SafeArea(top: false, child: Padding(
       padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
