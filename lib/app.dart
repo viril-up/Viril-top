@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'core/theme/viril_theme.dart';
-import 'core/widgets/viril_shell.dart';
 import 'core/widgets/particle_backdrop.dart';
 import 'core/widgets/viril_splash_screen.dart';
 
