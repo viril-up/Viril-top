@@ -43,7 +43,7 @@ class _BookLibraryScreenState extends State<BookLibraryScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: VirilColors.voidBlack,
+    
     appBar: AppBar(
       title: const Text('Библиотека книг'),
       backgroundColor: Colors.transparent,
@@ -178,7 +178,7 @@ class _BookReaderScreenState extends State<BookReaderScreen> {
   @override void dispose(){note.dispose();super.dispose();}
   Future<void> saveNote()async{await ResourceStore.instance.saveBookPageNote(widget.book.id,page,note.text);if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Заметка сохранена')));}
   @override Widget build(BuildContext context)=>Scaffold(
-    backgroundColor:VirilColors.voidBlack,
+    
     appBar:AppBar(title:Text(widget.book.title,maxLines:1,overflow:TextOverflow.ellipsis),backgroundColor:Colors.transparent,actions:[
       IconButton(tooltip:'Заметка к странице',icon:const Icon(Icons.edit_note_rounded),onPressed:()=>showModalBottomSheet(context:context,isScrollControlled:true,backgroundColor:VirilColors.stone,builder:(ctx)=>Padding(
         padding:EdgeInsets.fromLTRB(20,20,20,MediaQuery.of(ctx).viewInsets.bottom+20),
@@ -196,7 +196,7 @@ class _BookReaderScreenState extends State<BookReaderScreen> {
         controller: controller,
         initialPageNumber: page,
         params: PdfViewerParams(
-          backgroundColor: VirilColors.voidBlack,
+          
           onPageChanged: (p) {
             if (p == null || !mounted) return;
             setState(() => page = p);
@@ -221,7 +221,7 @@ class ReadingJournalScreen extends StatefulWidget{
 class _ReadingJournalScreenState extends State<ReadingJournalScreen>{
   late final TextEditingController controller=TextEditingController(text:ResourceStore.instance.journal);
   @override void dispose(){controller.dispose();super.dispose();}
-  @override Widget build(BuildContext context)=>Scaffold(backgroundColor:VirilColors.voidBlack,appBar:AppBar(title:const Text('Дневник читателя'),backgroundColor:Colors.transparent),
+  @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Дневник читателя'),backgroundColor:Colors.transparent),
     body:ListView(padding:const EdgeInsets.all(20),children:[
       const Text('МЫСЛИ, КОТОРЫЕ СТОИТ СОХРАНИТЬ',style:TextStyle(color:VirilColors.gold,fontSize:10,letterSpacing:1.5,fontWeight:FontWeight.w800)),
       const SizedBox(height:10),const Text('Записывай идеи, выводы и вопросы, к которым захочешь вернуться.',style:TextStyle(color:VirilColors.muted,height:1.5)),
