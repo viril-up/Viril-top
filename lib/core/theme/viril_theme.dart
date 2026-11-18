@@ -12,9 +12,12 @@ class VirilPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    // Show the complete destination screen immediately. No cross-fade
-    // that exposes the previous screen underneath transparent surfaces.
-    return child;
+    // Opaque backing prevents transparent detail pages from showing the
+    // previous tab/page underneath while the route is being built.
+    return ColoredBox(
+      color: VirilColors.black,
+      child: child,
+    );
   }
 }
 
