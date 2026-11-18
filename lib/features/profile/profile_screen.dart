@@ -65,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Image.asset('assets/profile_cover/profile-cover.jpg', fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => const DecoratedBox(decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-              colors: [Color(0xFF38402F), Color(0xFF171B20), Color(0xFF4A3022)])))),
+              colors: [Color(0xFF233247), Color(0xFF111925), Color(0xFF19212B)])))),
         const DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
           colors: [Color(0x3310141D), Color(0xEE090B12)], stops: [0.0, 1]))),
@@ -165,9 +165,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
         gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-          colors: [Color(0xFF302B20), Color(0xFF171923), Color(0xFF111722)]),
-        border: Border.all(color: VirilColors.gold.withValues(alpha: .58)),
-        boxShadow: [BoxShadow(color: VirilColors.gold.withValues(alpha: .08), blurRadius: 20)],
+          colors: [Color(0xFF202A36), Color(0xFF19212B), Color(0xFF151C26)]),
+        border: Border.all(color: VirilColors.line),
+        boxShadow: [BoxShadow(color: const Color(0xFF263A55).withValues(alpha: .12), blurRadius: 20)],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -181,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(children: [
           Container(width: 44, height: 44, decoration: BoxDecoration(shape: BoxShape.circle,
             border: Border.all(color: league.color, width: 1.7),
-            gradient: const LinearGradient(colors: [Color(0xFF4B402D), Color(0xFF171923)])),
+            gradient: const LinearGradient(colors: [Color(0xFF253448), Color(0xFF19212B)])),
             child: Icon(Icons.military_tech_rounded, color: league.color, size: 24)),
           const SizedBox(width: 9),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
