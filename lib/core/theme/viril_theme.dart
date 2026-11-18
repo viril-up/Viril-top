@@ -1,6 +1,35 @@
 import 'package:flutter/material.dart';
 import 'viril_colors.dart';
 
+class VirilPageTransitionsBuilder extends PageTransitionsBuilder {
+  const VirilPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final curved = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+    return FadeTransition(
+      opacity: curved,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, .025),
+          end: Offset.zero,
+        ).animate(curved),
+        child: child,
+      ),
+    );
+  }
+}
+
 abstract final class VirilTheme {
   static ThemeData get dark => ThemeData(
     brightness: Brightness.dark,
@@ -14,6 +43,15 @@ abstract final class VirilTheme {
     ),
     fontFamily: 'Roboto',
     useMaterial3: true,
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: VirilPageTransitionsBuilder(),
+        TargetPlatform.iOS: VirilPageTransitionsBuilder(),
+        TargetPlatform.linux: VirilPageTransitionsBuilder(),
+        TargetPlatform.macOS: VirilPageTransitionsBuilder(),
+        TargetPlatform.windows: VirilPageTransitionsBuilder(),
+      },
+    ),
     splashFactory: InkRipple.splashFactory,
     splashColor: VirilColors.ice.withValues(alpha: .055),
     highlightColor: VirilColors.ice.withValues(alpha: .025),
