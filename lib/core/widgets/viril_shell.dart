@@ -31,21 +31,13 @@ class _VirilShellState extends State<VirilShell> {
     body: SafeArea(bottom: false, child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-      AnimatedSwitcher(
-        duration: const Duration(milliseconds: 260),
-        switchInCurve: Curves.easeOutCubic,
-        switchOutCurve: Curves.easeInCubic,
-        transitionBuilder: (child, animation) => FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position: Tween<Offset>(begin: const Offset(0, .025), end: Offset.zero)
-                .animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-            child: child,
-          ),
-        ),
-        child: _index != 0 && _index != 2 && _index != 4
-            ? KeyedSubtree(key: ValueKey('header-$_index'), child: _header())
-            : const SizedBox.shrink(key: ValueKey('empty-header')),
+      // Stable header slot prevents content from jumping vertically
+      // when switching between tabs with and without a custom header.
+      SizedBox(
+        height: 64,
+        child: (_index == 1 || _index == 3)
+            ? _header()
+            : const SizedBox.shrink(),
       ),
       Expanded(child: VirilAnimatedStack(index: _index, children: _screens)),
     ])),
