@@ -47,7 +47,7 @@ class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerPr
         Positioned(
           right: -260 + math.cos(t * .11) * 24,
           bottom: -260 + math.sin(t * .09) * 20,
-          child: _glow(480, const Color(0xFF8F784F).withValues(alpha: .035)),
+          child: _glow(480, const Color(0xFF52647A).withValues(alpha: .035)),
         ),
         CustomPaint(
           painter: _ParticlePainter(_controller.value),
