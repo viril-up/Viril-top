@@ -4,7 +4,7 @@ import 'viril_colors.dart';
 abstract final class VirilTheme {
   static ThemeData get dark => ThemeData(
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: Colors.transparent,
+    scaffoldBackgroundColor: VirilColors.voidBlack,
     colorScheme: const ColorScheme.dark(
       primary: VirilColors.gold,
       secondary: VirilColors.chartBlue,
@@ -35,7 +35,7 @@ abstract final class VirilTheme {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: BorderSide(color: VirilColors.goldSoft.withValues(alpha: .62), width: 1),
+        side: BorderSide(color: VirilColors.line, width: 1),
       ),
     ),
     dialogTheme: DialogThemeData(
@@ -43,13 +43,13 @@ abstract final class VirilTheme {
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(22),
-        side: BorderSide(color: VirilColors.goldSoft.withValues(alpha: .72), width: 1),
+        side: BorderSide(color: VirilColors.line, width: 1),
       ),
     ),
     chipTheme: ChipThemeData(
       backgroundColor: VirilColors.black,
       selectedColor: VirilColors.navyLight,
-      side: BorderSide(color: VirilColors.goldSoft.withValues(alpha: .55)),
+      side: BorderSide(color: VirilColors.line),
       labelStyle: const TextStyle(color: VirilColors.text),
       secondaryLabelStyle: const TextStyle(color: VirilColors.ice),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
