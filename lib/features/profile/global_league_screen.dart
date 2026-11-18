@@ -13,8 +13,8 @@ class _GlobalLeagueScreenState extends State<GlobalLeagueScreen>{
  @override Widget build(BuildContext context)=>AnimatedBuilder(
   animation:VirilStore.instance,builder:(context,_){
    final s=VirilStore.instance; final league=LeagueSystem.forXp(s.xp); final now=DateTime.now();
-   return Scaffold(backgroundColor:VirilColors.voidBlack,
-    appBar:AppBar(title:const Text('Глобальная лига'),backgroundColor:VirilColors.voidBlack),
+   return Scaffold(
+    appBar:AppBar(title:const Text('Глобальная лига'),),
     body:ListView(padding:const EdgeInsets.fromLTRB(17,8,17,35),children:[
      _podium(),const SizedBox(height:16),
      _season(now,league.name,s.xp),const SizedBox(height:13),
