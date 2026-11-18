@@ -18,7 +18,7 @@ class DiaryToolsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _CompactHomeLauncher(
     title: 'Дневник мыслей',
-    subtitle: 'Личные записи и заметки',
+    subtitle: '',
     icon: Icons.auto_stories_rounded,
     onTap: onTap,
   );
@@ -58,8 +58,8 @@ class _CompactHomeLauncher extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(title, maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
-              Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
+              if (subtitle.isNotEmpty) Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: VirilColors.muted, fontSize: 8)),
             ],
           )),
