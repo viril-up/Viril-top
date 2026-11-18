@@ -210,19 +210,18 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(width: 9),
           Flexible(child: Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))),
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800))),
           const Spacer(),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
             decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15),
               border: Border.all(color: VirilColors.line)),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
-              const Icon(Icons.local_fire_department_rounded, color: VirilColors.gold, size: 18),
+              const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
               const SizedBox(width: 4),
               Text('${store.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
             ]),
           ),
-          const SizedBox(width: 6),
           const SizedBox(width: 6),
           Tooltip(
             message: 'Виджеты главной',
