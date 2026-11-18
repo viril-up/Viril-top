@@ -96,7 +96,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
   Widget build(BuildContext context) {
     final filtered = _exercises.where((e) => e.place == _place && ('${e.name} ${e.muscles}'.toLowerCase().contains(_query.toLowerCase()))).toList();
     return Scaffold(
-      backgroundColor: VirilColors.voidBlack,
+      
       appBar: AppBar(title: const Text('Тренировки'), backgroundColor: Colors.transparent),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(18, 4, 18, 30),
@@ -238,7 +238,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
   Widget build(BuildContext context) {
     final e = widget.exercise;
     return Scaffold(
-      backgroundColor: VirilColors.voidBlack,
+      
       appBar: AppBar(title: Text(e.name), backgroundColor: Colors.transparent),
       body: ListView(padding: const EdgeInsets.fromLTRB(18, 4, 18, 30), children: [
         GlassCard(padding: const EdgeInsets.all(10), child: Column(children: [
