@@ -58,7 +58,7 @@ class DomainDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final info = _domains[domain]!;
     return Scaffold(
-      backgroundColor: VirilColors.voidBlack,
+      
       appBar: AppBar(title: Text(domain), backgroundColor: Colors.transparent),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
