@@ -22,15 +22,18 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
   @override void dispose(){search.dispose();super.dispose();}
   Future<void> openFilters()async{
     final selected=Set<String>.from(filters);
+    var selectedCategory=category;
     await showModalBottomSheet<void>(context:context,isScrollControlled:true,sheetAnimationStyle:const AnimationStyle(duration:Duration(milliseconds:340),reverseDuration:Duration(milliseconds:260),curve:Curves.easeOutCubic,reverseCurve:Curves.easeInCubic),backgroundColor:VirilColors.stone,
       shape:const RoundedRectangleBorder(borderRadius:BorderRadius.vertical(top:Radius.circular(26))),
       builder:(sheet)=>StatefulBuilder(builder:(ctx,refresh)=>SafeArea(child:Padding(padding:const EdgeInsets.fromLTRB(20,18,20,24),child:Column(mainAxisSize:MainAxisSize.min,crossAxisAlignment:CrossAxisAlignment.start,children:[
         Row(children:[const Expanded(child:Text('Фильтры ресурсов',style:TextStyle(fontSize:19,fontWeight:FontWeight.w900))),TextButton(onPressed:()=>refresh(()=>selected.clear()),child:const Text('Сбросить'))]),
-        const SizedBox(height:12),const Text('ТЕМАТИКА',style:TextStyle(color:VirilColors.gold,fontSize:10,letterSpacing:1.4,fontWeight:FontWeight.w800)),
+        const SizedBox(height:12),const Text('РАЗДЕЛ РЕСУРСОВ',style:TextStyle(color:VirilColors.gold,fontSize:10,letterSpacing:1.4,fontWeight:FontWeight.w800)),
+        const SizedBox(height:8),Wrap(spacing:8,runSpacing:4,children:[for(final c in ['Все','Обучение','Практики','База знаний'])ChoiceChip(label:Text(c),selected:selectedCategory==c,onSelected:(_)=>refresh(()=>selectedCategory=c))]),
+        const SizedBox(height:14),const Text('ТЕМАТИКА',style:TextStyle(color:VirilColors.gold,fontSize:10,letterSpacing:1.4,fontWeight:FontWeight.w800)),
         const SizedBox(height:8),Wrap(spacing:8,runSpacing:2,children:[for(final c in categories.where((x)=>x!='Все'))FilterChip(label:Text(c),selected:selected.contains(c),onSelected:(v)=>refresh(()=>v?selected.add(c):selected.remove(c)))]),
         const SizedBox(height:14),const Text('ТИП МАТЕРИАЛА',style:TextStyle(color:VirilColors.gold,fontSize:10,letterSpacing:1.4,fontWeight:FontWeight.w800)),
         const SizedBox(height:8),Wrap(spacing:8,children:[for(final t in ['Книги','Видео','Статьи','Аудио','Упражнения','Подборки'])FilterChip(label:Text(t),selected:selected.contains('Тип:$t'),onSelected:(v)=>refresh(()=>v?selected.add('Тип:$t'):selected.remove('Тип:$t')))]),
-        const SizedBox(height:16),SizedBox(width:double.infinity,child:FilledButton(onPressed:(){setState((){filters..clear()..addAll(selected);});Navigator.pop(sheet);},child:Text('Показать материалы · ${selected.length} фильтров')))
+        const SizedBox(height:16),SizedBox(width:double.infinity,child:FilledButton(onPressed:(){setState((){category=selectedCategory;filters..clear()..addAll(selected);});Navigator.pop(sheet);},child:Text('Показать материалы · ${selected.length} фильтров')))
       ])))));
   }
   @override Widget build(BuildContext context)=>AnimatedBuilder(animation:ResourceStore.instance,builder:(context,_){
@@ -39,27 +42,22 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
     final types=filters.where((e)=>e.startsWith('Тип:')).map((e)=>e.substring(4)).toSet();
     final items=ResourceItem.catalog.where((i)=>(category=='Все'||i.category==category)&&(topics.isEmpty||topics.contains(i.category))&&(types.isEmpty||types.contains(i.category)||types.contains('Упражнения')&&i.category=='Практики')&&(!favoritesOnly||store.isFavorite(i.id))&&(q.isEmpty||i.title.toLowerCase().contains(q)||i.subtitle.toLowerCase().contains(q)||i.description.toLowerCase().contains(q))).toList();
     return VirilStaggeredList(pageIndex: 2, padding:const EdgeInsets.fromLTRB(20,8,20,120),children:[
-      const SectionTitle('Ресурсы',subtitle:'Твоя личная библиотека инструментов и знаний'),
+      const SectionTitle('Ресурсы'),
       Row(children:[
         Expanded(child:Container(decoration:BoxDecoration(color:VirilColors.stone.withValues(alpha:.9),borderRadius:BorderRadius.circular(17),border:Border.all(color:VirilColors.line)),
           child:TextField(controller:search,style:const TextStyle(color:VirilColors.text,fontSize:13),decoration:InputDecoration(hintText:'Поиск по библиотеке...',hintStyle:const TextStyle(color:VirilColors.muted,fontSize:12),prefixIcon:const Icon(Icons.search_rounded,color:VirilColors.ice),suffixIcon:q.isEmpty?null:IconButton(onPressed:search.clear,icon:const Icon(Icons.close_rounded,color:VirilColors.muted)),border:InputBorder.none,contentPadding:const EdgeInsets.symmetric(vertical:15))))),
         const SizedBox(width:8),Container(decoration:BoxDecoration(color:VirilColors.stone,borderRadius:BorderRadius.circular(15),border:Border.all(color:filters.isEmpty?VirilColors.line:VirilColors.ice)),child:IconButton(onPressed:openFilters,tooltip:'Фильтры',icon:Icon(Icons.tune_rounded,color:filters.isEmpty?VirilColors.ice:VirilColors.gold)))
       ]),
-      const SizedBox(height:14),SizedBox(height:40,child:ListView(scrollDirection:Axis.horizontal,children:[for(final c in ['Все','Обучение','Практики','База знаний'])Padding(padding:const EdgeInsets.only(right:7),child:ChoiceChip(label:Text(c),selected:category==c,onSelected:(_)=>setState(()=>category=c),selectedColor:VirilColors.ice.withValues(alpha:.2),backgroundColor:VirilColors.stone,side:BorderSide(color:category==c?VirilColors.ice:VirilColors.line),labelStyle:TextStyle(color:category==c?VirilColors.ice:VirilColors.muted,fontSize:11,fontWeight:FontWeight.w700)))])),
       const SizedBox(height:14),InkWell(onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const BookLibraryScreen())),borderRadius:BorderRadius.circular(22),child:Container(padding:const EdgeInsets.all(17),decoration:BoxDecoration(borderRadius:BorderRadius.circular(22),gradient:const LinearGradient(colors:[Color(0xFF202A36),Color(0xFF151C26)]),border:Border.all(color:VirilColors.line)),child:Row(children:[
         Container(width:52,height:62,decoration:BoxDecoration(color:VirilColors.navyLight.withValues(alpha:.55),borderRadius:BorderRadius.circular(13)),child:const Icon(Icons.menu_book_rounded,color:VirilColors.gold,size:29)),
         const SizedBox(width:14),const Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-          Text('БИБЛИОТЕКА КНИГ',style:TextStyle(color:VirilColors.gold,fontSize:9,letterSpacing:1.5,fontWeight:FontWeight.w900)),SizedBox(height:5),
-          Text('Читай. Осмысливай. Сохраняй.',style:TextStyle(fontSize:15,fontWeight:FontWeight.w900)),SizedBox(height:4),
-          Text('Твоя личная коллекция книг и заметок',style:TextStyle(color:VirilColors.muted,fontSize:10))
+          Text('Библиотека',style:TextStyle(color:VirilColors.text,fontSize:16,fontWeight:FontWeight.w900))
         ])),const Icon(Icons.arrow_forward_ios_rounded,color:VirilColors.gold,size:16)
       ]))),
       const SizedBox(height:12),InkWell(onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const VideoLibraryScreen())),borderRadius:BorderRadius.circular(20),child:Container(padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:VirilColors.stone,borderRadius:BorderRadius.circular(20),border:Border.all(color:VirilColors.ice.withValues(alpha:.25))),child:Row(children:[
         Container(width:44,height:44,decoration:BoxDecoration(color:VirilColors.ice.withValues(alpha:.12),borderRadius:BorderRadius.circular(13)),child:const Icon(Icons.play_circle_outline_rounded,color:VirilColors.ice,size:25)),
         const SizedBox(width:12),const Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-          Text('ВИДЕОТЕКА ЗНАНИЙ',style:TextStyle(color:VirilColors.ice,fontSize:9,letterSpacing:1.4,fontWeight:FontWeight.w900)),
-          SizedBox(height:4),Text('Короткие видео, большие идеи',style:TextStyle(fontSize:13,fontWeight:FontWeight.w800)),
-          SizedBox(height:3),Text('Познавательные ролики и жизненные уроки',style:TextStyle(color:VirilColors.muted,fontSize:10))
+          Text('Видеотека',style:TextStyle(color:VirilColors.text,fontSize:15,fontWeight:FontWeight.w900))
         ])),const Icon(Icons.arrow_forward_ios_rounded,color:VirilColors.ice,size:14)
       ]))),
       const SizedBox(height:14),Row(children:[Expanded(child:Text('${items.length} МАТЕРИАЛОВ',style:const TextStyle(color:VirilColors.gold,letterSpacing:1.6,fontSize:9,fontWeight:FontWeight.w800))),TextButton.icon(onPressed:()=>setState(()=>favoritesOnly=!favoritesOnly),icon:Icon(favoritesOnly?Icons.bookmark_rounded:Icons.bookmark_border_rounded,size:17),label:Text(favoritesOnly?'Избранное':'Все материалы'),style:TextButton.styleFrom(foregroundColor:favoritesOnly?VirilColors.gold:VirilColors.muted))]),
