@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Keeps section state alive, but paints only the selected section.
-/// The new section fades in as one surface; old sections are hidden immediately
-/// so their cards can never remain layered underneath it.
+/// Keeps each main section mounted so its local state is preserved.
+/// Tab changes are immediate: no overlapping layers, sliding or vertical motion.
 class VirilAnimatedStack extends StatelessWidget {
   const VirilAnimatedStack({
     super.key,
@@ -23,12 +22,7 @@ class VirilAnimatedStack extends StatelessWidget {
           enabled: i == index,
           child: Offstage(
             offstage: i != index,
-            child: AnimatedOpacity(
-              opacity: i == index ? 1 : 0,
-              duration: const Duration(milliseconds: 150),
-              curve: Curves.easeOut,
-              child: children[i],
-            ),
+            child: children[i],
           ),
         ),
     ],
