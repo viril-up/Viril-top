@@ -1,25 +1,9 @@
 import 'package:flutter/material.dart';
 
-/// Shares the active section with content widgets without rebuilding their state.
-class VirilMotionScope extends InheritedWidget {
-  const VirilMotionScope({
-    super.key,
-    required this.activePage,
-    required super.child,
-  });
-
-  final ValueNotifier<int> activePage;
-
-  static ValueNotifier<int>? maybeOf(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<VirilMotionScope>()?.activePage;
-
-  @override
-  bool updateShouldNotify(VirilMotionScope oldWidget) =>
-      !identical(activePage, oldWidget.activePage);
-}
-
-/// Keeps every main section alive while softly transitioning between them.
-class VirilAnimatedStack extends StatefulWidget {
+/// Keeps section state alive, but paints only the selected section.
+/// The new section fades in as one surface; old sections are hidden immediately
+/// so their cards can never remain layered underneath it.
+class VirilAnimatedStack extends StatelessWidget {
   const VirilAnimatedStack({
     super.key,
     required this.index,
@@ -30,57 +14,23 @@ class VirilAnimatedStack extends StatefulWidget {
   final List<Widget> children;
 
   @override
-  State<VirilAnimatedStack> createState() => _VirilAnimatedStackState();
-}
-
-class _VirilAnimatedStackState extends State<VirilAnimatedStack> {
-  late final ValueNotifier<int> _activePage = ValueNotifier<int>(widget.index);
-
-  @override
-  void didUpdateWidget(covariant VirilAnimatedStack oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.index != widget.index) _activePage.value = widget.index;
-  }
-
-  @override
-  void dispose() {
-    _activePage.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => VirilMotionScope(
-    activePage: _activePage,
-    child: Stack(
-      fit: StackFit.expand,
-      children: [
-        for (var i = 0; i < widget.children.length; i++)
-          Positioned.fill(
-            child: IgnorePointer(
-              ignoring: i != widget.index,
-              child: ExcludeSemantics(
-                excluding: i != widget.index,
-                // Keep the transition widgets ticking even after the outgoing
-                // page is disabled. Otherwise its opacity freezes at 1 and
-                // every visited page remains painted in the stack.
-                child: AnimatedOpacity(
-                  opacity: i == widget.index ? 1 : 0,
-                  duration: const Duration(milliseconds: 320),
-                  curve: Curves.easeInOutCubic,
-                  child: AnimatedSlide(
-                    offset: i == widget.index ? Offset.zero : const Offset(0, .012),
-                    duration: const Duration(milliseconds: 360),
-                    curve: Curves.easeOutCubic,
-                    child: TickerMode(
-                      enabled: i == widget.index,
-                      child: widget.children[i],
-                    ),
-                  ),
-                ),
-              ),
+  Widget build(BuildContext context) => IndexedStack(
+    index: index,
+    sizing: StackFit.expand,
+    children: [
+      for (var i = 0; i < children.length; i++)
+        TickerMode(
+          enabled: i == index,
+          child: Offstage(
+            offstage: i != index,
+            child: AnimatedOpacity(
+              opacity: i == index ? 1 : 0,
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOut,
+              child: children[i],
             ),
           ),
-      ],
-    ),
+        ),
+    ],
   );
 }
