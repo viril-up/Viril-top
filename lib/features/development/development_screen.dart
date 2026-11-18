@@ -22,8 +22,8 @@ class DevelopmentScreen extends StatelessWidget {
               width: 58, height: 58,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
-                gradient: LinearGradient(colors: [VirilColors.gold.withValues(alpha: .25), VirilColors.gold.withValues(alpha: .06)]),
-                border: Border.all(color: VirilColors.gold.withValues(alpha: .45)),
+                gradient: const LinearGradient(colors: [Color(0xFF253448), Color(0xFF19212B)]),
+                border: Border.all(color: VirilColors.line),
               ),
               child: const Icon(Icons.fitness_center_rounded, color: VirilColors.gold, size: 29),
             ),
@@ -64,9 +64,9 @@ class _DevelopmentHubCard extends StatelessWidget {
           Container(
             width: 48, height: 48,
             decoration: BoxDecoration(
-              color: VirilColors.gold.withValues(alpha: .13),
+              color: VirilColors.navyLight.withValues(alpha: .55),
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: VirilColors.gold.withValues(alpha: .3)),
+              border: Border.all(color: VirilColors.line),
             ),
             child: const Icon(Icons.hub_rounded, color: VirilColors.gold, size: 25),
           ),
