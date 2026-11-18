@@ -368,8 +368,8 @@ class _FaqScreen extends StatelessWidget {
     ('Где получить помощь в Telegram?', 'Нажми «Менеджер TG» в профиле, чтобы открыть контакт @Virilgo.'),
   ];
   @override Widget build(BuildContext context) => Scaffold(
-    backgroundColor: VirilColors.voidBlack,
-    appBar: AppBar(title: const Text('Ответы на вопросы'), backgroundColor: VirilColors.voidBlack),
+    
+    appBar: AppBar(title: const Text('Ответы на вопросы'), ),
     body: ListView(padding: const EdgeInsets.all(18), children: [
       const Text('ПОМОЩЬ VIRIL', style: TextStyle(color: VirilColors.gold, letterSpacing: 2, fontWeight: FontWeight.w900)),
       const SizedBox(height: 14),
