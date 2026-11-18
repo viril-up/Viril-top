@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/widgets/viril_staggered_list.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/section_title.dart';
@@ -37,7 +38,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
     final topics=filters.where((e)=>!e.startsWith('Тип:')).toSet();
     final types=filters.where((e)=>e.startsWith('Тип:')).map((e)=>e.substring(4)).toSet();
     final items=ResourceItem.catalog.where((i)=>(category=='Все'||i.category==category)&&(topics.isEmpty||topics.contains(i.category))&&(types.isEmpty||types.contains(i.category)||types.contains('Упражнения')&&i.category=='Практики')&&(!favoritesOnly||store.isFavorite(i.id))&&(q.isEmpty||i.title.toLowerCase().contains(q)||i.subtitle.toLowerCase().contains(q)||i.description.toLowerCase().contains(q))).toList();
-    return ListView(padding:const EdgeInsets.fromLTRB(20,8,20,120),children:[
+    return VirilStaggeredList(pageIndex: 2, padding:const EdgeInsets.fromLTRB(20,8,20,120),children:[
       const SectionTitle('Ресурсы',subtitle:'Твоя личная библиотека инструментов и знаний'),
       Row(children:[
         Expanded(child:Container(decoration:BoxDecoration(color:VirilColors.stone.withValues(alpha:.9),borderRadius:BorderRadius.circular(17),border:Border.all(color:VirilColors.line)),
