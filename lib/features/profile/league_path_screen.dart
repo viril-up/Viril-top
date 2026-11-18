@@ -18,8 +18,8 @@ class _LeaguePathScreenState extends State<LeaguePathScreen> {
       final inner = LeagueSystem.levelWithinLeagueForXp(xp);
       final color = _colors[league.epochNumber - 1];
       return Scaffold(
-        backgroundColor: VirilColors.voidBlack,
-        appBar: AppBar(title: const Text('Путь 60 глобальных лиг'), backgroundColor: VirilColors.voidBlack),
+        
+        appBar: AppBar(title: const Text('Путь 60 глобальных лиг'), ),
         body: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 32), children: [
           _current(xp, league, level, inner, color),
           const SizedBox(height: 15),
