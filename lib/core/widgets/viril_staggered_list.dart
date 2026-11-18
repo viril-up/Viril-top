@@ -71,8 +71,8 @@ class _VirilStaggeredListState extends State<VirilStaggeredList>
           animation: _controller,
           child: widget.children[i],
           builder: (context, child) {
-            final start = (i * .10).clamp(0.0, .62);
-            final end = (start + .38).clamp(.01, 1.0);
+            final start = (i * .10).clamp(0.0, .62).toDouble();
+            final end = (start + .38).clamp(.01, 1.0).toDouble();
             final animation = CurvedAnimation(
               parent: _controller,
               curve: Interval(start, end, curve: Curves.easeOutCubic),
