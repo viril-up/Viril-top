@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../core/widgets/viril_staggered_list.dart';
 import '../../core/data/viril_store.dart';
 import '../habits/data/habit_store.dart';
 import '../goals/data/goal_store.dart';
@@ -76,7 +77,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         final monthValue = store.averagePercent(monthStart, _dateOnly(now));
         final yearValue = store.averagePercent(DateTime(now.year, 1, 1), _dateOnly(now));
         final league = _leagueFor(store.xp);
-        return ListView(
+        return VirilStaggeredList(pageIndex: 3, 
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
           children: [
             GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
