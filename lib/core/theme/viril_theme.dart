@@ -12,14 +12,9 @@ class VirilPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    // Fade only: no lateral movement that can make transparent screens
-    // look like they are sliding over one another.
-    final curved = CurvedAnimation(
-      parent: animation,
-      curve: Curves.easeOutCubic,
-      reverseCurve: Curves.easeInCubic,
-    );
-    return FadeTransition(opacity: curved, child: child);
+    // Show the complete destination screen immediately. No cross-fade
+    // that exposes the previous screen underneath transparent surfaces.
+    return child;
   }
 }
 
