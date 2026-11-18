@@ -54,6 +54,8 @@ jobs:
           path.write_text(content)
           PY
       - run: flutter pub get
+      - name: Generate Android launcher icons
+        run: dart run flutter_launcher_icons
       # Preinstall the NDK required by the generated Android project.
       # Retry transient/partial downloads before Gradle starts the APK build.
       - name: Install Android NDK with retries
