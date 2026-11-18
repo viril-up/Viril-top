@@ -54,22 +54,33 @@ jobs:
           path.write_text(content)
           PY
       - run: flutter pub get
-      - name: Normalize Viril logo images
+      - name: Prepare uploaded Viril logo images
         run: |
           python3 -m pip install --quiet --user Pillow
           python3 - <<'PY'
           from pathlib import Path
-          from PIL import Image
+          from PIL import Image, ImageFile
 
-          for name in (
-              "assets/app_icon/viril-icon.png",
-              "assets/splash/viril-logo.png",
-          ):
-              path = Path(name)
-              with Image.open(path) as source:
+          # The files uploaded by the user have an extra ".png" in their names.
+          # Pillow can still identify their real format from the file contents.
+          # Allow recovery of valid image data if the upload has a truncated tail.
+          ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+          sources = {
+              Path("assets/splash/splash-logo.png .png"): Path("assets/splash/viril-logo.png"),
+              Path("assets/app_icon/app-icon.png.png"): Path("assets/app_icon/viril-icon.png"),
+          }
+
+          for source_path, target_path in sources.items():
+              if not source_path.is_file():
+                  raise SystemExit(f"Uploaded user image not found: {source_path}")
+              with Image.open(source_path) as source:
+                  source.load()
                   image = source.convert("RGBA")
-                  image.save(path, format="PNG", optimize=True)
-              print(f"Normalized {name}")
+                  if image.width < 64 or image.height < 64:
+                      raise SystemExit(f"Image is too small: {source_path} ({image.size})")
+                  image.save(target_path, format="PNG", optimize=True)
+                  print(f"Prepared {source_path} -> {target_path}: {image.size}")
           PY
       - name: Generate Android launcher icons
         run: dart run flutter_launcher_icons
@@ -80,8 +91,6 @@ jobs:
         run: |
           SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
           NDK_VERSION="28.2.13676358"
-          # sdkmanager may close the license input early; tolerate the resulting
-          # Broken pipe because it does not mean license acceptance failed.
           yes | "$SDKMANAGER" --sdk_root="$ANDROID_SDK_ROOT" --licenses >/dev/null 2>&1 || true
           for attempt in 1 2 3; do
             echo "Installing Android NDK $NDK_VERSION (attempt $attempt/3)"
