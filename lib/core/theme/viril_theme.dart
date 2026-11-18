@@ -14,6 +14,10 @@ abstract final class VirilTheme {
     ),
     fontFamily: 'Roboto',
     useMaterial3: true,
+    splashFactory: InkRipple.splashFactory,
+    splashColor: VirilColors.ice.withValues(alpha: .055),
+    highlightColor: VirilColors.ice.withValues(alpha: .025),
+    hoverColor: VirilColors.ice.withValues(alpha: .025),
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: VirilColors.text),
       bodyMedium: TextStyle(color: VirilColors.text),
