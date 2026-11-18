@@ -22,7 +22,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
   @override void dispose(){search.dispose();super.dispose();}
   Future<void> openFilters()async{
     final selected=Set<String>.from(filters);
-    await showModalBottomSheet<void>(context:context,isScrollControlled:true,backgroundColor:VirilColors.stone,
+    await showModalBottomSheet<void>(context:context,isScrollControlled:true,sheetAnimationStyle:const AnimationStyle(duration:Duration(milliseconds:340),reverseDuration:Duration(milliseconds:260),curve:Curves.easeOutCubic,reverseCurve:Curves.easeInCubic),backgroundColor:VirilColors.stone,
       shape:const RoundedRectangleBorder(borderRadius:BorderRadius.vertical(top:Radius.circular(26))),
       builder:(sheet)=>StatefulBuilder(builder:(ctx,refresh)=>SafeArea(child:Padding(padding:const EdgeInsets.fromLTRB(20,18,20,24),child:Column(mainAxisSize:MainAxisSize.min,crossAxisAlignment:CrossAxisAlignment.start,children:[
         Row(children:[const Expanded(child:Text('Фильтры ресурсов',style:TextStyle(fontSize:19,fontWeight:FontWeight.w900))),TextButton(onPressed:()=>refresh(()=>selected.clear()),child:const Text('Сбросить'))]),
