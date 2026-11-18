@@ -57,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       height: 270,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
+        border: Border.all(color: Colors.white.withValues(alpha: .16)),
         boxShadow: [BoxShadow(color: VirilColors.gold.withValues(alpha: .10), blurRadius: 24)],
       ),
       clipBehavior: Clip.antiAlias,
@@ -65,10 +65,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Image.asset('assets/profile_cover/profile-cover.jpg', fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => const DecoratedBox(decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-              colors: [Color(0xFF233247), Color(0xFF111925), Color(0xFF19212B)])))),
+              colors: [Color(0xFF626870), Color(0xFF242830), Color(0xFF08090C)])))),
         const DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          colors: [Color(0x3310141D), Color(0xEE090B12)], stops: [0.0, 1]))),
+          colors: [Color(0x995F646C), Color(0x66303740), Color(0xD9080A0E), Color(0xF208090C)], stops: [0.0, .24, .66, 1]))),
         Positioned(right: 12, top: 10, child: IconButton(
           tooltip: 'Настройки профиля',
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileSettingsScreen())),
@@ -164,9 +164,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-          colors: [Color(0xFF202A36), Color(0xFF19212B), Color(0xFF151C26)]),
-        border: Border.all(color: VirilColors.line),
+        gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
+          stops: [0, .2, .58, 1],
+          colors: [Color(0xB85B6068), Color(0x76505760), Color(0x30303640), Color(0x1008090C)]),
+        border: Border.all(color: Colors.white.withValues(alpha: .16)),
         boxShadow: [BoxShadow(color: const Color(0xFF263A55).withValues(alpha: .12), blurRadius: 20)],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
