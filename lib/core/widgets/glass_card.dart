@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Smoke-gradient surface: a soft graphite crown dissolving into the app background.
+/// Deep graphite smoke surface with a restrained top edge that dissolves downward.
 class GlassCard extends StatelessWidget {
   const GlassCard({super.key, required this.child, this.padding = const EdgeInsets.all(18), this.margin, this.radius = 20});
   final Widget child;
@@ -19,18 +19,17 @@ class GlassCard extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          stops: [0, .18, .52, .82, 1],
+          stops: [0, .16, .48, .78, 1],
           colors: [
-            Color(0xB85B6068),
-            Color(0x76505760),
-            Color(0x40303640),
-            Color(0x18131720),
-            Color(0x0807090D),
+            Color(0x783A3F47),
+            Color(0x5030363F),
+            Color(0x30202730),
+            Color(0x1810151D),
+            Color(0x0806080C),
           ],
         ),
         boxShadow: const [
-          BoxShadow(color: Color(0x55000000), blurRadius: 22, offset: Offset(0, 9)),
-          BoxShadow(color: Color(0x182D4968), blurRadius: 14, spreadRadius: -6),
+          BoxShadow(color: Color(0x66000000), blurRadius: 22, offset: Offset(0, 9)),
         ],
       ),
       child: child,
@@ -48,17 +47,17 @@ class _SmokeEdgePainter extends CustomPainter {
     final rrect = RRect.fromRectAndRadius(rect.deflate(.6), Radius.circular(radius));
     final paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.1
+      ..strokeWidth = 1.0
       ..shader = const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        stops: [0, .22, .48, .72, 1],
+        stops: [0, .18, .38, .58, 1],
         colors: [
-          Color(0xA6AEB7C2),
-          Color(0x667D8794),
-          Color(0x263E4651),
-          Color(0x083E4651),
-          Color(0x003E4651),
+          Color(0x8C9AA5B3),
+          Color(0x526C7785),
+          Color(0x263E4855),
+          Color(0x083E4855),
+          Color(0x003E4855),
         ],
       ).createShader(rect);
     canvas.drawRRect(rrect, paint);
