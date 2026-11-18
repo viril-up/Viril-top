@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/widgets/viril_staggered_list.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import 'domains/domain_detail_screen.dart';
@@ -8,7 +9,7 @@ class DevelopmentScreen extends StatelessWidget {
   const DevelopmentScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => ListView(
+  Widget build(BuildContext context) => VirilStaggeredList(pageIndex: 1, 
     padding: const EdgeInsets.fromLTRB(20, 14, 20, 120),
     children: [
       InkWell(
