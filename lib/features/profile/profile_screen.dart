@@ -57,8 +57,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       height: 270,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withValues(alpha: .16)),
-        boxShadow: [BoxShadow(color: VirilColors.gold.withValues(alpha: .10), blurRadius: 24)],
+        border: Border.all(color: Colors.white.withValues(alpha: .12)),
+        boxShadow: const [BoxShadow(color: Color(0x66000000), blurRadius: 20, offset: Offset(0, 8))],
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(fit: StackFit.expand, children: [
@@ -66,9 +66,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           errorBuilder: (_, __, ___) => const DecoratedBox(decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
               colors: [Color(0xFF626870), Color(0xFF242830), Color(0xFF08090C)])))),
-        const DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
-          begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          colors: [Color(0x995F646C), Color(0x66303740), Color(0xD9080A0E), Color(0xF208090C)], stops: [0.0, .24, .66, 1]))),
         Positioned(right: 12, top: 10, child: IconButton(
           tooltip: 'Настройки профиля',
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileSettingsScreen())),
@@ -165,10 +162,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
         gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          stops: [0, .2, .58, 1],
-          colors: [Color(0xB85B6068), Color(0x76505760), Color(0x30303640), Color(0x1008090C)]),
-        border: Border.all(color: Colors.white.withValues(alpha: .16)),
-        boxShadow: [BoxShadow(color: const Color(0xFF263A55).withValues(alpha: .12), blurRadius: 20)],
+          stops: [0, .18, .48, 1],
+          colors: [Color(0x663A3F47), Color(0x38252B34), Color(0x1C11161E), Color(0x0806080C)]),
+        border: Border.all(color: Colors.white.withValues(alpha: .10)),
+        boxShadow: const [BoxShadow(color: Color(0x55000000), blurRadius: 18, offset: Offset(0, 7))],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
