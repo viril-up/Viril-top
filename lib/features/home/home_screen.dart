@@ -405,6 +405,12 @@ class _HomeScreenState extends State<HomeScreen> {
     var reward = 5;
     var goalPeriod = _period;
     var priority = false;
+    DateTime? plannedStartAt;
+    DateTime? plannedEndAt;
+    String dateLabel(DateTime? value) {
+      if (value == null) return 'Не задана';
+      return '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year}';
+    }
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
@@ -440,6 +446,49 @@ class _HomeScreenState extends State<HomeScreen> {
                 onChanged: (value) => setDialogState(() => priority = value),
               ),
             ],
+            const SizedBox(height: 14),
+            const Text('СРОКИ ДОСТИЖЕНИЯ · НЕОБЯЗАТЕЛЬНО',
+              style: TextStyle(color: VirilColors.gold, fontSize: 10, letterSpacing: 1.1, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 8),
+            Wrap(spacing: 8, runSpacing: 8, children: [
+              OutlinedButton.icon(
+                onPressed: () async {
+                  final picked = await showDatePicker(
+                    context: dialogContext,
+                    initialDate: plannedStartAt ?? DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: plannedEndAt ?? DateTime(2100),
+                    helpText: 'Когда планируешь начать?',
+                  );
+                  if (picked != null) setDialogState(() => plannedStartAt = picked);
+                },
+                icon: const Icon(Icons.play_arrow_rounded, size: 17),
+                label: Text('Начало: ${dateLabel(plannedStartAt)}'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () async {
+                  final picked = await showDatePicker(
+                    context: dialogContext,
+                    initialDate: plannedEndAt ?? plannedStartAt ?? DateTime.now(),
+                    firstDate: plannedStartAt ?? DateTime(2000),
+                    lastDate: DateTime(2100),
+                    helpText: 'К какому сроку достичь?',
+                  );
+                  if (picked != null) setDialogState(() => plannedEndAt = picked);
+                },
+                icon: const Icon(Icons.flag_outlined, size: 17),
+                label: Text('Завершение: ${dateLabel(plannedEndAt)}'),
+              ),
+              if (plannedStartAt != null || plannedEndAt != null)
+                TextButton.icon(
+                  onPressed: () => setDialogState(() {
+                    plannedStartAt = null;
+                    plannedEndAt = null;
+                  }),
+                  icon: const Icon(Icons.close_rounded, size: 15),
+                  label: const Text('Очистить даты'),
+                ),
+            ]),
             const SizedBox(height: 12),
             const Text('Награда за выполнение', style: TextStyle(color: VirilColors.muted, fontSize: 12)),
             const SizedBox(height: 7),
@@ -454,7 +503,10 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () async {
                 if (controller.text.trim().isEmpty) return;
                 await VirilStore.instance.addTask(
-                  controller.text, 'Личная цель', period: goalPeriod, xpReward: reward, isPriority: goalPeriod == 'day' && priority,
+                  controller.text, 'Личная цель', period: goalPeriod, xpReward: reward,
+                  isPriority: goalPeriod == 'day' && priority,
+                  plannedStartAt: plannedStartAt,
+                  plannedEndAt: plannedEndAt,
                 );
                 if (dialogContext.mounted) Navigator.pop(dialogContext);
               },
@@ -492,6 +544,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+String _formatTaskDate(DateTime value) =>
+    '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year}';
+
 class _GoalTile extends StatelessWidget {
   const _GoalTile({required this.task});
   final VirilTask task;
@@ -515,12 +570,26 @@ class _GoalTile extends StatelessWidget {
           visualDensity: VisualDensity.compact,
           onChanged: (_) => store.toggleTask(task.id),
         ),
-        Expanded(child: Text(task.title, maxLines: 2, overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: 11, fontWeight: FontWeight.w600,
-            decoration: task.completed ? TextDecoration.lineThrough : null,
-            color: task.completed ? VirilColors.muted : VirilColors.text,
-          ))),
+        Expanded(child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(task.title, maxLines: 2, overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 11, fontWeight: FontWeight.w600,
+                decoration: task.completed ? TextDecoration.lineThrough : null,
+                color: task.completed ? VirilColors.muted : VirilColors.text,
+              )),
+            if (task.plannedStartAt != null || task.plannedEndAt != null) ...[
+              const SizedBox(height: 3),
+              Text([
+                if (task.plannedStartAt != null) 'Старт ${_formatTaskDate(task.plannedStartAt!)}',
+                if (task.plannedEndAt != null) 'До ${_formatTaskDate(task.plannedEndAt!)}',
+              ].join('  ·  '), maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 9, color: VirilColors.gold, fontWeight: FontWeight.w600)),
+            ],
+          ],
+        )),
         if (task.period == 'day') IconButton(
           visualDensity: VisualDensity.compact,
           constraints: const BoxConstraints.tightFor(width: 28, height: 30),
