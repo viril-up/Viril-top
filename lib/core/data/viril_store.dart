@@ -99,7 +99,7 @@ class VirilStore extends ChangeNotifier {
     await _preferences?.setStringList(_activeDaysKey, _activeDays.toList()..sort());
     await _preferences?.setString(_dailyXpKey, jsonEncode(_dailyXp));
   }
-  Future<void> addTask(String title, String domain, {String period = 'day', int xpReward = 5, bool isPriority = false}) async {
+  Future<void> addTask(String title, String domain, {String period = 'day', int xpReward = 5, bool isPriority = false, DateTime? plannedStartAt, DateTime? plannedEndAt}) async {
     final cleanTitle = title.trim();
     if (cleanTitle.isEmpty) return;
     await initialize();
@@ -109,7 +109,8 @@ class VirilStore extends ChangeNotifier {
         ? task.copyWith(isPriority: false) : task).toList();
     }
     _tasks = [VirilTask(id: now.microsecondsSinceEpoch.toString(), title: cleanTitle,
-      domain: domain, createdAt: now, period: period, xpReward: xpReward, isPriority: isPriority), ..._tasks];
+      domain: domain, createdAt: now, period: period, xpReward: xpReward, isPriority: isPriority,
+      plannedStartAt: plannedStartAt, plannedEndAt: plannedEndAt), ..._tasks];
     await _saveTasks(); notifyListeners();
   }
   Future<void> setPriorityTask(String id) async {
