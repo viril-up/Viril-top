@@ -151,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final compact = constraints.maxHeight < 650;
           final gap = compact ? 7.0 : 10.0;
           return Padding(
-            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 0, 8),
+            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 16, 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -195,65 +195,78 @@ class _HomeScreenState extends State<HomeScreen> {
       return SizedBox(
         width: double.infinity,
         child: Row(
-        children: [
-          Tooltip(
-            message: 'Профиль · ${profile.name}',
-            child: Material(
-              color: VirilColors.stone,
-              shape: const CircleBorder(side: BorderSide(color: VirilColors.gold)),
-              child: InkWell(
-                customBorder: const CircleBorder(),
-                onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
-                child: SizedBox(width: 42, height: 42, child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 22)),
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Tooltip(
+                    message: 'Профиль · ${profile.name}',
+                    child: Material(
+                      color: VirilColors.stone,
+                      shape: const CircleBorder(side: BorderSide(color: VirilColors.gold)),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
+                        child: SizedBox(width: 42, height: 42, child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 22)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 9),
+                  Flexible(
+                    child: Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+                  ),
+                ],
               ),
             ),
-          ),
-          const SizedBox(width: 9),
-          Flexible(child: Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800))),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
-            decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: VirilColors.line)),
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
-              const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
-              const SizedBox(width: 4),
-              Text('${store.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
-            ]),
-          ),
-          const SizedBox(width: 6),
-          Tooltip(
-            message: 'Виджеты главной',
-            child: Material(
-              color: VirilColors.stone,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),
-                side: const BorderSide(color: VirilColors.goldSoft)),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(15),
-                onTap: _showWidgetsSheet,
-                child: const SizedBox(width: 40, height: 40,
-                  child: Icon(Icons.dashboard_customize_rounded, color: VirilColors.gold, size: 19)),
-              ),
+            const SizedBox(width: 8),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+                  decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: VirilColors.line)),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
+                    const SizedBox(width: 4),
+                    Text('${store.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                  ]),
+                ),
+                const SizedBox(width: 6),
+                Tooltip(
+                  message: 'Виджеты главной',
+                  child: Material(
+                    color: VirilColors.stone,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),
+                      side: const BorderSide(color: VirilColors.goldSoft)),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(15),
+                      onTap: _showWidgetsSheet,
+                      child: const SizedBox(width: 40, height: 40,
+                        child: Icon(Icons.dashboard_customize_rounded, color: VirilColors.gold, size: 19)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Tooltip(
+                  message: 'Уведомления',
+                  child: Material(
+                    color: VirilColors.stone,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),
+                      side: const BorderSide(color: VirilColors.line)),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(15),
+                      onTap: () => _showInfo('Уведомления', 'Центр уведомлений будет подключён на следующем этапе.'),
+                      child: const SizedBox(width: 40, height: 40,
+                        child: Icon(Icons.notifications_none_rounded, color: VirilColors.ice, size: 20)),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(width: 6),
-          Tooltip(
-            message: 'Уведомления',
-            child: Material(
-              color: VirilColors.stone,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),
-                side: const BorderSide(color: VirilColors.line)),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(15),
-                onTap: () => _showInfo('Уведомления', 'Центр уведомлений будет подключён на следующем этапе.'),
-                child: const SizedBox(width: 40, height: 40,
-                  child: Icon(Icons.notifications_none_rounded, color: VirilColors.ice, size: 20)),
-              ),
-            ),
-          ),
-        ],
-      ));
+          ],
+        ));;
     },
   );
 
