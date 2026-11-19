@@ -54,48 +54,70 @@ class _VirilShellState extends State<VirilShell> {
     );
     if (_index == 3) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) {
       final profile = ProfileStore.instance;
-      return Padding(padding: const EdgeInsets.fromLTRB(16, 7, 0, 8), child: SizedBox(width: double.infinity, child: Row(mainAxisSize: MainAxisSize.max, children: [
-        Material(
-          color: VirilColors.stone,
-          shape: const CircleBorder(side: BorderSide(color: VirilColors.gold)),
-          child: InkWell(
-            customBorder: const CircleBorder(),
-            onTap: _openProfile,
-            child: SizedBox(width: 40, height: 40, child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 21)),
-          ),
+      return Padding(padding: const EdgeInsets.fromLTRB(16, 7, 16, 8), child: SizedBox(
+        width: double.infinity,
+        child: Row(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Material(
+                    color: VirilColors.stone,
+                    shape: const CircleBorder(side: BorderSide(color: VirilColors.gold)),
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: _openProfile,
+                      child: SizedBox(width: 40, height: 40, child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 21)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(child: Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800))),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+                  decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: VirilColors.line)),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
+                    const SizedBox(width: 4),
+                    Text('${VirilStore.instance.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                  ]),
+                ),
+                const SizedBox(width: 6),
+                Tooltip(message: 'Виджеты', child: Material(
+                  color: VirilColors.stone,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: const BorderSide(color: VirilColors.goldSoft)),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(15),
+                    onTap: () => setState(() => _index = 0),
+                    child: const SizedBox(width: 40, height: 40,
+                      child: Icon(Icons.dashboard_customize_rounded, color: VirilColors.gold, size: 19)),
+                  ),
+                )),
+                const SizedBox(width: 6),
+                Tooltip(message: 'Уведомления', child: Material(
+                  color: VirilColors.stone,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: const BorderSide(color: VirilColors.line)),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(15),
+                    onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Уведомления появятся в одном из следующих обновлений.'))),
+                    child: const SizedBox(width: 40, height: 40,
+                      child: Icon(Icons.notifications_none_rounded, color: VirilColors.ice, size: 20)),
+                  ),
+                )),
+              ],
+            ),
+          ],
         ),
-        const SizedBox(width: 8),
-        Flexible(child: Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800))),
-        const Spacer(),
-        Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
-          decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15), border: Border.all(color: VirilColors.line)),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
-            const SizedBox(width: 4), Text('${VirilStore.instance.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800))])),
-        const SizedBox(width: 6),
-        Tooltip(message: 'Виджеты', child: Material(
-          color: VirilColors.stone,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: const BorderSide(color: VirilColors.goldSoft)),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(15),
-            onTap: () => setState(() => _index = 0),
-            child: const SizedBox(width: 40, height: 40,
-              child: Icon(Icons.dashboard_customize_rounded, color: VirilColors.gold, size: 19)),
-          ),
-        )),
-        const SizedBox(width: 6),
-        Tooltip(message: 'Уведомления', child: Material(
-          color: VirilColors.stone,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: const BorderSide(color: VirilColors.line)),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(15),
-            onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Уведомления появятся в одном из следующих обновлений.'))),
-            child: const SizedBox(width: 40, height: 40,
-              child: Icon(Icons.notifications_none_rounded, color: VirilColors.ice, size: 20)),
-          ),
-        )),
-      ])));
+      );
     });
     return Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 12), child: Row(children: [
       Container(width: 48, height: 48, decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),
