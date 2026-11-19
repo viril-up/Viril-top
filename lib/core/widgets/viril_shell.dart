@@ -117,7 +117,7 @@ class _VirilShellState extends State<VirilShell> {
             ),
           ],
         ),
-      );
+      ));
     });
     return Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 12), child: Row(children: [
       Container(width: 48, height: 48, decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),
