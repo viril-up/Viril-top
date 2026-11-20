@@ -31,10 +31,10 @@ class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerPr
             center: Alignment(-.72, -.82),
             radius: 1.55,
             colors: [
-              Color(0xFF17263B), // soft midnight-blue depth
-              Color(0xFF101722), // graphite navy
-              Color(0xFF0B0F16), // deep charcoal
-              Color(0xFF06080C), // near-black edges
+              Color(0xFF101722), // restrained midnight depth
+              Color(0xFF0B1119), // deep graphite navy
+              Color(0xFF080B11), // charcoal
+              Color(0xFF050609), // near-black edges
             ],
             stops: [0, .34, .70, 1],
           ),
@@ -42,7 +42,7 @@ class _ParticleBackdropState extends State<ParticleBackdrop> with SingleTickerPr
         Positioned(
           left: -250 + math.sin(t * .12) * 22,
           top: -245 + math.cos(t * .10) * 18,
-          child: _glow(470, const Color(0xFF263A55).withValues(alpha: .075)),
+          child: _glow(470, const Color(0xFF263A55).withValues(alpha: .035)),
         ),
         Positioned(
           right: -260 + math.cos(t * .11) * 24,
