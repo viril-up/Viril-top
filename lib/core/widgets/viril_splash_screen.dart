@@ -30,7 +30,7 @@ class _VirilSplashScreenState extends State<VirilSplashScreen>
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
     _controller.forward();
-    _timer = Timer(const Duration(milliseconds: 1500), _openHome);
+    _timer = Timer(const Duration(milliseconds: 1000), _openHome);
   }
 
   void _openHome() {
