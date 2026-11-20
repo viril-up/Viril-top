@@ -16,28 +16,40 @@ class DevelopmentScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WorkoutsScreen())),
         child: GlassCard(
-          padding: const EdgeInsets.all(18),
-          margin: const EdgeInsets.only(bottom: 16),
-          child: Row(children: [
-            Container(
-              width: 58, height: 58,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                gradient: const LinearGradient(colors: [Color(0xFF253448), Color(0xFF19212B)]),
-                border: Border.all(color: VirilColors.line),
-              ),
-              child: const Icon(Icons.fitness_center_rounded, color: VirilColors.gold, size: 29),
+          padding: EdgeInsets.zero,
+          margin: const EdgeInsets.only(bottom: 12),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SizedBox(
+              height: 88,
+              child: Stack(fit: StackFit.expand, children: [
+                Image.asset(
+                  'assets/section_cards/training/training.png',
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [Color(0xFF343A42), Color(0xFF171D26)]),
+                    ),
+                  ),
+                ),
+                DecoratedBox(decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft, end: Alignment.centerRight,
+                    colors: [Colors.black.withValues(alpha: .78), Colors.black.withValues(alpha: .12)],
+                  ),
+                )),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 18),
+                    child: Text('Тренировки', style: TextStyle(
+                      color: Colors.white, fontSize: 17, fontWeight: FontWeight.w900,
+                    )),
+                  ),
+                ),
+              ]),
             ),
-            const SizedBox(width: 15),
-            const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('ТРЕНИРОВКИ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 2, fontWeight: FontWeight.w900)),
-              SizedBox(height: 5),
-              Text('Твоя система тренировок', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
-              SizedBox(height: 4),
-              Text('Программы, упражнения и личный прогресс', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
-            ])),
-            const Icon(Icons.arrow_forward_ios_rounded, color: VirilColors.gold, size: 17),
-          ]),
+          ),
         ),
       ),
       const Padding(
