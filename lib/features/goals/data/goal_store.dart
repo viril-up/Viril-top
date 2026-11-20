@@ -25,6 +25,8 @@ class VirilGoal {
     required this.steps,
     this.isArchived = false,
     this.completedAt,
+    this.plannedStartAt,
+    this.plannedEndAt,
   });
 
   final String id;
@@ -34,8 +36,10 @@ class VirilGoal {
   final List<VirilGoalStep> steps;
   bool isArchived;
   DateTime? completedAt;
+  final DateTime? plannedStartAt;
+  final DateTime? plannedEndAt;
 
-  DateTime get deadline => startedAt.add(Duration(days: durationDays));
+  DateTime get deadline => plannedEndAt ?? startedAt.add(Duration(days: durationDays));
   int get completedSteps => steps.where((step) => step.isDone).length;
   int get progress => steps.isEmpty ? 0 : completedSteps * 100 ~/ steps.length;
   bool get isCompleted => steps.isNotEmpty && completedSteps == steps.length;
@@ -48,6 +52,8 @@ class VirilGoal {
     'startedAt': startedAt.toIso8601String(),
     'isArchived': isArchived,
     'completedAt': completedAt?.toIso8601String(),
+    'plannedStartAt': plannedStartAt?.toIso8601String(),
+    'plannedEndAt': plannedEndAt?.toIso8601String(),
     'steps': steps.map((step) => step.toJson()).toList(),
   };
 
@@ -58,6 +64,8 @@ class VirilGoal {
     startedAt: DateTime.parse(json['startedAt'] as String),
     isArchived: json['isArchived'] as bool? ?? false,
     completedAt: json['completedAt'] == null ? null : DateTime.tryParse(json['completedAt'] as String),
+    plannedStartAt: json['plannedStartAt'] == null ? null : DateTime.tryParse(json['plannedStartAt'] as String),
+    plannedEndAt: json['plannedEndAt'] == null ? null : DateTime.tryParse(json['plannedEndAt'] as String),
     steps: (json['steps'] as List<dynamic>? ?? [])
         .map((item) => VirilGoalStep.fromJson(item as Map<String, dynamic>))
         .toList(),
@@ -109,14 +117,16 @@ class GoalStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addGoal(String title, int durationDays) async {
+  Future<void> addGoal(String title, int durationDays, {DateTime? plannedStartAt, DateTime? plannedEndAt}) async {
     final value = title.trim();
     if (value.isEmpty) return;
     _goals.insert(0, VirilGoal(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       title: value,
       durationDays: durationDays,
-      startedAt: DateTime.now(),
+      startedAt: plannedStartAt ?? DateTime.now(),
+      plannedStartAt: plannedStartAt,
+      plannedEndAt: plannedEndAt,
       steps: [],
     ));
     await _save();
