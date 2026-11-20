@@ -51,13 +51,13 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
       const SizedBox(height:14),
       _LibraryLauncherCard(
         title: 'Библиотека',
-        icon: Icons.menu_book_rounded,
+        imagePath: 'assets/section_cards/library/library.png',
         accent: VirilColors.gold,
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BookLibraryScreen())),
       ),
       _LibraryLauncherCard(
         title: 'Видеотека',
-        icon: Icons.play_circle_outline_rounded,
+        imagePath: 'assets/section_cards/videoteka/videoteka.png',
         accent: VirilColors.ice,
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VideoLibraryScreen())),
       ),
@@ -69,40 +69,59 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
 class _LibraryLauncherCard extends StatelessWidget {
   const _LibraryLauncherCard({
     required this.title,
-    required this.icon,
+    required this.imagePath,
     required this.accent,
     required this.onTap,
   });
 
   final String title;
-  final IconData icon;
+  final String imagePath;
   final Color accent;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,
-    borderRadius: BorderRadius.circular(23),
+    borderRadius: BorderRadius.circular(20),
     child: GlassCard(
+      padding: EdgeInsets.zero,
       margin: const EdgeInsets.only(bottom: 12),
-      child: Row(children: [
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: accent.withValues(alpha: .13),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: accent.withValues(alpha: .3)),
-          ),
-          child: Icon(icon, color: accent, size: 25),
+      radius: 20,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: SizedBox(
+          height: 88,
+          child: Stack(fit: StackFit.expand, children: [
+            Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    accent.withValues(alpha: .24),
+                    const Color(0xFF171D26),
+                  ]),
+                ),
+              ),
+            ),
+            DecoratedBox(decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft, end: Alignment.centerRight,
+                colors: [Colors.black.withValues(alpha: .78), Colors.black.withValues(alpha: .10)],
+              ),
+            )),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: Row(children: [
+                Expanded(child: Text(title, style: const TextStyle(
+                  color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900,
+                ))),
+                Icon(Icons.arrow_forward_ios_rounded, color: accent, size: 16),
+              ]),
+            ),
+          ]),
         ),
-        const SizedBox(width: 13),
-        Expanded(child: Text(
-          title,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
-        )),
-        Icon(Icons.arrow_forward_ios_rounded, color: accent, size: 16),
-      ]),
+      ),
     ),
   );
 }
