@@ -417,7 +417,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     String timeLabel(DateTime? value) {
-      if (value == null || (value.hour == 0 && value.minute == 0)) return 'Выбрать время';
+      if (value == null || (value.year != 2000 && value.hour == 0 && value.minute == 0)) return 'Выбрать время';
       return '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
     }
 
@@ -639,8 +639,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-String _formatTaskDate(DateTime value) =>
-    '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year} ${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
+String _formatTaskDate(DateTime value) {
+  final time = '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
+  if (value.year == 2000) return 'Время $time';
+  final date = '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year}';
+  return value.hour == 0 && value.minute == 0 ? date : '$date $time';
+}
 
 class _GoalTile extends StatelessWidget {
   const _GoalTile({required this.task});
