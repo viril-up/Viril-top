@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/data/viril_store.dart';
+import '../../core/localization/viril_localization.dart';
 import '../../core/models/viril_task.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
@@ -134,12 +135,15 @@ class _HomeScreenState extends State<HomeScreen> {
     subtitle: Text(subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
   );
 
-  static const _periods = <String, String>{
-    'day': 'День',
-    'week': 'Неделя',
-    'month': 'Месяц',
-    'year': 'Год',
-  };
+  Map<String, String> get _periods {
+    final s = VirilStrings.of(context);
+    return {
+      'day': s.t('day'),
+      'week': s.t('week'),
+      'month': s.t('month'),
+      'year': s.t('year'),
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -316,6 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _goalsCard(VirilStore store, bool compact) {
+    final s = VirilStrings.of(context);
     final goals = _period == 'day'
       ? store.dailyTasksFor(DateTime.now())
       : store.tasks.where((task) => task.period == _period).toList();
@@ -324,8 +329,8 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: EdgeInsets.all(compact ? 11 : 14),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
-          const Expanded(child: Text('Мои цели', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900))),
-          Text('${goals.where((task) => !task.completed).length} активные',
+          Expanded(child: Text(s.t('goals'), style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w900))),
+          Text('${goals.where((task) => !task.completed).length} ${s.t('active')}',
             style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
           const SizedBox(width: 7),
           Material(
@@ -358,11 +363,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
                   Icon(Icons.flag_outlined, color: VirilColors.muted.withValues(alpha: .8), size: 29),
                   const SizedBox(height: 7),
-                  const Text('Здесь появятся твои цели', style: TextStyle(
+                  Text(s.t('emptyGoals'), style: const TextStyle(
                     color: VirilColors.muted, fontSize: 12, fontWeight: FontWeight.w600,
                   )),
                   const SizedBox(height: 3),
-                  const Text('Нажми + и создай первую', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
+                  Text(s.t('addFirst'), style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
                 ]),
               )
             : ListView.separated(
