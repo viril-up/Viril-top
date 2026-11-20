@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/viril_store.dart';
+import '../localization/viril_localization.dart';
 import '../theme/viril_colors.dart';
 import 'viril_animated_stack.dart';
 import '../../features/home/home_screen.dart';
@@ -20,13 +21,10 @@ class _VirilShellState extends State<VirilShell> {
     const ResourcesScreen(), const ProgressScreen(), const ProfileScreen(),
   ];
   void _openProfile() => setState(() => _index = 4);
-  static const _items = [
-    (Icons.home_rounded, 'Главная'), (Icons.auto_awesome_rounded, 'Развитие'),
-    (Icons.menu_book_rounded, 'Ресурсы'), (Icons.insights_rounded, 'Прогресс'),
-    (Icons.person_rounded, 'Профиль'),
-  ];
   @override void initState() { super.initState(); VirilStore.instance.initialize(); }
-  @override Widget build(BuildContext context) => Scaffold(
+  @override Widget build(BuildContext context) {
+    final s = VirilStrings.of(context);
+    return Scaffold(
     extendBody: false,
     body: SafeArea(bottom: false, child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -42,14 +40,21 @@ class _VirilShellState extends State<VirilShell> {
         boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 22, offset: Offset(0, 8))]),
         child: NavigationBar(height: 72, selectedIndex: _index,
           onDestinationSelected: (value) => setState(() => _index = value),
-          destinations: [for (final item in _items) NavigationDestination(icon: Icon(item.$1), label: item.$2)]),
+          destinations: [
+            NavigationDestination(icon: const Icon(Icons.home_rounded), label: s.t('navHome')),
+            NavigationDestination(icon: const Icon(Icons.auto_awesome_rounded), label: s.t('navDevelopment')),
+            NavigationDestination(icon: const Icon(Icons.menu_book_rounded), label: s.t('navResources')),
+            NavigationDestination(icon: const Icon(Icons.insights_rounded), label: s.t('navProgress')),
+            NavigationDestination(icon: const Icon(Icons.person_rounded), label: s.t('navProfile')),
+          ]),
       ),
     )),
-  );
+    );
+  }
   Widget _header() {
-    if (_index == 1) return const Padding(
+    if (_index == 1) return Padding(
       padding: EdgeInsets.fromLTRB(22, 12, 22, 12),
-      child: Align(alignment: Alignment.centerLeft, child: Text('Развитие',
+      child: Align(alignment: Alignment.centerLeft, child: Text(VirilStrings.of(context).t('navDevelopment'),
         style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: VirilColors.text))),
     );
     if (_index == 3) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) {
@@ -91,7 +96,7 @@ class _VirilShellState extends State<VirilShell> {
                   ]),
                 ),
                 const SizedBox(width: 6),
-                Tooltip(message: 'Виджеты', child: Material(
+                Tooltip(message: VirilStrings.of(context).t('widgets'), child: Material(
                   color: VirilColors.stone,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: const BorderSide(color: VirilColors.goldSoft)),
                   child: InkWell(
@@ -102,13 +107,13 @@ class _VirilShellState extends State<VirilShell> {
                   ),
                 )),
                 const SizedBox(width: 6),
-                Tooltip(message: 'Уведомления', child: Material(
+                Tooltip(message: VirilStrings.of(context).t('notifications'), child: Material(
                   color: VirilColors.stone,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: const BorderSide(color: VirilColors.line)),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(15),
                     onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Уведомления появятся в одном из следующих обновлений.'))),
+                      SnackBar(content: Text(VirilStrings.of(context).t('notificationsSoon')))),
                     child: const SizedBox(width: 40, height: 40,
                       child: Icon(Icons.notifications_none_rounded, color: VirilColors.ice, size: 20)),
                   ),
@@ -126,9 +131,9 @@ class _VirilShellState extends State<VirilShell> {
         border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .34))),
         child: const Center(child: Text('🧠', style: TextStyle(fontSize: 23)))),
       const SizedBox(width: 12),
-      const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Viril Top', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
-        Text('Система дисциплины и целей', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Viril Top', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+        Text(VirilStrings.of(context).t('shellSubtitle'), style: const TextStyle(color: VirilColors.muted, fontSize: 11)),
       ])),
     ]));
   }

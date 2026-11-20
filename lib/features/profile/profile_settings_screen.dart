@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/data/viril_store.dart';
+import '../../core/localization/viril_localization.dart';
 import '../../core/theme/viril_colors.dart';
 import 'data/profile_store.dart';
 
@@ -13,51 +13,45 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     'Русский','Украинский','Английский','Французский','Немецкий','Испанский',
     'Китайский','Корейский','Японский','Индийский (хинди)','Арабский','Турецкий','Туркменский',
   ];
-  String _language = 'Русский';
-  bool _loaded = false;
-  @override void initState() { super.initState(); _loadLanguage(); }
-  Future<void> _loadLanguage() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!mounted) return;
-    setState(() { _language = prefs.getString('viril.profile.language.v1') ?? 'Русский'; _loaded = true; });
-  }
+  String get _language => VirilLanguageController.instance.languageName;
   Future<void> _chooseLanguage() async {
     final selected = await showModalBottomSheet<String>(context: context, backgroundColor: VirilColors.stone,
       isScrollControlled: true, builder: (ctx) => SafeArea(child: SizedBox(height: MediaQuery.of(ctx).size.height * .72,
         child: Column(children: [
-          const Padding(padding: EdgeInsets.all(18), child: Text('ЯЗЫК ПРИЛОЖЕНИЯ',
+          Padding(padding: const EdgeInsets.all(18), child: Text(VirilStrings.of(context).t('languageTitle'),
             style: TextStyle(color: VirilColors.gold, fontWeight: FontWeight.w900, letterSpacing: 1.6))),
           Expanded(child: ListView(children: [for (final language in _languages)
             RadioListTile<String>(value: language, groupValue: _language, activeColor: VirilColors.gold,
               title: Text(language), onChanged: (v) => Navigator.pop(ctx, v))])),
         ]))));
     if (selected == null) return;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('viril.profile.language.v1', selected);
-    if (mounted) setState(() => _language = selected);
-    if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Языковое предпочтение сохранено. Полная локализация всех разделов будет подключаться поэтапно.')));
+    await VirilLanguageController.instance.setLanguage(selected);
+    if (mounted) setState(() {});
+    if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(VirilStrings.of(context).t('languageSaved'))));
   }
-  @override Widget build(BuildContext context) => Scaffold(
-    
-    appBar: AppBar(title: const Text('Настройки'), ),
-    body: ListView(padding: const EdgeInsets.fromLTRB(18, 10, 18, 40), children: [
-      const _GroupTitle('ПЕРСОНАЛИЗАЦИЯ'),
-      _SettingTile(icon: Icons.language_rounded, title: 'Язык', subtitle: _loaded ? _language : 'Загрузка…', onTap: _chooseLanguage),
-      const SizedBox(height: 16),
-      const _GroupTitle('УПРАВЛЕНИЕ ДАННЫМИ'),
-      _SettingTile(icon: Icons.restart_alt_rounded, title: 'Сброс прогресса',
-        subtitle: 'Удалить XP, задачи, активность и записи', color: VirilColors.lava, onTap: _confirmReset),
-      _SettingTile(icon: Icons.delete_forever_rounded, title: 'Удаление аккаунта',
-        subtitle: 'Удалить локальный профиль и прогресс', color: VirilColors.lava, onTap: _confirmDelete),
-      const SizedBox(height: 16),
-      const _GroupTitle('ИНФОРМАЦИЯ'),
-      _SettingTile(icon: Icons.lock_outline_rounded, title: 'Конфиденциальность',
-        subtitle: 'Как хранятся и используются данные', onTap: _privacy),
-      _SettingTile(icon: Icons.info_outline_rounded, title: 'О приложении',
-        subtitle: 'Версия, назначение и контакты', onTap: _about),
-    ]),
-  );
+  @override Widget build(BuildContext context) {
+    final s = VirilStrings.of(context);
+    return Scaffold(
+      appBar: AppBar(title: Text(s.t('settings'))),
+      body: ListView(padding: const EdgeInsets.fromLTRB(18, 10, 18, 40), children: [
+        _GroupTitle(s.t('personalization')),
+        _SettingTile(icon: Icons.language_rounded, title: s.t('language'), subtitle: _language, onTap: _chooseLanguage),
+        const SizedBox(height: 16),
+        _GroupTitle(s.t('data')),
+        _SettingTile(icon: Icons.restart_alt_rounded, title: s.t('resetProgress'),
+          subtitle: s.t('resetSubtitle'), color: VirilColors.lava, onTap: _confirmReset),
+        _SettingTile(icon: Icons.delete_forever_rounded, title: s.t('deleteAccount'),
+          subtitle: s.t('deleteSubtitle'), color: VirilColors.lava, onTap: _confirmDelete),
+        const SizedBox(height: 16),
+        _GroupTitle(s.t('information')),
+        _SettingTile(icon: Icons.lock_outline_rounded, title: s.t('privacy'),
+          subtitle: s.t('privacySubtitle'), onTap: _privacy),
+        _SettingTile(icon: Icons.info_outline_rounded, title: s.t('about'),
+          subtitle: s.t('aboutSubtitle'), onTap: _about),
+      ]),
+    );
+  }
   Future<void> _confirmReset() async {
     final yes = await _confirm(title: 'Сбросить прогресс?', message:
       'Будут удалены накопленный XP, задачи, отметки активности, записи дневника и благодарности. Никнейм и настройки профиля останутся.');
@@ -71,8 +65,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     if (yes != true) return;
     await VirilStore.instance.resetProgress();
     await ProfileStore.instance.resetLocalProfile();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('viril.profile.language.v1');
+    await VirilLanguageController.instance.reset();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Локальные данные профиля удалены.')));
     Navigator.of(context).pop();
