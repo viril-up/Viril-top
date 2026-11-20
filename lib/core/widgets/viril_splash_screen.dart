@@ -68,8 +68,8 @@ class _VirilSplashScreenState extends State<VirilSplashScreen>
               children: [
                 ClipRect(
                   child: SizedBox(
-                    width: 184,
-                    height: 184,
+                    width: 300,
+                    height: 300,
                     child: Image.asset(
                       'assets/splash/splash-logo.png .png',
                       fit: BoxFit.contain,
