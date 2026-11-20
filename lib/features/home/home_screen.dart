@@ -408,13 +408,16 @@ class _HomeScreenState extends State<HomeScreen> {
     DateTime? plannedStartAt;
     DateTime? plannedEndAt;
 
+    bool hasCalendarDate(DateTime? value) => value != null && value.year != 2000;
+    int? minutesOf(DateTime? value) => value == null ? null : value.hour * 60 + value.minute;
+
     String dateLabel(DateTime? value) {
-      if (value == null) return 'Не задана';
-      return '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year}';
+      if (!hasCalendarDate(value)) return 'Не задана';
+      return '${value!.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year}';
     }
 
     String timeLabel(DateTime? value) {
-      if (value == null) return 'Выбрать время';
+      if (value == null || (value.hour == 0 && value.minute == 0)) return 'Выбрать время';
       return '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
     }
 
@@ -423,9 +426,11 @@ class _HomeScreenState extends State<HomeScreen> {
       DateTime? current, {
       required bool isEnd,
     }) async {
-      final initial = current ?? (isEnd
-          ? (plannedStartAt ?? DateTime.now())
-          : DateTime.now());
+      final initial = hasCalendarDate(current)
+          ? current!
+          : (isEnd && hasCalendarDate(plannedStartAt)
+              ? plannedStartAt!
+              : DateTime.now());
       final picked = await showDatePicker(
         context: pickerContext,
         initialDate: initial,
@@ -434,31 +439,25 @@ class _HomeScreenState extends State<HomeScreen> {
         helpText: isEnd ? 'Дата завершения' : 'Дата начала',
       );
       if (picked == null) return null;
-      final defaultHour = isEnd
-          ? (plannedStartAt != null &&
-                  plannedStartAt!.year == picked.year &&
-                  plannedStartAt!.month == picked.month &&
-                  plannedStartAt!.day == picked.day
-              ? (plannedStartAt!.hour + 1).clamp(0, 23)
-              : 10)
-          : 9;
-      return DateTime(
-        picked.year,
-        picked.month,
-        picked.day,
-        current?.hour ?? defaultHour,
-        current?.minute ?? 0,
-      );
+      final minutes = minutesOf(current);
+      return DateTime(picked.year, picked.month, picked.day,
+          minutes == null ? 0 : minutes ~/ 60,
+          minutes == null ? 0 : minutes % 60);
     }
 
     Future<DateTime?> pickTime(
       BuildContext pickerContext,
-      DateTime current, {
+      DateTime? current, {
       required bool isEnd,
     }) async {
+      final existingMinutes = minutesOf(current);
+      final initialTime = TimeOfDay(
+        hour: existingMinutes == null ? (isEnd ? 10 : 9) : existingMinutes ~/ 60,
+        minute: existingMinutes == null ? 0 : existingMinutes % 60,
+      );
       final picked = await showTimePicker(
         context: pickerContext,
-        initialTime: TimeOfDay(hour: current.hour, minute: current.minute),
+        initialTime: initialTime,
         helpText: isEnd ? 'ВРЕМЯ ЗАВЕРШЕНИЯ' : 'ВРЕМЯ НАЧАЛА',
         builder: (context, child) => Theme(
           data: Theme.of(context).copyWith(
@@ -468,21 +467,14 @@ class _HomeScreenState extends State<HomeScreen> {
               surface: VirilColors.stone,
               onSurface: VirilColors.text,
             ),
-            dialogTheme: const DialogThemeData(
-              backgroundColor: VirilColors.stone,
-            ),
+            dialogTheme: const DialogThemeData(backgroundColor: VirilColors.stone),
           ),
           child: child!,
         ),
       );
       if (picked == null) return null;
-      return DateTime(
-        current.year,
-        current.month,
-        current.day,
-        picked.hour,
-        picked.minute,
-      );
+      final date = hasCalendarDate(current) ? current! : DateTime(2000, 1, 1);
+      return DateTime(date.year, date.month, date.day, picked.hour, picked.minute);
     }
 
     await showDialog<void>(
@@ -535,34 +527,32 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (picked != null) setDialogState(() => plannedStartAt = picked);
                     },
                     icon: const Icon(Icons.play_arrow_rounded, size: 17),
-                    label: Text('Начало: ${dateLabel(plannedStartAt)}'),
+                    label: Text('Дата начала: ${dateLabel(plannedStartAt)}'),
                   ),
-                  if (plannedStartAt != null)
-                    OutlinedButton.icon(
-                      onPressed: () async {
-                        final picked = await pickTime(dialogContext, plannedStartAt!, isEnd: false);
-                        if (picked != null) setDialogState(() => plannedStartAt = picked);
-                      },
-                      icon: const Icon(Icons.schedule_rounded, size: 17),
-                      label: Text('Время: ${timeLabel(plannedStartAt)}'),
-                    ),
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final picked = await pickTime(dialogContext, plannedStartAt, isEnd: false);
+                      if (picked != null) setDialogState(() => plannedStartAt = picked);
+                    },
+                    icon: const Icon(Icons.schedule_rounded, size: 17),
+                    label: Text('Время начала: ${timeLabel(plannedStartAt)}'),
+                  ),
                   OutlinedButton.icon(
                     onPressed: () async {
                       final picked = await pickDate(dialogContext, plannedEndAt, isEnd: true);
                       if (picked != null) setDialogState(() => plannedEndAt = picked);
                     },
                     icon: const Icon(Icons.flag_outlined, size: 17),
-                    label: Text('Завершение: ${dateLabel(plannedEndAt)}'),
+                    label: Text('Дата завершения: ${dateLabel(plannedEndAt)}'),
                   ),
-                  if (plannedEndAt != null)
-                    OutlinedButton.icon(
-                      onPressed: () async {
-                        final picked = await pickTime(dialogContext, plannedEndAt!, isEnd: true);
-                        if (picked != null) setDialogState(() => plannedEndAt = picked);
-                      },
-                      icon: const Icon(Icons.alarm_rounded, size: 17),
-                      label: Text('Время: ${timeLabel(plannedEndAt)}'),
-                    ),
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final picked = await pickTime(dialogContext, plannedEndAt, isEnd: true);
+                      if (picked != null) setDialogState(() => plannedEndAt = picked);
+                    },
+                    icon: const Icon(Icons.alarm_rounded, size: 17),
+                    label: Text('Время завершения: ${timeLabel(plannedEndAt)}'),
+                  ),
                   if (plannedStartAt != null || plannedEndAt != null)
                     TextButton.icon(
                       onPressed: () => setDialogState(() {
@@ -570,12 +560,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         plannedEndAt = null;
                       }),
                       icon: const Icon(Icons.close_rounded, size: 15),
-                      label: const Text('Очистить даты'),
+                      label: const Text('Очистить сроки'),
                     ),
                 ]),
+                const SizedBox(height: 5),
+                const Text('Дату и время можно задавать независимо. Например, только 09:00–10:00.',
+                  style: TextStyle(color: VirilColors.muted, fontSize: 10)),
                 const SizedBox(height: 12),
-                const Text('Награда за выполнение', style: TextStyle(color: VirilColors.muted, fontSize: 12)),
-                const SizedBox(height: 7),
+                const Text('НАГРАДА', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
+                const SizedBox(height: 6),
                 Wrap(spacing: 8, children: [
                   ChoiceChip(label: const Text('5 XP'), selected: reward == 5, onSelected: (_) => setDialogState(() => reward = 5)),
                   ChoiceChip(label: const Text('10 XP'), selected: reward == 10, onSelected: (_) => setDialogState(() => reward = 10)),
@@ -588,8 +581,16 @@ class _HomeScreenState extends State<HomeScreen> {
             FilledButton(
               onPressed: () async {
                 if (controller.text.trim().isEmpty) return;
-                if (plannedStartAt != null &&
-                    plannedEndAt != null &&
+                final startHasDate = hasCalendarDate(plannedStartAt);
+                final endHasDate = hasCalendarDate(plannedEndAt);
+                if (startHasDate && endHasDate &&
+                    plannedEndAt!.isBefore(DateTime(plannedStartAt!.year, plannedStartAt!.month, plannedStartAt!.day))) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Дата завершения не может быть раньше даты начала')),
+                  );
+                  return;
+                }
+                if (!startHasDate && !endHasDate && plannedStartAt != null && plannedEndAt != null &&
                     !plannedEndAt!.isAfter(plannedStartAt!)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Время завершения должно быть позже времени начала')),
