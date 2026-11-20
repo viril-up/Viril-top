@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/section_title.dart';
@@ -50,10 +51,64 @@ class _GoalsScreenState extends State<GoalsScreen> {
         helpText: isEnd ? 'Дата завершения' : 'Дата начала',
       );
       if (date == null) return null;
-      final time = await showTimePicker(
+      final initialTime = DateTime(date.year, date.month, date.day, initial.hour, initial.minute);
+      DateTime selectedTime = initialTime;
+      final time = await showModalBottomSheet<DateTime>(
         context: pickerContext,
-        initialTime: TimeOfDay.fromDateTime(initial),
-        helpText: isEnd ? 'Время завершения' : 'Время начала',
+        backgroundColor: VirilColors.stone,
+        isScrollControlled: false,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+          side: BorderSide(color: VirilColors.line),
+        ),
+        builder: (sheetContext) => SizedBox(
+          height: 300,
+          child: SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 14, 10, 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          isEnd ? 'Время завершения' : 'Время начала',
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(sheetContext, selectedTime),
+                        child: const Text('Готово'),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1, color: VirilColors.line),
+                Expanded(
+                  child: CupertinoTheme(
+                    data: const CupertinoThemeData(
+                      brightness: Brightness.dark,
+                      primaryColor: VirilColors.gold,
+                      textTheme: CupertinoTextThemeData(
+                        dateTimePickerTextStyle: TextStyle(
+                          color: VirilColors.text,
+                          fontSize: 23,
+                        ),
+                      ),
+                    ),
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.time,
+                      initialDateTime: initialTime,
+                      use24hFormat: true,
+                      minuteInterval: 1,
+                      onDateTimeChanged: (value) => selectedTime = value,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       );
       if (time == null) return null;
       return DateTime(date.year, date.month, date.day, time.hour, time.minute);
