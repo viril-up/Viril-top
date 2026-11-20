@@ -131,8 +131,8 @@ class _VirilShellState extends State<VirilShell> {
         border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .34))),
         child: const Center(child: Text('🧠', style: TextStyle(fontSize: 23)))),
       const SizedBox(width: 12),
-      const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Viril Top', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Viril Top', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
         Text(VirilStrings.of(context).t('shellSubtitle'), style: const TextStyle(color: VirilColors.muted, fontSize: 11)),
       ])),
     ]));
