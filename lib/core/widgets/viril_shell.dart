@@ -49,9 +49,10 @@ class _VirilShellState extends State<VirilShell> {
           ]),
       ),
     )),
-  );
+    );
+  }
   Widget _header() {
-    if (_index == 1) return const Padding(
+    if (_index == 1) return Padding(
       padding: EdgeInsets.fromLTRB(22, 12, 22, 12),
       child: Align(alignment: Alignment.centerLeft, child: Text(VirilStrings.of(context).t('navDevelopment'),
         style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: VirilColors.text))),
