@@ -33,6 +33,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
   }
 
   Future<void> _createGoal() async {
+    await GoalStore.instance.initialize();
+    if (!mounted) return;
     _titleController.clear();
     _duration = 30;
     _plannedStartAt = null;
@@ -57,7 +59,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
     }
 
     Future<DateTime?> pickClock(BuildContext pickerContext, DateTime current, {required bool isEnd}) async {
-      DateTime selectedTime = current;
+      var selectedHour = current.hour;
+      var selectedMinute = current.minute;
       final result = await showModalBottomSheet<DateTime>(
         context: pickerContext,
         backgroundColor: VirilColors.stone,
@@ -67,22 +70,30 @@ class _GoalsScreenState extends State<GoalsScreen> {
           side: BorderSide(color: VirilColors.line),
         ),
         builder: (sheetContext) => SizedBox(
-          height: 300,
+          height: 292,
           child: SafeArea(
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(18, 14, 10, 4),
+                  padding: const EdgeInsets.fromLTRB(18, 12, 10, 4),
                   child: Row(
                     children: [
                       Expanded(
                         child: Text(
-                          isEnd ? 'Время дедлайна' : 'Время начала',
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                          isEnd ? 'ТОЧНОЕ ВРЕМЯ ДЕДЛАЙНА' : 'ТОЧНОЕ ВРЕМЯ НАЧАЛА',
+                          style: const TextStyle(
+                            color: VirilColors.gold,
+                            fontSize: 11,
+                            letterSpacing: 1.1,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
                       TextButton(
-                        onPressed: () => Navigator.pop(sheetContext, selectedTime),
+                        onPressed: () => Navigator.pop(
+                          sheetContext,
+                          DateTime(current.year, current.month, current.day, selectedHour, selectedMinute),
+                        ),
                         child: const Text('Готово'),
                       ),
                     ],
@@ -97,26 +108,62 @@ class _GoalsScreenState extends State<GoalsScreen> {
                       textTheme: CupertinoTextThemeData(
                         dateTimePickerTextStyle: TextStyle(
                           color: VirilColors.text,
-                          fontSize: 23,
+                          fontSize: 27,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    child: CupertinoDatePicker(
-                      mode: CupertinoDatePickerMode.time,
-                      initialDateTime: current,
-                      use24hFormat: true,
-                      minuteInterval: 1,
-                      onDateTimeChanged: (value) => selectedTime = value,
+                    child: Row(
+                      children: [
+                        const Spacer(),
+                        Expanded(
+                          flex: 3,
+                          child: CupertinoPicker(
+                            scrollController: FixedExtentScrollController(initialItem: selectedHour),
+                            itemExtent: 46,
+                            magnification: 1.12,
+                            useMagnifier: true,
+                            onSelectedItemChanged: (value) => selectedHour = value,
+                            children: List.generate(
+                              24,
+                              (hour) => Center(child: Text(hour.toString().padLeft(2, '0'))),
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(':', style: TextStyle(color: VirilColors.gold, fontSize: 27, fontWeight: FontWeight.w800)),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: CupertinoPicker(
+                            scrollController: FixedExtentScrollController(initialItem: selectedMinute),
+                            itemExtent: 46,
+                            magnification: 1.12,
+                            useMagnifier: true,
+                            onSelectedItemChanged: (value) => selectedMinute = value,
+                            children: List.generate(
+                              60,
+                              (minute) => Center(child: Text(minute.toString().padLeft(2, '0'))),
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                      ],
                     ),
                   ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8),
+                  child: Text('ЧАСЫ                         МИНУТЫ',
+                    style: TextStyle(color: VirilColors.muted, fontSize: 9, letterSpacing: 1.5)),
                 ),
               ],
             ),
           ),
         ),
       );
-      if (result == null) return null;
-      return DateTime(current.year, current.month, current.day, result.hour, result.minute);
+      return result;
     }
 
     final result = await showDialog<bool>(
