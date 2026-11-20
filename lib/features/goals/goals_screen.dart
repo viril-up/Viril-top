@@ -38,22 +38,27 @@ class _GoalsScreenState extends State<GoalsScreen> {
     _plannedStartAt = null;
     _plannedEndAt = null;
 
-    Future<DateTime?> pickDateTime(BuildContext pickerContext, DateTime? current, {required bool isEnd}) async {
+    Future<DateTime?> pickDate(BuildContext pickerContext, DateTime? current, {required bool isEnd}) async {
       final now = DateTime.now();
       final initial = current ?? (isEnd
-          ? (_plannedStartAt?.add(const Duration(hours: 1)) ?? now.add(const Duration(hours: 1)))
+          ? (_plannedStartAt ?? now.add(const Duration(days: 1)))
           : now);
       final date = await showDatePicker(
         context: pickerContext,
         initialDate: initial,
         firstDate: DateTime(2000),
         lastDate: DateTime(2100),
-        helpText: isEnd ? 'Дата завершения' : 'Дата начала',
+        helpText: isEnd ? 'Дата дедлайна' : 'Дата начала',
       );
       if (date == null) return null;
-      final initialTime = DateTime(date.year, date.month, date.day, initial.hour, initial.minute);
-      DateTime selectedTime = initialTime;
-      final time = await showModalBottomSheet<DateTime>(
+      final hour = current?.hour ?? (isEnd ? 23 : 0);
+      final minute = current?.minute ?? (isEnd ? 59 : 0);
+      return DateTime(date.year, date.month, date.day, hour, minute);
+    }
+
+    Future<DateTime?> pickClock(BuildContext pickerContext, DateTime current, {required bool isEnd}) async {
+      DateTime selectedTime = current;
+      final result = await showModalBottomSheet<DateTime>(
         context: pickerContext,
         backgroundColor: VirilColors.stone,
         isScrollControlled: false,
@@ -72,7 +77,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          isEnd ? 'Время завершения' : 'Время начала',
+                          isEnd ? 'Время дедлайна' : 'Время начала',
                           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                         ),
                       ),
@@ -98,7 +103,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     ),
                     child: CupertinoDatePicker(
                       mode: CupertinoDatePickerMode.time,
-                      initialDateTime: initialTime,
+                      initialDateTime: current,
                       use24hFormat: true,
                       minuteInterval: 1,
                       onDateTimeChanged: (value) => selectedTime = value,
@@ -110,8 +115,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
           ),
         ),
       );
-      if (time == null) return null;
-      return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+      if (result == null) return null;
+      return DateTime(current.year, current.month, current.day, result.hour, result.minute);
     }
 
     final result = await showDialog<bool>(
@@ -142,15 +147,15 @@ class _GoalsScreenState extends State<GoalsScreen> {
           const SizedBox(height: 18),
           const Align(
             alignment: Alignment.centerLeft,
-            child: Text('ТОЧНОЕ ВРЕМЯ (НЕОБЯЗАТЕЛЬНО)',
+            child: Text('РАСПИСАНИЕ ЦЕЛИ (НЕОБЯЗАТЕЛЬНО)',
               style: TextStyle(color: VirilColors.gold, fontSize: 10, letterSpacing: 1.1, fontWeight: FontWeight.w800)),
           ),
           const SizedBox(height: 8),
           OutlinedButton.icon(
-            icon: const Icon(Icons.play_arrow_rounded, size: 18),
-            label: Text(_plannedStartAt == null ? 'Выбрать начало' : 'Начало: '+_dateTime(_plannedStartAt!)),
+            icon: const Icon(Icons.calendar_today_rounded, size: 18),
+            label: Text(_plannedStartAt == null ? 'Дата начала' : 'Дата начала: '+_date(_plannedStartAt!)),
             onPressed: () async {
-              final value = await pickDateTime(context, _plannedStartAt, isEnd: false);
+              final value = await pickDate(context, _plannedStartAt, isEnd: false);
               if (value == null) return;
               setDialogState(() {
                 _plannedStartAt = value;
@@ -159,14 +164,42 @@ class _GoalsScreenState extends State<GoalsScreen> {
             },
           ),
           OutlinedButton.icon(
-            icon: const Icon(Icons.flag_rounded, size: 18),
-            label: Text(_plannedEndAt == null ? 'Выбрать завершение' : 'Завершение: '+_dateTime(_plannedEndAt!)),
+            icon: const Icon(Icons.access_time_rounded, size: 18),
+            label: Text(_plannedStartAt == null ? 'Время начала (сначала выбери дату)' : 'Время начала: '+_plannedStartAt!.hour.toString().padLeft(2, '0')+':'+_plannedStartAt!.minute.toString().padLeft(2, '0')),
+            onPressed: _plannedStartAt == null ? null : () async {
+              final value = await pickClock(context, _plannedStartAt!, isEnd: false);
+              if (value == null) return;
+              setDialogState(() {
+                _plannedStartAt = value;
+                if (_plannedEndAt != null && !_plannedEndAt!.isAfter(value)) _plannedEndAt = null;
+              });
+            },
+          ),
+          const SizedBox(height: 6),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.event_rounded, size: 18),
+            label: Text(_plannedEndAt == null ? 'Дата завершения / дедлайн' : 'Дата дедлайна: '+_date(_plannedEndAt!)),
             onPressed: () async {
-              final value = await pickDateTime(context, _plannedEndAt, isEnd: true);
+              final value = await pickDate(context, _plannedEndAt, isEnd: true);
               if (value == null) return;
               if (_plannedStartAt != null && !value.isAfter(_plannedStartAt!)) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Время завершения должно быть позже времени начала')),
+                  const SnackBar(content: Text('Дедлайн должен быть позже времени начала')),
+                );
+                return;
+              }
+              setDialogState(() => _plannedEndAt = value);
+            },
+          ),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.alarm_rounded, size: 18),
+            label: Text(_plannedEndAt == null ? 'Время дедлайна (сначала выбери дату)' : 'Время дедлайна: '+_plannedEndAt!.hour.toString().padLeft(2, '0')+':'+_plannedEndAt!.minute.toString().padLeft(2, '0')),
+            onPressed: _plannedEndAt == null ? null : () async {
+              final value = await pickClock(context, _plannedEndAt!, isEnd: true);
+              if (value == null) return;
+              if (_plannedStartAt != null && !value.isAfter(_plannedStartAt!)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Дедлайн должен быть позже времени начала')),
                 );
                 return;
               }
@@ -179,7 +212,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
               child: TextButton.icon(
                 onPressed: () => setDialogState(() { _plannedStartAt = null; _plannedEndAt = null; }),
                 icon: const Icon(Icons.close, size: 15),
-                label: const Text('Сбросить время'),
+                label: const Text('Сбросить расписание'),
               ),
             ),
         ])),
