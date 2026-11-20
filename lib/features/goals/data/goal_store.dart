@@ -80,6 +80,7 @@ class GoalStore extends ChangeNotifier {
   SharedPreferences? _prefs;
   final List<VirilGoal> _goals = [];
   bool _ready = false;
+  Future<void>? _initializing;
 
   List<VirilGoal> get goals => List.unmodifiable(_goals);
   List<VirilGoal> get activeGoals => _goals.where((goal) => !goal.isArchived).toList();
@@ -101,8 +102,12 @@ class GoalStore extends ChangeNotifier {
     return measurable.fold(0, (sum, goal) => sum + goal.progress) ~/ measurable.length;
   }
 
-  Future<void> initialize() async {
-    if (_ready) return;
+  Future<void> initialize() {
+    if (_ready) return Future<void>.value();
+    return _initializing ??= _loadStoredGoals();
+  }
+
+  Future<void> _loadStoredGoals() async {
     _prefs = await SharedPreferences.getInstance();
     final raw = _prefs!.getString(_storageKey);
     if (raw != null) {
@@ -118,6 +123,7 @@ class GoalStore extends ChangeNotifier {
   }
 
   Future<void> addGoal(String title, int durationDays, {DateTime? plannedStartAt, DateTime? plannedEndAt}) async {
+    await initialize();
     final value = title.trim();
     if (value.isEmpty) return;
     _goals.insert(0, VirilGoal(
