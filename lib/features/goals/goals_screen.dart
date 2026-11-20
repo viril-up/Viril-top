@@ -17,8 +17,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
   int _duration = 30;
   DateTime? _plannedStartAt;
   DateTime? _plannedEndAt;
-  int? _plannedStartMinutes;
-  int? _plannedEndMinutes;
   bool _showArchived = false;
 
   @override
@@ -41,8 +39,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
     _duration = 30;
     _plannedStartAt = null;
     _plannedEndAt = null;
-    _plannedStartMinutes = null;
-    _plannedEndMinutes = null;
 
     Future<DateTime?> pickDate(BuildContext pickerContext, DateTime? current, {required bool isEnd}) async {
       final now = DateTime.now();
@@ -57,13 +53,15 @@ class _GoalsScreenState extends State<GoalsScreen> {
         helpText: isEnd ? 'Дата дедлайна' : 'Дата начала',
       );
       if (date == null) return null;
-      return DateTime(date.year, date.month, date.day);
+      final hour = current?.hour ?? (isEnd ? 23 : 0);
+      final minute = current?.minute ?? (isEnd ? 59 : 0);
+      return DateTime(date.year, date.month, date.day, hour, minute);
     }
 
-    Future<int?> pickClock(BuildContext pickerContext, int? currentMinutes, {required bool isEnd}) async {
-      var selectedHour = (currentMinutes ?? (isEnd ? 600 : 540)) ~/ 60;
-      var selectedMinute = (currentMinutes ?? (isEnd ? 60 : 540)) % 60;
-      final result = await showModalBottomSheet<int>(
+    Future<DateTime?> pickClock(BuildContext pickerContext, DateTime current, {required bool isEnd}) async {
+      var selectedHour = current.hour;
+      var selectedMinute = current.minute;
+      final result = await showModalBottomSheet<DateTime>(
         context: pickerContext,
         backgroundColor: VirilColors.stone,
         isScrollControlled: false,
@@ -82,12 +80,20 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          isEnd ? 'ВРЕМЯ ЗАВЕРШЕНИЯ' : 'ВРЕМЯ НАЧАЛА',
-                          style: const TextStyle(color: VirilColors.gold, fontSize: 11, letterSpacing: 1.1, fontWeight: FontWeight.w800),
+                          isEnd ? 'ТОЧНОЕ ВРЕМЯ ДЕДЛАЙНА' : 'ТОЧНОЕ ВРЕМЯ НАЧАЛА',
+                          style: const TextStyle(
+                            color: VirilColors.gold,
+                            fontSize: 11,
+                            letterSpacing: 1.1,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
                       TextButton(
-                        onPressed: () => Navigator.pop(sheetContext, selectedHour * 60 + selectedMinute),
+                        onPressed: () => Navigator.pop(
+                          sheetContext,
+                          DateTime(current.year, current.month, current.day, selectedHour, selectedMinute),
+                        ),
                         child: const Text('Готово'),
                       ),
                     ],
@@ -100,7 +106,11 @@ class _GoalsScreenState extends State<GoalsScreen> {
                       brightness: Brightness.dark,
                       primaryColor: VirilColors.gold,
                       textTheme: CupertinoTextThemeData(
-                        dateTimePickerTextStyle: TextStyle(color: VirilColors.text, fontSize: 27, fontWeight: FontWeight.w600),
+                        dateTimePickerTextStyle: TextStyle(
+                          color: VirilColors.text,
+                          fontSize: 27,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     child: Row(
@@ -114,7 +124,10 @@ class _GoalsScreenState extends State<GoalsScreen> {
                             magnification: 1.12,
                             useMagnifier: true,
                             onSelectedItemChanged: (value) => selectedHour = value,
-                            children: List.generate(24, (hour) => Center(child: Text(hour.toString().padLeft(2, '0')))),
+                            children: List.generate(
+                              24,
+                              (hour) => Center(child: Text(hour.toString().padLeft(2, '0'))),
+                            ),
                           ),
                         ),
                         const Padding(
@@ -129,7 +142,10 @@ class _GoalsScreenState extends State<GoalsScreen> {
                             magnification: 1.12,
                             useMagnifier: true,
                             onSelectedItemChanged: (value) => selectedMinute = value,
-                            children: List.generate(60, (minute) => Center(child: Text(minute.toString().padLeft(2, '0')))),
+                            children: List.generate(
+                              60,
+                              (minute) => Center(child: Text(minute.toString().padLeft(2, '0'))),
+                            ),
                           ),
                         ),
                         const Spacer(),
@@ -139,7 +155,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
                 ),
                 const Padding(
                   padding: EdgeInsets.only(bottom: 8),
-                  child: Text('ЧАСЫ                         МИНУТЫ', style: TextStyle(color: VirilColors.muted, fontSize: 9, letterSpacing: 1.5)),
+                  child: Text('ЧАСЫ                         МИНУТЫ',
+                    style: TextStyle(color: VirilColors.muted, fontSize: 9, letterSpacing: 1.5)),
                 ),
               ],
             ),
@@ -183,48 +200,64 @@ class _GoalsScreenState extends State<GoalsScreen> {
           const SizedBox(height: 8),
           OutlinedButton.icon(
             icon: const Icon(Icons.calendar_today_rounded, size: 18),
-            label: Text(_plannedStartAt == null ? 'Дата начала: не задана' : 'Дата начала: ${_date(_plannedStartAt!)}'),
+            label: Text(_plannedStartAt == null ? 'Дата начала' : 'Дата начала: '+_date(_plannedStartAt!)),
             onPressed: () async {
               final value = await pickDate(context, _plannedStartAt, isEnd: false);
-              if (value != null) setDialogState(() => _plannedStartAt = value);
+              if (value == null) return;
+              setDialogState(() {
+                _plannedStartAt = value;
+                if (_plannedEndAt != null && !_plannedEndAt!.isAfter(value)) _plannedEndAt = null;
+              });
             },
           ),
           OutlinedButton.icon(
             icon: const Icon(Icons.access_time_rounded, size: 18),
-            label: Text('Время начала: ${_clockLabel(_plannedStartMinutes)}'),
-            onPressed: () async {
-              final value = await pickClock(context, _plannedStartMinutes, isEnd: false);
-              if (value != null) setDialogState(() => _plannedStartMinutes = value);
+            label: Text(_plannedStartAt == null ? 'Время начала (сначала выбери дату)' : 'Время начала: '+_plannedStartAt!.hour.toString().padLeft(2, '0')+':'+_plannedStartAt!.minute.toString().padLeft(2, '0')),
+            onPressed: _plannedStartAt == null ? null : () async {
+              final value = await pickClock(context, _plannedStartAt!, isEnd: false);
+              if (value == null) return;
+              setDialogState(() {
+                _plannedStartAt = value;
+                if (_plannedEndAt != null && !_plannedEndAt!.isAfter(value)) _plannedEndAt = null;
+              });
             },
           ),
           const SizedBox(height: 6),
           OutlinedButton.icon(
             icon: const Icon(Icons.event_rounded, size: 18),
-            label: Text(_plannedEndAt == null ? 'Дата завершения: не задана' : 'Дата завершения: ${_date(_plannedEndAt!)}'),
+            label: Text(_plannedEndAt == null ? 'Дата завершения / дедлайн' : 'Дата дедлайна: '+_date(_plannedEndAt!)),
             onPressed: () async {
               final value = await pickDate(context, _plannedEndAt, isEnd: true);
-              if (value != null) setDialogState(() => _plannedEndAt = value);
+              if (value == null) return;
+              if (_plannedStartAt != null && !value.isAfter(_plannedStartAt!)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Дедлайн должен быть позже времени начала')),
+                );
+                return;
+              }
+              setDialogState(() => _plannedEndAt = value);
             },
           ),
           OutlinedButton.icon(
             icon: const Icon(Icons.alarm_rounded, size: 18),
-            label: Text('Время завершения: ${_clockLabel(_plannedEndMinutes)}'),
-            onPressed: () async {
-              final value = await pickClock(context, _plannedEndMinutes, isEnd: true);
-              if (value != null) setDialogState(() => _plannedEndMinutes = value);
+            label: Text(_plannedEndAt == null ? 'Время дедлайна (сначала выбери дату)' : 'Время дедлайна: '+_plannedEndAt!.hour.toString().padLeft(2, '0')+':'+_plannedEndAt!.minute.toString().padLeft(2, '0')),
+            onPressed: _plannedEndAt == null ? null : () async {
+              final value = await pickClock(context, _plannedEndAt!, isEnd: true);
+              if (value == null) return;
+              if (_plannedStartAt != null && !value.isAfter(_plannedStartAt!)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Дедлайн должен быть позже времени начала')),
+                );
+                return;
+              }
+              setDialogState(() => _plannedEndAt = value);
             },
           ),
-          const Text('Даты и время можно указывать независимо друг от друга.', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
-          if (_plannedStartAt != null || _plannedEndAt != null || _plannedStartMinutes != null || _plannedEndMinutes != null)
+          if (_plannedStartAt != null || _plannedEndAt != null)
             Align(
               alignment: Alignment.centerRight,
               child: TextButton.icon(
-                onPressed: () => setDialogState(() {
-                  _plannedStartAt = null;
-                  _plannedEndAt = null;
-                  _plannedStartMinutes = null;
-                  _plannedEndMinutes = null;
-                }),
+                onPressed: () => setDialogState(() { _plannedStartAt = null; _plannedEndAt = null; }),
                 icon: const Icon(Icons.close, size: 15),
                 label: const Text('Сбросить расписание'),
               ),
@@ -242,8 +275,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
         _duration,
         plannedStartAt: _plannedStartAt,
         plannedEndAt: _plannedEndAt,
-        plannedStartMinutes: _plannedStartMinutes,
-        plannedEndMinutes: _plannedEndMinutes,
       );
     }
   }
@@ -278,10 +309,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   String _dateTime(DateTime value) =>
       '${_date(value)}  ${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
-
-  String _clockLabel(int? minutes) => minutes == null
-      ? 'Не задано'
-      : '${(minutes ~/ 60).toString().padLeft(2, '0')}:${(minutes % 60).toString().padLeft(2, '0')}';
 
   @override
   Widget build(BuildContext context) {
@@ -373,11 +400,11 @@ class _GoalsScreenState extends State<GoalsScreen> {
             const SizedBox(width: 12),
             Text('${goal.progress}%', style: const TextStyle(color: VirilColors.gold, fontWeight: FontWeight.w800, fontSize: 12)),
           ]),
-          if (goal.plannedStartAt != null || goal.plannedEndAt != null || goal.plannedStartMinutes != null || goal.plannedEndMinutes != null)
+          if (goal.plannedStartAt != null || goal.plannedEndAt != null)
             Padding(
               padding: const EdgeInsets.only(top: 7),
               child: Text(
-                '${goal.plannedStartAt == null ? '' : 'Дата старта: ${_date(goal.plannedStartAt!)}'}${goal.plannedStartMinutes == null ? '' : '${goal.plannedStartAt == null ? '' : '   •   '}Старт: ${_clockLabel(goal.plannedStartMinutes)}'}${goal.plannedEndAt == null ? '' : '${goal.plannedStartAt != null || goal.plannedStartMinutes != null ? '   •   ' : ''}Дата финиша: ${_date(goal.plannedEndAt!)}'}${goal.plannedEndMinutes == null ? '' : '${goal.plannedEndAt != null || goal.plannedStartAt != null || goal.plannedStartMinutes != null ? '   •   ' : ''}Финиш: ${_clockLabel(goal.plannedEndMinutes)}'}',
+                '${goal.plannedStartAt == null ? '' : 'Старт: ${_dateTime(goal.plannedStartAt!)}'}${goal.plannedStartAt != null && goal.plannedEndAt != null ? '   •   ' : ''}${goal.plannedEndAt == null ? '' : 'Финиш: ${_dateTime(goal.plannedEndAt!)}'}',
                 style: const TextStyle(color: VirilColors.muted, fontSize: 10),
               ),
             ),
