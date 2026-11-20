@@ -54,7 +54,8 @@ class VirilStrings {
   static VirilStrings of(BuildContext context) =>
       Localizations.of<VirilStrings>(context, VirilStrings)!;
   String t(String key) => _translations[locale.languageCode]?[key] ??
-      _translations['ru']![key] ?? key;
+      _navigationTranslations[locale.languageCode]?[key] ??
+      _translations['ru']![key] ?? _navigationTranslations['ru']?[key] ?? key;
 
   static const delegate = _VirilStringsDelegate();
 }
@@ -419,5 +420,152 @@ const Map<String, Map<String, String>> _translations = {
     "addFirst": "Ilkinji maksady döretmek üçin + bas",
     "cancel": "Ýatyr",
     "confirm": "Tassykla"
+  }
+};
+
+
+const Map<String, Map<String, String>> _navigationTranslations = {
+  "ru": {
+    "navHome": "Главная",
+    "navDevelopment": "Развитие",
+    "navResources": "Ресурсы",
+    "navProgress": "Прогресс",
+    "navProfile": "Профиль",
+    "shellSubtitle": "Система дисциплины и целей",
+    "widgets": "Виджеты",
+    "notifications": "Уведомления",
+    "notificationsSoon": "Уведомления появятся в одном из следующих обновлений."
+  },
+  "uk": {
+    "navHome": "Головна",
+    "navDevelopment": "Розвиток",
+    "navResources": "Ресурси",
+    "navProgress": "Прогрес",
+    "navProfile": "Профіль",
+    "shellSubtitle": "Система дисципліни та цілей",
+    "widgets": "Віджети",
+    "notifications": "Сповіщення",
+    "notificationsSoon": "Сповіщення з’являться в одному з наступних оновлень."
+  },
+  "en": {
+    "navHome": "Home",
+    "navDevelopment": "Development",
+    "navResources": "Resources",
+    "navProgress": "Progress",
+    "navProfile": "Profile",
+    "shellSubtitle": "A system for discipline and goals",
+    "widgets": "Widgets",
+    "notifications": "Notifications",
+    "notificationsSoon": "Notifications will arrive in a future update."
+  },
+  "fr": {
+    "navHome": "Accueil",
+    "navDevelopment": "Développement",
+    "navResources": "Ressources",
+    "navProgress": "Progrès",
+    "navProfile": "Profil",
+    "shellSubtitle": "Un système de discipline et d’objectifs",
+    "widgets": "Widgets",
+    "notifications": "Notifications",
+    "notificationsSoon": "Les notifications arriveront dans une prochaine mise à jour."
+  },
+  "de": {
+    "navHome": "Start",
+    "navDevelopment": "Entwicklung",
+    "navResources": "Ressourcen",
+    "navProgress": "Fortschritt",
+    "navProfile": "Profil",
+    "shellSubtitle": "Ein System für Disziplin und Ziele",
+    "widgets": "Widgets",
+    "notifications": "Benachrichtigungen",
+    "notificationsSoon": "Benachrichtigungen folgen in einem zukünftigen Update."
+  },
+  "es": {
+    "navHome": "Inicio",
+    "navDevelopment": "Desarrollo",
+    "navResources": "Recursos",
+    "navProgress": "Progreso",
+    "navProfile": "Perfil",
+    "shellSubtitle": "Un sistema de disciplina y objetivos",
+    "widgets": "Widgets",
+    "notifications": "Notificaciones",
+    "notificationsSoon": "Las notificaciones llegarán en una próxima actualización."
+  },
+  "zh": {
+    "navHome": "主页",
+    "navDevelopment": "成长",
+    "navResources": "资源",
+    "navProgress": "进度",
+    "navProfile": "个人资料",
+    "shellSubtitle": "自律与目标管理系统",
+    "widgets": "小组件",
+    "notifications": "通知",
+    "notificationsSoon": "通知功能将在后续更新中推出。"
+  },
+  "ko": {
+    "navHome": "홈",
+    "navDevelopment": "성장",
+    "navResources": "자료",
+    "navProgress": "진행",
+    "navProfile": "프로필",
+    "shellSubtitle": "규율과 목표 관리 시스템",
+    "widgets": "위젯",
+    "notifications": "알림",
+    "notificationsSoon": "알림 기능은 추후 업데이트에서 제공됩니다."
+  },
+  "ja": {
+    "navHome": "ホーム",
+    "navDevelopment": "成長",
+    "navResources": "リソース",
+    "navProgress": "進捗",
+    "navProfile": "プロフィール",
+    "shellSubtitle": "規律と目標のためのシステム",
+    "widgets": "ウィジェット",
+    "notifications": "通知",
+    "notificationsSoon": "通知機能は今後のアップデートで追加されます。"
+  },
+  "hi": {
+    "navHome": "होम",
+    "navDevelopment": "विकास",
+    "navResources": "संसाधन",
+    "navProgress": "प्रगति",
+    "navProfile": "प्रोफ़ाइल",
+    "shellSubtitle": "अनुशासन और लक्ष्यों की प्रणाली",
+    "widgets": "विजेट",
+    "notifications": "सूचनाएँ",
+    "notificationsSoon": "सूचनाएँ भविष्य के अपडेट में उपलब्ध होंगी।"
+  },
+  "ar": {
+    "navHome": "الرئيسية",
+    "navDevelopment": "التطوير",
+    "navResources": "الموارد",
+    "navProgress": "التقدم",
+    "navProfile": "الملف الشخصي",
+    "shellSubtitle": "نظام للانضباط والأهداف",
+    "widgets": "الأدوات",
+    "notifications": "الإشعارات",
+    "notificationsSoon": "ستتوفر الإشعارات في تحديث قادم."
+  },
+  "tr": {
+    "navHome": "Ana Sayfa",
+    "navDevelopment": "Gelişim",
+    "navResources": "Kaynaklar",
+    "navProgress": "İlerleme",
+    "navProfile": "Profil",
+    "shellSubtitle": "Disiplin ve hedef sistemi",
+    "widgets": "Bileşenler",
+    "notifications": "Bildirimler",
+    "notificationsSoon": "Bildirimler gelecek güncellemelerden birinde sunulacak."
+  },
+  "tk": {
+    "navHome": "Baş sahypa",
+    "navDevelopment": "Ösüş",
+    "navResources": "Çeşmeler",
+    "navProgress": "Öňe gidiş",
+    "navProfile": "Profil",
+    "shellSubtitle": "Düzgün-nyzam we maksatlar ulgamy",
+    "widgets": "Widjetler",
+    "notifications": "Bildirişler",
+    "notificationsSoon": "Bildirişler geljekki täzelenmeleriň birinde goşular."
   }
 };
