@@ -166,6 +166,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
+        image: const DecorationImage(
+          image: AssetImage('assets/section_cards/global_league/global-league.png'),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(Color(0x99000000), BlendMode.darken),
+        ),
         gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
           stops: [0, .18, .48, 1],
           colors: [Color(0x663A3F47), Color(0x38252B34), Color(0x1C11161E), Color(0x0806080C)]),
