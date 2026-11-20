@@ -407,101 +407,195 @@ class _HomeScreenState extends State<HomeScreen> {
     var priority = false;
     DateTime? plannedStartAt;
     DateTime? plannedEndAt;
+
     String dateLabel(DateTime? value) {
       if (value == null) return 'Не задана';
       return '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year}';
     }
+
+    String timeLabel(DateTime? value) {
+      if (value == null) return 'Выбрать время';
+      return '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
+    }
+
+    Future<DateTime?> pickDate(
+      BuildContext pickerContext,
+      DateTime? current, {
+      required bool isEnd,
+    }) async {
+      final initial = current ?? (isEnd
+          ? (plannedStartAt ?? DateTime.now())
+          : DateTime.now());
+      final picked = await showDatePicker(
+        context: pickerContext,
+        initialDate: initial,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+        helpText: isEnd ? 'Дата завершения' : 'Дата начала',
+      );
+      if (picked == null) return null;
+      final defaultHour = isEnd
+          ? (plannedStartAt != null &&
+                  plannedStartAt!.year == picked.year &&
+                  plannedStartAt!.month == picked.month &&
+                  plannedStartAt!.day == picked.day
+              ? (plannedStartAt!.hour + 1).clamp(0, 23)
+              : 10)
+          : 9;
+      return DateTime(
+        picked.year,
+        picked.month,
+        picked.day,
+        current?.hour ?? defaultHour,
+        current?.minute ?? 0,
+      );
+    }
+
+    Future<DateTime?> pickTime(
+      BuildContext pickerContext,
+      DateTime current, {
+      required bool isEnd,
+    }) async {
+      final picked = await showTimePicker(
+        context: pickerContext,
+        initialTime: TimeOfDay(hour: current.hour, minute: current.minute),
+        helpText: isEnd ? 'ВРЕМЯ ЗАВЕРШЕНИЯ' : 'ВРЕМЯ НАЧАЛА',
+        builder: (context, child) => Theme(
+          data: Theme.of(context).copyWith(
+            brightness: Brightness.dark,
+            colorScheme: const ColorScheme.dark(
+              primary: VirilColors.gold,
+              surface: VirilColors.stone,
+              onSurface: VirilColors.text,
+            ),
+            dialogTheme: const DialogThemeData(
+              backgroundColor: VirilColors.stone,
+            ),
+          ),
+          child: child!,
+        ),
+      );
+      if (picked == null) return null;
+      return DateTime(
+        current.year,
+        current.month,
+        current.day,
+        picked.hour,
+        picked.minute,
+      );
+    }
+
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           backgroundColor: VirilColors.stone,
           title: const Text('Новая цель'),
-          content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            TextField(
-              controller: controller,
-              autofocus: true,
-              maxLength: 90,
-              decoration: const InputDecoration(hintText: 'Напиши свою цель'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: controller,
+                  autofocus: true,
+                  maxLength: 90,
+                  decoration: const InputDecoration(hintText: 'Напиши свою цель'),
+                ),
+                const SizedBox(height: 12),
+                const Text('Период', style: TextStyle(color: VirilColors.muted, fontSize: 12)),
+                const SizedBox(height: 7),
+                Wrap(spacing: 6, children: [
+                  for (final entry in _periods.entries)
+                    ChoiceChip(
+                      label: Text(entry.value),
+                      selected: goalPeriod == entry.key,
+                      onSelected: (_) => setDialogState(() => goalPeriod = entry.key),
+                    ),
+                ]),
+                if (goalPeriod == 'day') ...[
+                  const SizedBox(height: 10),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    value: priority,
+                    activeColor: VirilColors.gold,
+                    title: const Text('Главная приоритетная цель', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                    subtitle: const Text('Будет выделена в списке дня', style: TextStyle(fontSize: 10, color: VirilColors.muted)),
+                    onChanged: (value) => setDialogState(() => priority = value),
+                  ),
+                ],
+                const SizedBox(height: 14),
+                const Text('СРОКИ ДОСТИЖЕНИЯ · НЕОБЯЗАТЕЛЬНО',
+                  style: TextStyle(color: VirilColors.gold, fontSize: 10, letterSpacing: 1.1, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 8),
+                Wrap(spacing: 8, runSpacing: 8, children: [
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final picked = await pickDate(dialogContext, plannedStartAt, isEnd: false);
+                      if (picked != null) setDialogState(() => plannedStartAt = picked);
+                    },
+                    icon: const Icon(Icons.play_arrow_rounded, size: 17),
+                    label: Text('Начало: ${dateLabel(plannedStartAt)}'),
+                  ),
+                  if (plannedStartAt != null)
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        final picked = await pickTime(dialogContext, plannedStartAt!, isEnd: false);
+                        if (picked != null) setDialogState(() => plannedStartAt = picked);
+                      },
+                      icon: const Icon(Icons.schedule_rounded, size: 17),
+                      label: Text('Время: ${timeLabel(plannedStartAt)}'),
+                    ),
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final picked = await pickDate(dialogContext, plannedEndAt, isEnd: true);
+                      if (picked != null) setDialogState(() => plannedEndAt = picked);
+                    },
+                    icon: const Icon(Icons.flag_outlined, size: 17),
+                    label: Text('Завершение: ${dateLabel(plannedEndAt)}'),
+                  ),
+                  if (plannedEndAt != null)
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        final picked = await pickTime(dialogContext, plannedEndAt!, isEnd: true);
+                        if (picked != null) setDialogState(() => plannedEndAt = picked);
+                      },
+                      icon: const Icon(Icons.alarm_rounded, size: 17),
+                      label: Text('Время: ${timeLabel(plannedEndAt)}'),
+                    ),
+                  if (plannedStartAt != null || plannedEndAt != null)
+                    TextButton.icon(
+                      onPressed: () => setDialogState(() {
+                        plannedStartAt = null;
+                        plannedEndAt = null;
+                      }),
+                      icon: const Icon(Icons.close_rounded, size: 15),
+                      label: const Text('Очистить даты'),
+                    ),
+                ]),
+                const SizedBox(height: 12),
+                const Text('Награда за выполнение', style: TextStyle(color: VirilColors.muted, fontSize: 12)),
+                const SizedBox(height: 7),
+                Wrap(spacing: 8, children: [
+                  ChoiceChip(label: const Text('5 XP'), selected: reward == 5, onSelected: (_) => setDialogState(() => reward = 5)),
+                  ChoiceChip(label: const Text('10 XP'), selected: reward == 10, onSelected: (_) => setDialogState(() => reward = 10)),
+                ]),
+              ],
             ),
-            const SizedBox(height: 12),
-            const Text('Период', style: TextStyle(color: VirilColors.muted, fontSize: 12)),
-            const SizedBox(height: 7),
-            Wrap(spacing: 6, children: [
-              for (final entry in _periods.entries)
-                ChoiceChip(
-                  label: Text(entry.value),
-                  selected: goalPeriod == entry.key,
-                  onSelected: (_) => setDialogState(() => goalPeriod = entry.key),
-                ),
-            ]),
-            if (goalPeriod == 'day') ...[
-              const SizedBox(height: 10),
-              SwitchListTile.adaptive(
-                contentPadding: EdgeInsets.zero,
-                value: priority,
-                activeColor: VirilColors.gold,
-                title: const Text('Главная приоритетная цель', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
-                subtitle: const Text('Будет выделена в списке дня', style: TextStyle(fontSize: 10, color: VirilColors.muted)),
-                onChanged: (value) => setDialogState(() => priority = value),
-              ),
-            ],
-            const SizedBox(height: 14),
-            const Text('СРОКИ ДОСТИЖЕНИЯ · НЕОБЯЗАТЕЛЬНО',
-              style: TextStyle(color: VirilColors.gold, fontSize: 10, letterSpacing: 1.1, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 8),
-            Wrap(spacing: 8, runSpacing: 8, children: [
-              OutlinedButton.icon(
-                onPressed: () async {
-                  final picked = await showDatePicker(
-                    context: dialogContext,
-                    initialDate: plannedStartAt ?? DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: plannedEndAt ?? DateTime(2100),
-                    helpText: 'Когда планируешь начать?',
-                  );
-                  if (picked != null) setDialogState(() => plannedStartAt = picked);
-                },
-                icon: const Icon(Icons.play_arrow_rounded, size: 17),
-                label: Text('Начало: ${dateLabel(plannedStartAt)}'),
-              ),
-              OutlinedButton.icon(
-                onPressed: () async {
-                  final picked = await showDatePicker(
-                    context: dialogContext,
-                    initialDate: plannedEndAt ?? plannedStartAt ?? DateTime.now(),
-                    firstDate: plannedStartAt ?? DateTime(2000),
-                    lastDate: DateTime(2100),
-                    helpText: 'К какому сроку достичь?',
-                  );
-                  if (picked != null) setDialogState(() => plannedEndAt = picked);
-                },
-                icon: const Icon(Icons.flag_outlined, size: 17),
-                label: Text('Завершение: ${dateLabel(plannedEndAt)}'),
-              ),
-              if (plannedStartAt != null || plannedEndAt != null)
-                TextButton.icon(
-                  onPressed: () => setDialogState(() {
-                    plannedStartAt = null;
-                    plannedEndAt = null;
-                  }),
-                  icon: const Icon(Icons.close_rounded, size: 15),
-                  label: const Text('Очистить даты'),
-                ),
-            ]),
-            const SizedBox(height: 12),
-            const Text('Награда за выполнение', style: TextStyle(color: VirilColors.muted, fontSize: 12)),
-            const SizedBox(height: 7),
-            Wrap(spacing: 8, children: [
-              ChoiceChip(label: const Text('5 XP'), selected: reward == 5, onSelected: (_) => setDialogState(() => reward = 5)),
-              ChoiceChip(label: const Text('10 XP'), selected: reward == 10, onSelected: (_) => setDialogState(() => reward = 10)),
-            ]),
-          ]),
+          ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Отмена')),
             FilledButton(
               onPressed: () async {
                 if (controller.text.trim().isEmpty) return;
+                if (plannedStartAt != null &&
+                    plannedEndAt != null &&
+                    !plannedEndAt!.isAfter(plannedStartAt!)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Время завершения должно быть позже времени начала')),
+                  );
+                  return;
+                }
                 await VirilStore.instance.addTask(
                   controller.text, 'Личная цель', period: goalPeriod, xpReward: reward,
                   isPriority: goalPeriod == 'day' && priority,
@@ -545,7 +639,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 String _formatTaskDate(DateTime value) =>
-    '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year}';
+    '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year} ${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
 
 class _GoalTile extends StatelessWidget {
   const _GoalTile({required this.task});
