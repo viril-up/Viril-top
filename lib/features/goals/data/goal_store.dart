@@ -27,8 +27,6 @@ class VirilGoal {
     this.completedAt,
     this.plannedStartAt,
     this.plannedEndAt,
-    this.plannedStartMinutes,
-    this.plannedEndMinutes,
   });
 
   final String id;
@@ -40,15 +38,8 @@ class VirilGoal {
   DateTime? completedAt;
   final DateTime? plannedStartAt;
   final DateTime? plannedEndAt;
-  final int? plannedStartMinutes;
-  final int? plannedEndMinutes;
 
-  DateTime get deadline {
-    if (plannedEndAt == null) return startedAt.add(Duration(days: durationDays));
-    final minutes = plannedEndMinutes;
-    if (minutes == null) return DateTime(plannedEndAt!.year, plannedEndAt!.month, plannedEndAt!.day, 23, 59);
-    return DateTime(plannedEndAt!.year, plannedEndAt!.month, plannedEndAt!.day, minutes ~/ 60, minutes % 60);
-  }
+  DateTime get deadline => plannedEndAt ?? startedAt.add(Duration(days: durationDays));
   int get completedSteps => steps.where((step) => step.isDone).length;
   int get progress => steps.isEmpty ? 0 : completedSteps * 100 ~/ steps.length;
   bool get isCompleted => steps.isNotEmpty && completedSteps == steps.length;
@@ -63,8 +54,6 @@ class VirilGoal {
     'completedAt': completedAt?.toIso8601String(),
     'plannedStartAt': plannedStartAt?.toIso8601String(),
     'plannedEndAt': plannedEndAt?.toIso8601String(),
-    'plannedStartMinutes': plannedStartMinutes,
-    'plannedEndMinutes': plannedEndMinutes,
     'steps': steps.map((step) => step.toJson()).toList(),
   };
 
@@ -77,19 +66,10 @@ class VirilGoal {
     completedAt: json['completedAt'] == null ? null : DateTime.tryParse(json['completedAt'] as String),
     plannedStartAt: json['plannedStartAt'] == null ? null : DateTime.tryParse(json['plannedStartAt'] as String),
     plannedEndAt: json['plannedEndAt'] == null ? null : DateTime.tryParse(json['plannedEndAt'] as String),
-    plannedStartMinutes: json['plannedStartMinutes'] as int? ?? _minutesFromLegacy(json['plannedStartAt']),
-    plannedEndMinutes: json['plannedEndMinutes'] as int? ?? _minutesFromLegacy(json['plannedEndAt']),
     steps: (json['steps'] as List<dynamic>? ?? [])
         .map((item) => VirilGoalStep.fromJson(item as Map<String, dynamic>))
         .toList(),
   );
-
-  static int? _minutesFromLegacy(dynamic value) {
-    if (value is! String) return null;
-    final date = DateTime.tryParse(value);
-    if (date == null || (date.hour == 0 && date.minute == 0)) return null;
-    return date.hour * 60 + date.minute;
-  }
 }
 
 class GoalStore extends ChangeNotifier {
@@ -142,7 +122,7 @@ class GoalStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addGoal(String title, int durationDays, {DateTime? plannedStartAt, DateTime? plannedEndAt, int? plannedStartMinutes, int? plannedEndMinutes}) async {
+  Future<void> addGoal(String title, int durationDays, {DateTime? plannedStartAt, DateTime? plannedEndAt}) async {
     await initialize();
     final value = title.trim();
     if (value.isEmpty) return;
@@ -153,8 +133,6 @@ class GoalStore extends ChangeNotifier {
       startedAt: plannedStartAt ?? DateTime.now(),
       plannedStartAt: plannedStartAt,
       plannedEndAt: plannedEndAt,
-      plannedStartMinutes: plannedStartMinutes,
-      plannedEndMinutes: plannedEndMinutes,
       steps: [],
     ));
     await _save();
