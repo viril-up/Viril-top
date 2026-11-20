@@ -166,17 +166,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        image: const DecorationImage(
-          image: AssetImage('assets/section_cards/global_league/global-league.png'),
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(Color(0x99000000), BlendMode.darken),
-        ),
         gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
           stops: [0, .18, .48, 1],
           colors: [Color(0x663A3F47), Color(0x38252B34), Color(0x1C11161E), Color(0x0806080C)]),
         boxShadow: const [BoxShadow(color: Color(0x55000000), blurRadius: 18, offset: Offset(0, 7))],
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: Stack(children: [
+          Positioned.fill(child: Image.asset(
+            'assets/section_cards/global_league/global-league.png',
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [Color(0xFF303640), Color(0xFF11161E)]),
+              ),
+            ),
+          )),
+          Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter, end: Alignment.bottomCenter,
+              colors: [Colors.black.withValues(alpha: .35), Colors.black.withValues(alpha: .76)],
+            ),
+          ))),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           const Icon(Icons.shield_moon_rounded, color: VirilColors.gold, size: 22),
           const SizedBox(width: 9),
@@ -213,7 +226,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text('ОТКРЫТЬ ЛИГУ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
           SizedBox(width: 5), Icon(Icons.arrow_forward_rounded, color: VirilColors.gold, size: 15),
         ]),
-      ]),
+          ]),
+        ]),
+      ),
       ),
     ),
   );
