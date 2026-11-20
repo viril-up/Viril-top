@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/data/viril_store.dart';
 import '../../core/localization/viril_localization.dart';
 import '../../core/theme/viril_colors.dart';
@@ -66,7 +65,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     if (yes != true) return;
     await VirilStore.instance.resetProgress();
     await ProfileStore.instance.resetLocalProfile();
-    final prefs = await SharedPreferences.getInstance();
     await VirilLanguageController.instance.reset();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Локальные данные профиля удалены.')));
