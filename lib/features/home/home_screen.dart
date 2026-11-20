@@ -673,9 +673,9 @@ class _GoalTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(task.title, maxLines: 2, overflow: TextOverflow.ellipsis,
+            Text(task.title, maxLines: 3, overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 11, fontWeight: FontWeight.w600,
+                fontSize: 15, height: 1.3, fontWeight: FontWeight.w700,
                 decoration: task.completed ? TextDecoration.lineThrough : null,
                 color: task.completed ? VirilColors.muted : VirilColors.text,
               )),
