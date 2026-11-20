@@ -409,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
     DateTime? plannedEndAt;
 
     bool hasCalendarDate(DateTime? value) => value != null && value.year != 2000;
-    int? minutesOf(DateTime? value) => value == null ? null : value.hour * 60 + value.minute;
+    int? minutesOf(DateTime? value) => value == null || (value.year != 2000 && value.hour == 0 && value.minute == 0) ? null : value.hour * 60 + value.minute;
 
     String dateLabel(DateTime? value) {
       if (!hasCalendarDate(value)) return 'Не задана';
