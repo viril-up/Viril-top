@@ -14,6 +14,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
   final _titleController = TextEditingController();
   final _stepController = TextEditingController();
   int _duration = 30;
+  DateTime? _plannedStartAt;
+  DateTime? _plannedEndAt;
   bool _showArchived = false;
 
   @override
@@ -32,12 +34,37 @@ class _GoalsScreenState extends State<GoalsScreen> {
   Future<void> _createGoal() async {
     _titleController.clear();
     _duration = 30;
+    _plannedStartAt = null;
+    _plannedEndAt = null;
+
+    Future<DateTime?> pickDateTime(BuildContext pickerContext, DateTime? current, {required bool isEnd}) async {
+      final now = DateTime.now();
+      final initial = current ?? (isEnd
+          ? (_plannedStartAt?.add(const Duration(hours: 1)) ?? now.add(const Duration(hours: 1)))
+          : now);
+      final date = await showDatePicker(
+        context: pickerContext,
+        initialDate: initial,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+        helpText: isEnd ? 'Дата завершения' : 'Дата начала',
+      );
+      if (date == null) return null;
+      final time = await showTimePicker(
+        context: pickerContext,
+        initialTime: TimeOfDay.fromDateTime(initial),
+        helpText: isEnd ? 'Время завершения' : 'Время начала',
+      );
+      if (time == null) return null;
+      return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    }
+
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(builder: (context, setDialogState) => AlertDialog(
         backgroundColor: VirilColors.stone,
         title: const Text('Новая цель'),
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
+        content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
           TextField(
             controller: _titleController,
             autofocus: true,
@@ -47,7 +74,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
           const SizedBox(height: 10),
           DropdownButtonFormField<int>(
             value: _duration,
-            decoration: const InputDecoration(labelText: 'Срок'),
+            decoration: const InputDecoration(labelText: 'Срок по дням'),
             items: const [
               DropdownMenuItem(value: 7, child: Text('7 дней')),
               DropdownMenuItem(value: 30, child: Text('30 дней')),
@@ -57,7 +84,50 @@ class _GoalsScreenState extends State<GoalsScreen> {
               if (value != null) setDialogState(() => _duration = value);
             },
           ),
-        ]),
+          const SizedBox(height: 18),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text('ТОЧНОЕ ВРЕМЯ (НЕОБЯЗАТЕЛЬНО)',
+              style: TextStyle(color: VirilColors.gold, fontSize: 10, letterSpacing: 1.1, fontWeight: FontWeight.w800)),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.play_arrow_rounded, size: 18),
+            label: Text(_plannedStartAt == null ? 'Выбрать начало' : 'Начало: '+_dateTime(_plannedStartAt!)),
+            onPressed: () async {
+              final value = await pickDateTime(context, _plannedStartAt, isEnd: false);
+              if (value == null) return;
+              setDialogState(() {
+                _plannedStartAt = value;
+                if (_plannedEndAt != null && !_plannedEndAt!.isAfter(value)) _plannedEndAt = null;
+              });
+            },
+          ),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.flag_rounded, size: 18),
+            label: Text(_plannedEndAt == null ? 'Выбрать завершение' : 'Завершение: '+_dateTime(_plannedEndAt!)),
+            onPressed: () async {
+              final value = await pickDateTime(context, _plannedEndAt, isEnd: true);
+              if (value == null) return;
+              if (_plannedStartAt != null && !value.isAfter(_plannedStartAt!)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Время завершения должно быть позже времени начала')),
+                );
+                return;
+              }
+              setDialogState(() => _plannedEndAt = value);
+            },
+          ),
+          if (_plannedStartAt != null || _plannedEndAt != null)
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                onPressed: () => setDialogState(() { _plannedStartAt = null; _plannedEndAt = null; }),
+                icon: const Icon(Icons.close, size: 15),
+                label: const Text('Сбросить время'),
+              ),
+            ),
+        ])),
         actions: [
           TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Отмена')),
           FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Создать')),
@@ -65,7 +135,12 @@ class _GoalsScreenState extends State<GoalsScreen> {
       )),
     );
     if (result == true && _titleController.text.trim().isNotEmpty) {
-      await GoalStore.instance.addGoal(_titleController.text, _duration);
+      await GoalStore.instance.addGoal(
+        _titleController.text,
+        _duration,
+        plannedStartAt: _plannedStartAt,
+        plannedEndAt: _plannedEndAt,
+      );
     }
   }
 
@@ -96,6 +171,9 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   String _date(DateTime value) =>
       '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year}';
+
+  String _dateTime(DateTime value) =>
+      '${_date(value)}  ${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
 
   @override
   Widget build(BuildContext context) {
@@ -183,10 +261,18 @@ class _GoalsScreenState extends State<GoalsScreen> {
           Row(children: [
             Text('${goal.durationDays} дней', style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
             const Spacer(),
-            Text('${_date(goal.deadline)}', style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
+            Text('${_dateTime(goal.deadline)}', style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
             const SizedBox(width: 12),
             Text('${goal.progress}%', style: const TextStyle(color: VirilColors.gold, fontWeight: FontWeight.w800, fontSize: 12)),
           ]),
+          if (goal.plannedStartAt != null || goal.plannedEndAt != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 7),
+              child: Text(
+                '${goal.plannedStartAt == null ? '' : 'Старт: ${_dateTime(goal.plannedStartAt!)}'}${goal.plannedStartAt != null && goal.plannedEndAt != null ? '   •   ' : ''}${goal.plannedEndAt == null ? '' : 'Финиш: ${_dateTime(goal.plannedEndAt!)}'}',
+                style: const TextStyle(color: VirilColors.muted, fontSize: 10),
+              ),
+            ),
           const SizedBox(height: 7),
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
