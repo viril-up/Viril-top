@@ -71,8 +71,8 @@ class _VirilSplashScreenState extends State<VirilSplashScreen>
                     width: 184,
                     height: 184,
                     child: Image.asset(
-                      'assets/splash/viril-logo.png',
-                      fit: BoxFit.cover,
+                      'assets/splash/splash-logo.png .png',
+                      fit: BoxFit.contain,
                       errorBuilder: (_, __, ___) => const Icon(
                         Icons.change_history_rounded,
                         color: Colors.white,
