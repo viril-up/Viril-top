@@ -259,7 +259,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
           ]),
           const SizedBox(height: 10),
           Row(children: [
-            Text('${goal.durationDays} дней', style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
+            Text(goal.plannedEndAt == null ? '${goal.durationDays} дней' : 'Точный срок', style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
             const Spacer(),
             Text('${_dateTime(goal.deadline)}', style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
             const SizedBox(width: 12),
