@@ -21,17 +21,22 @@ class VirilLanguageController extends ChangeNotifier {
           orElse: () => const MapEntry('Русский', 'ru')).key;
 
   Future<void> initialize() async {
-    final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString(_preferenceKey) ?? 'Русский';
-    _locale = Locale(virilLanguageNames[saved] ?? 'ru');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final saved = prefs.getString(_preferenceKey) ?? 'Русский';
+      _locale = Locale(virilLanguageNames[saved] ?? 'ru');
+    } catch (error) {
+      debugPrint('Viril language preference could not be loaded: $error');
+      _locale = const Locale('ru');
+    }
   }
 
   Future<void> setLanguage(String name) async {
     final code = virilLanguageNames[name];
     if (code == null || _locale.languageCode == code) return;
-    _locale = Locale(code);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_preferenceKey, name);
+    _locale = Locale(code);
     notifyListeners();
   }
 
