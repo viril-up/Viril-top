@@ -61,7 +61,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
     }
 
     Future<int?> pickClock(BuildContext pickerContext, int? currentMinutes, {required bool isEnd}) async {
-      var selectedHour = (currentMinutes ?? (isEnd ? 60 : 540)) ~/ 60;
+      var selectedHour = (currentMinutes ?? (isEnd ? 600 : 540)) ~/ 60;
       var selectedMinute = (currentMinutes ?? (isEnd ? 60 : 540)) % 60;
       final result = await showModalBottomSheet<int>(
         context: pickerContext,
@@ -149,10 +149,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
       return result;
     }
 
-    String clockLabel(int? minutes) => minutes == null
-        ? 'Не задано'
-        : '${(minutes ~/ 60).toString().padLeft(2, '0')}:${(minutes % 60).toString().padLeft(2, '0')}';
-
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(builder: (context, setDialogState) => AlertDialog(
@@ -195,7 +191,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
           ),
           OutlinedButton.icon(
             icon: const Icon(Icons.access_time_rounded, size: 18),
-            label: Text('Время начала: ${clockLabel(_plannedStartMinutes)}'),
+            label: Text('Время начала: ${_clockLabel(_plannedStartMinutes)}'),
             onPressed: () async {
               final value = await pickClock(context, _plannedStartMinutes, isEnd: false);
               if (value != null) setDialogState(() => _plannedStartMinutes = value);
@@ -212,7 +208,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
           ),
           OutlinedButton.icon(
             icon: const Icon(Icons.alarm_rounded, size: 18),
-            label: Text('Время завершения: ${clockLabel(_plannedEndMinutes)}'),
+            label: Text('Время завершения: ${_clockLabel(_plannedEndMinutes)}'),
             onPressed: () async {
               final value = await pickClock(context, _plannedEndMinutes, isEnd: true);
               if (value != null) setDialogState(() => _plannedEndMinutes = value);
@@ -282,6 +278,10 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   String _dateTime(DateTime value) =>
       '${_date(value)}  ${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
+
+  String _clockLabel(int? minutes) => minutes == null
+      ? 'Не задано'
+      : '${(minutes ~/ 60).toString().padLeft(2, '0')}:${(minutes % 60).toString().padLeft(2, '0')}';
 
   @override
   Widget build(BuildContext context) {
@@ -377,7 +377,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
             Padding(
               padding: const EdgeInsets.only(top: 7),
               child: Text(
-                '${goal.plannedStartAt == null ? '' : 'Дата старта: ${_date(goal.plannedStartAt!)}'}${goal.plannedStartMinutes == null ? '' : '${goal.plannedStartAt == null ? '' : '   •   '}Старт: ${clockLabel(goal.plannedStartMinutes)}'}${goal.plannedEndAt == null ? '' : '${goal.plannedStartAt != null || goal.plannedStartMinutes != null ? '   •   ' : ''}Дата финиша: ${_date(goal.plannedEndAt!)}'}${goal.plannedEndMinutes == null ? '' : '${goal.plannedEndAt != null || goal.plannedStartAt != null || goal.plannedStartMinutes != null ? '   •   ' : ''}Финиш: ${clockLabel(goal.plannedEndMinutes)}'}',
+                '${goal.plannedStartAt == null ? '' : 'Дата старта: ${_date(goal.plannedStartAt!)}'}${goal.plannedStartMinutes == null ? '' : '${goal.plannedStartAt == null ? '' : '   •   '}Старт: ${_clockLabel(goal.plannedStartMinutes)}'}${goal.plannedEndAt == null ? '' : '${goal.plannedStartAt != null || goal.plannedStartMinutes != null ? '   •   ' : ''}Дата финиша: ${_date(goal.plannedEndAt!)}'}${goal.plannedEndMinutes == null ? '' : '${goal.plannedEndAt != null || goal.plannedStartAt != null || goal.plannedStartMinutes != null ? '   •   ' : ''}Финиш: ${_clockLabel(goal.plannedEndMinutes)}'}',
                 style: const TextStyle(color: VirilColors.muted, fontSize: 10),
               ),
             ),
