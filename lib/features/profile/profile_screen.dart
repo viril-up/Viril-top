@@ -239,7 +239,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(children: [
           _LeagueValue(label: 'МЕСТО В ЛИГЕ', value: '—'),
           const SizedBox(width: 20),
-          _LeagueValue(label: 'ТЕКУЩИЙ СЕЗОН', value: '${stats.xp} XP*'),
+          _LeagueValue(label: 'ТЕКУЩИЙ СЕЗОН', value: '${stats.xp} XP'),
           const SizedBox(width: 20),
           const _LeagueValue(label: 'ПРОШЛЫЙ СЕЗОН', value: '—'),
         ]),
