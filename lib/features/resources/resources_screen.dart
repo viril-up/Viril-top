@@ -7,6 +7,7 @@ import 'data/resource_store.dart';
 import 'models/resource_item.dart';
 import 'books/book_library_screen.dart';
 import 'videos/video_library_screen.dart';
+import 'audio_library_screen.dart';
 
 class ResourcesScreen extends StatefulWidget {
   const ResourcesScreen({super.key});
@@ -60,6 +61,9 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
         imagePath: 'assets/section_cards/videoteka/videoteka.png',
         accent: VirilColors.ice,
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VideoLibraryScreen())),
+      ),
+      _AudioLibraryLauncherCard(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AudioLibraryScreen())),
       ),
       const SizedBox(height:14),Row(children:[Expanded(child:Text('${items.length} МАТЕРИАЛОВ',style:const TextStyle(color:VirilColors.gold,letterSpacing:1.6,fontSize:9,fontWeight:FontWeight.w800))),TextButton.icon(onPressed:()=>setState(()=>favoritesOnly=!favoritesOnly),icon:Icon(favoritesOnly?Icons.bookmark_rounded:Icons.bookmark_border_rounded,size:17),label:Text(favoritesOnly?'Избранное':'Все материалы'),style:TextButton.styleFrom(foregroundColor:favoritesOnly?VirilColors.gold:VirilColors.muted))]),
       if(items.isEmpty)GlassCard(child:Column(children:[const Icon(Icons.search_off_rounded,color:VirilColors.muted,size:30),const SizedBox(height:8),const Text('Ничего не найдено',style:TextStyle(fontWeight:FontWeight.w800)),const SizedBox(height:4),const Text('Измени запрос или выбери другую категорию.',style:TextStyle(color:VirilColors.muted,fontSize:11))])) else for(final item in items)_ResourceCard(item:item,favorite:store.isFavorite(item.id),hasNote:store.noteFor(item.id).isNotEmpty,onFavorite:()=>store.toggleFavorite(item.id),onOpen:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>ResourceDetailScreen(item:item))))
@@ -174,4 +178,27 @@ class _ResourceDetailScreenState extends State<ResourceDetailScreen>{
         ]))
       ]));
   }
+}
+
+
+class _AudioLibraryLauncherCard extends StatelessWidget {
+  const _AudioLibraryLauncherCard({required this.onTap});
+  final VoidCallback onTap;
+  @override Widget build(BuildContext context) => InkWell(
+    onTap: onTap, borderRadius: BorderRadius.circular(20),
+    child: GlassCard(padding: EdgeInsets.zero, margin: const EdgeInsets.only(bottom: 12), radius: 20,
+      child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(
+        height: 88,
+        decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight,
+          colors: [Color(0xFF18313C), Color(0xFF111820), Color(0xFF17202A)])),
+        child: Stack(children: [
+          Positioned(right: 18, top: 8, bottom: 8, child: Icon(Icons.headphones_rounded, size: 68, color: VirilColors.ice.withValues(alpha: .18))),
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 18), child: Row(children: const [
+            Expanded(child: Text('Аудиотека', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900))),
+            Icon(Icons.arrow_forward_ios_rounded, color: VirilColors.ice, size: 16),
+          ])),
+        ]),
+      )),
+    ),
+  );
 }
