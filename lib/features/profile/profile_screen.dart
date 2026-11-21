@@ -7,6 +7,7 @@ import 'data/profile_store.dart';
 import 'global_league_screen.dart';
 import 'data/global_league_data.dart';
 import 'profile_settings_screen.dart';
+import 'future_features_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -34,7 +35,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _profileCover(profile, stats, league),
           const SizedBox(height: 22),
           _leagueCard(context, stats, league),
-          const SizedBox(height: 22),
+          const SizedBox(height: 12),
+          _FutureProfileTile(
+            icon: Icons.emoji_events_rounded,
+            title: 'Мотивационная игра',
+            subtitle: 'Будущие задания и система поощрений',
+            accent: VirilColors.gold,
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MotivationGameScreen())),
+          ),
+          _FutureProfileTile(
+            icon: Icons.card_giftcard_rounded,
+            title: 'Пригласить друга',
+            subtitle: 'Подарки и бонусы в будущем',
+            accent: VirilColors.ice,
+            compact: true,
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const InviteFriendScreen())),
+          ),
+          const SizedBox(height: 16),
           _sectionLabel('ТВОЙ ПРОФИЛЬ'),
           const SizedBox(height: 10),
           _ActionTile(icon: Icons.person_add_alt_1_rounded, title: 'Зарегистрироваться',
@@ -436,4 +453,36 @@ class _ProfileMaskPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _ProfileMaskPainter oldDelegate) => oldDelegate.radius != radius;
+}
+
+
+class _FutureProfileTile extends StatelessWidget {
+  const _FutureProfileTile({required this.icon, required this.title, required this.subtitle, required this.accent, required this.onTap, this.compact = false});
+  final IconData icon;
+  final String title, subtitle;
+  final Color accent;
+  final VoidCallback onTap;
+  final bool compact;
+
+  @override Widget build(BuildContext context) => Container(
+    margin: const EdgeInsets.only(bottom: 9),
+    decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: accent.withValues(alpha: .28))),
+    child: Material(color: Colors.transparent, borderRadius: BorderRadius.circular(16),
+      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(16),
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 13, vertical: compact ? 8 : 11), child: Row(children: [
+          Container(width: compact ? 34 : 39, height: compact ? 34 : 39,
+            decoration: BoxDecoration(color: accent.withValues(alpha: .12), borderRadius: BorderRadius.circular(11)),
+            child: Icon(icon, color: accent, size: compact ? 19 : 21)),
+          const SizedBox(width: 11),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 2),
+            Text(subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 9)),
+          ])),
+          Icon(Icons.chevron_right_rounded, color: accent, size: 20),
+        ])),
+      ),
+    ),
+  );
 }

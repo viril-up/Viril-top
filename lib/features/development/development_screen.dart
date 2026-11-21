@@ -5,6 +5,8 @@ import '../../core/widgets/glass_card.dart';
 import 'domains/domain_detail_screen.dart';
 import '../workouts/workouts_screen.dart';
 import 'personal_dictionary_screen.dart';
+import 'running_screen.dart';
+import 'meditation_screen.dart';
 
 class DevelopmentScreen extends StatelessWidget {
   const DevelopmentScreen({super.key});
@@ -52,6 +54,20 @@ class DevelopmentScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+      _DevelopmentFeatureCard(
+        icon: Icons.directions_run_rounded,
+        title: 'Бег',
+        subtitle: 'Секундомер, GPS-маршрут и результаты пробежек',
+        accent: VirilColors.lava,
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RunningScreen())),
+      ),
+      _DevelopmentFeatureCard(
+        icon: Icons.self_improvement_rounded,
+        title: 'Медитация',
+        subtitle: 'Таймер, дыхательная практика и спокойный фокус',
+        accent: VirilColors.ice,
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MeditationScreen())),
       ),
       InkWell(
         borderRadius: BorderRadius.circular(22),
@@ -200,5 +216,32 @@ class _DirectionCard extends StatelessWidget {
         const Icon(Icons.chevron_right_rounded, color: VirilColors.gold),
       ]),
     ),
+  );
+}
+
+
+class _DevelopmentFeatureCard extends StatelessWidget {
+  const _DevelopmentFeatureCard({required this.icon, required this.title, required this.subtitle, required this.accent, required this.onTap});
+  final IconData icon;
+  final String title, subtitle;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override Widget build(BuildContext context) => InkWell(
+    borderRadius: BorderRadius.circular(22),
+    onTap: onTap,
+    child: GlassCard(margin: const EdgeInsets.only(bottom: 12), child: Row(children: [
+      Container(width: 46, height: 46,
+        decoration: BoxDecoration(color: accent.withValues(alpha: .13), borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: accent.withValues(alpha: .35))),
+        child: Icon(icon, color: accent, size: 24)),
+      const SizedBox(width: 13),
+      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900)),
+        const SizedBox(height: 4),
+        Text(subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
+      ])),
+      const Icon(Icons.chevron_right_rounded, color: VirilColors.gold),
+    ])),
   );
 }

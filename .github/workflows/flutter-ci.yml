@@ -38,6 +38,18 @@ jobs:
           channel: stable
           cache: true
       - run: flutter create --platforms=web,android --org com.viril.app .
+      - run: flutter create --platforms=web,android --org com.viril.app .
+      - name: Configure Android location permissions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("android/app/src/main/AndroidManifest.xml")
+          content = path.read_text()
+          permissions = '    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n'
+          if "android.permission.ACCESS_FINE_LOCATION" not in content:
+              content = content.replace("<application", permissions + "<application", 1)
+          path.write_text(content)
+          PY
       # Ensure Gradle plugin resolution checks Maven Central as well as the Plugin Portal.
       - name: Configure Android plugin repositories
         run: |
