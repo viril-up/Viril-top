@@ -4,6 +4,7 @@ import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import 'domains/domain_detail_screen.dart';
 import '../workouts/workouts_screen.dart';
+import 'personal_dictionary_screen.dart';
 
 class DevelopmentScreen extends StatelessWidget {
   const DevelopmentScreen({super.key});
@@ -50,6 +51,34 @@ class DevelopmentScreen extends StatelessWidget {
               ]),
             ),
           ),
+        ),
+      ),
+      InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const PersonalDictionaryScreen()),
+        ),
+        child: GlassCard(
+          margin: const EdgeInsets.only(bottom: 12),
+          child: Row(children: [
+            Container(
+              width: 46, height: 46,
+              decoration: BoxDecoration(
+                color: VirilColors.gold.withValues(alpha: .13),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: VirilColors.gold.withValues(alpha: .3)),
+              ),
+              child: const Icon(Icons.menu_book_rounded, color: VirilColors.gold, size: 24),
+            ),
+            const SizedBox(width: 13),
+            const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Мой словарь', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900)),
+              SizedBox(height: 4),
+              Text('Собирай слова, записывай собственные значения и повторяй их',
+                style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
+            ])),
+            const Icon(Icons.chevron_right_rounded, color: VirilColors.gold),
+          ]),
         ),
       ),
       const Padding(
