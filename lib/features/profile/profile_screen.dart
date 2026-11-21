@@ -8,6 +8,7 @@ import 'global_league_screen.dart';
 import 'data/global_league_data.dart';
 import 'profile_settings_screen.dart';
 import 'future_features_screen.dart';
+import 'viril_store_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -36,6 +37,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 22),
           _leagueCard(context, stats, league),
           const SizedBox(height: 12),
+          _FutureProfileTile(
+            icon: Icons.shopping_bag_rounded,
+            title: 'Магазин',
+            subtitle: 'Открывай темы, оформление и полезные материалы за V-Coin',
+            accent: VirilColors.gold,
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const VirilStoreScreen())),
+          ),
+          const SizedBox(height: 4),
           _FutureProfileTile(
             icon: Icons.emoji_events_rounded,
             title: 'Мотивационная игра',
