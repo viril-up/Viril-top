@@ -234,6 +234,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   ]),
                 ),
                 const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: VirilColors.gold.withValues(alpha: .10),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
+                  ),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.toll_rounded, color: VirilColors.gold, size: 17),
+                    const SizedBox(width: 4),
+                    Text('${store.vcoins}', style: const TextStyle(
+                      color: VirilColors.gold, fontSize: 12, fontWeight: FontWeight.w900)),
+                  ]),
+                ),
+                const SizedBox(width: 6),
                 Tooltip(
                   message: 'Виджеты главной',
                   child: Material(
