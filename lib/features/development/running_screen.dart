@@ -97,6 +97,40 @@ class _RunningScreenState extends State<RunningScreen> {
     setState(() => _running = false);
   }
 
+  void _resumeRun() {
+    _watch.start();
+    _positionSubscription?.resume();
+    _ticker?.cancel();
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) { if (mounted) setState(() {}); });
+    setState(() { _running = true; _gpsReady = _route.isNotEmpty; });
+  }
+
+  Future<void> _openHistoryRoute(Map<String, dynamic> item) async {
+    final raw = (item['route'] as List<dynamic>? ?? []);
+    final points = raw.map((v) {
+      final pair = v as List<dynamic>;
+      return (latitude: (pair[0] as num).toDouble(), longitude: (pair[1] as num).toDouble());
+    }).toList();
+    if (points.length < 2) {
+      _message('Для этой пробежки маршрут не был записан.');
+      return;
+    }
+    await showDialog<void>(context: context, builder: (ctx) => AlertDialog(
+      backgroundColor: VirilColors.stone,
+      title: const Text('Маршрут пробежки'),
+      content: SizedBox(height: 190, width: double.maxFinite,
+        child: CustomPaint(painter: _SavedRoutePainter(points))),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Закрыть')),
+        FilledButton.icon(onPressed: () async {
+          final first = points.first, last = points.last;
+          final uri = Uri.parse('https://www.google.com/maps/dir/?api=1&origin=${first.latitude},${first.longitude}&destination=${last.latitude},${last.longitude}&travelmode=walking');
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }, icon: const Icon(Icons.map_outlined), label: const Text('Google Maps')),
+      ],
+    ));
+  }
+
   Future<void> _finishRun() async {
     _watch.stop();
     _ticker?.cancel();
@@ -108,6 +142,7 @@ class _RunningScreenState extends State<RunningScreen> {
         'seconds': _watch.elapsed.inSeconds,
         'meters': _distanceMeters.round(),
         'points': _route.length,
+        'route': _route.map((p) => [p.latitude, p.longitude]).toList(),
       });
       if (_history.length > 30) _history.removeLast();
       await _saveHistory();
@@ -161,7 +196,7 @@ class _RunningScreenState extends State<RunningScreen> {
           const SizedBox(height: 18),
           Row(children: [
             Expanded(child: FilledButton.icon(
-              onPressed: _running ? _pauseRun : _startRun,
+              onPressed: _running ? _pauseRun : (_watch.elapsed.inSeconds > 0 ? _resumeRun : _startRun),
               icon: Icon(_running ? Icons.pause_rounded : Icons.play_arrow_rounded),
               label: Text(_running ? 'Пауза' : (_watch.isRunning ? 'Продолжить' : 'Начать бег')),
             )),
@@ -208,7 +243,7 @@ class _RunningScreenState extends State<RunningScreen> {
         if (_history.isEmpty)
           const GlassCard(child: Text('Здесь появятся твои результаты после первой завершённой пробежки.', style: TextStyle(color: VirilColors.muted, fontSize: 11)))
         else
-          for (final item in _history) GlassCard(margin: const EdgeInsets.only(bottom: 8), child: Row(children: [
+          for (final item in _history) InkWell(onTap: () => _openHistoryRoute(item), borderRadius: BorderRadius.circular(18), child: GlassCard(margin: const EdgeInsets.only(bottom: 8), child: Row(children: [
             const Icon(Icons.directions_run_rounded, color: VirilColors.lava, size: 22),
             const SizedBox(width: 10),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -219,7 +254,8 @@ class _RunningScreenState extends State<RunningScreen> {
             ])),
             Text(_time(Duration(seconds: item['seconds'] as int? ?? 0)),
               style: const TextStyle(color: VirilColors.gold, fontWeight: FontWeight.w900, fontSize: 12)),
-          ])),
+            const SizedBox(width: 5), const Icon(Icons.chevron_right_rounded, color: VirilColors.muted, size: 17),
+          ]))),
       ]),
     );
   }
@@ -256,4 +292,28 @@ class _RoutePainter extends CustomPainter {
     canvas.drawPath(path, Paint()..color = VirilColors.lava..style = PaintingStyle.stroke..strokeWidth = 3..strokeCap = StrokeCap.round..strokeJoin = StrokeJoin.round);
   }
   @override bool shouldRepaint(covariant _RoutePainter oldDelegate) => true;
+}
+
+
+class _SavedRoutePainter extends CustomPainter {
+  _SavedRoutePainter(this.points);
+  final List<({double latitude, double longitude})> points;
+  @override void paint(Canvas canvas, Size size) {
+    if (points.length < 2) return;
+    final minLat = points.map((p) => p.latitude).reduce((a,b) => a < b ? a : b);
+    final maxLat = points.map((p) => p.latitude).reduce((a,b) => a > b ? a : b);
+    final minLon = points.map((p) => p.longitude).reduce((a,b) => a < b ? a : b);
+    final maxLon = points.map((p) => p.longitude).reduce((a,b) => a > b ? a : b);
+    final dx = (maxLon - minLon).abs() < .000001 ? .000001 : maxLon - minLon;
+    final dy = (maxLat - minLat).abs() < .000001 ? .000001 : maxLat - minLat;
+    final path = Path();
+    for (var i = 0; i < points.length; i++) {
+      final p = points[i];
+      final x = 12 + (p.longitude - minLon) / dx * (size.width - 24);
+      final y = size.height - 12 - (p.latitude - minLat) / dy * (size.height - 24);
+      if (i == 0) { path.moveTo(x, y); } else { path.lineTo(x, y); }
+    }
+    canvas.drawPath(path, Paint()..color = VirilColors.lava..style = PaintingStyle.stroke..strokeWidth = 3..strokeCap = StrokeCap.round..strokeJoin = StrokeJoin.round);
+  }
+  @override bool shouldRepaint(covariant _SavedRoutePainter oldDelegate) => true;
 }
