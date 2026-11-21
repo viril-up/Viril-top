@@ -13,9 +13,15 @@ class VirilStore extends ChangeNotifier {
   static const _dailyXpKey = 'viril.daily_xp.v1';
   static const _journalKey = 'viril.journal.v1';
   static const _gratitudeKey = 'viril.gratitude.v1';
+  static const _vcoinKey = 'viril.vcoin.v1';
+  static const _coinRewardedTasksKey = 'viril.vcoin_rewarded_tasks.v1';
+  static const _purchasedItemsKey = 'viril.store_purchases.v1';
   SharedPreferences? _preferences;
   List<VirilTask> _tasks = [];
   int _xp = 0;
+  int _vcoins = 0;
+  final Set<String> _coinRewardedTasks = <String>{};
+  final Set<String> _purchasedItems = <String>{};
   final Set<String> _habitRewards = <String>{};
   final Set<String> _activeDays = <String>{};
   final Map<String, int> _dailyXp = <String, int>{};
@@ -29,6 +35,19 @@ class VirilStore extends ChangeNotifier {
   }
   List<VirilTask> tasksForDay(DateTime date) => dailyTasksFor(date);
   int get xp => _xp;
+  int get vcoins => _vcoins;
+  bool ownsStoreItem(String id) => _purchasedItems.contains(id);
+  Future<bool> purchaseStoreItem(String id, int price) async {
+    await initialize();
+    if (_purchasedItems.contains(id)) return true;
+    if (price < 0 || _vcoins < price) return false;
+    _vcoins -= price;
+    _purchasedItems.add(id);
+    await _preferences?.setInt(_vcoinKey, _vcoins);
+    await _preferences?.setStringList(_purchasedItemsKey, _purchasedItems.toList());
+    notifyListeners();
+    return true;
+  }
   int get completedCount => _tasks.where((task) => task.completed).length;
   int get pendingCount => _tasks.where((task) => !task.completed).length;
   bool get isReady => _ready;
@@ -64,6 +83,9 @@ class VirilStore extends ChangeNotifier {
     if (_ready) return;
     _preferences = await SharedPreferences.getInstance();
     _xp = _preferences!.getInt(_xpKey) ?? 0;
+    _vcoins = _preferences!.getInt(_vcoinKey) ?? 0;
+    _coinRewardedTasks.addAll(_preferences!.getStringList(_coinRewardedTasksKey) ?? <String>[]);
+    _purchasedItems.addAll(_preferences!.getStringList(_purchasedItemsKey) ?? <String>[]);
     _habitRewards.addAll(_preferences!.getStringList(_habitRewardsKey) ?? <String>[]);
     _activeDays.addAll(_preferences!.getStringList(_activeDaysKey) ?? <String>[]);
     final rawDaily = _preferences!.getString(_dailyXpKey);
@@ -137,6 +159,11 @@ class VirilStore extends ChangeNotifier {
     } else {
       final completedAt = DateTime.now();
       _tasks[index] = task.copyWith(completed: true, completedAt: completedAt);
+      if (_coinRewardedTasks.add(task.id)) {
+        _vcoins = (_vcoins + 1).clamp(0, 999999).toInt();
+        await _preferences?.setInt(_vcoinKey, _vcoins);
+        await _preferences?.setStringList(_coinRewardedTasksKey, _coinRewardedTasks.toList());
+      }
       _xp = (_xp + task.xpReward).clamp(0, 999999).toInt();
       await _recordActivity(xpDelta: task.xpReward, date: completedAt);
     }
@@ -159,6 +186,8 @@ class VirilStore extends ChangeNotifier {
     await initialize();
     final rewardKey = '$habitId:$dayKey'; if (!_habitRewards.add(rewardKey)) return false;
     _xp = (_xp + 5).clamp(0, 999999).toInt();
+    _vcoins = (_vcoins + 1).clamp(0, 999999).toInt();
+    await _preferences?.setInt(_vcoinKey, _vcoins);
     final parts = dayKey.split('-').map(int.parse).toList();
     final date = DateTime(parts[0], parts[1], parts[2]);
     await _preferences?.setStringList(_habitRewardsKey, _habitRewards.toList());
@@ -175,9 +204,10 @@ class VirilStore extends ChangeNotifier {
 
   Future<void> resetProgress() async {
     await initialize();
-    _tasks.clear(); _xp = 0; _habitRewards.clear(); _activeDays.clear();
+    _tasks.clear(); _xp = 0; _vcoins = 0; _coinRewardedTasks.clear();
+    _purchasedItems.clear(); _habitRewards.clear(); _activeDays.clear();
     _dailyXp.clear(); _journalEntries.clear(); _gratitudeEntries.clear();
-    for (final key in [_tasksKey, _xpKey, _habitRewardsKey, _activeDaysKey, _dailyXpKey, _journalKey, _gratitudeKey]) {
+    for (final key in [_tasksKey, _xpKey, _habitRewardsKey, _activeDaysKey, _dailyXpKey, _journalKey, _gratitudeKey, _vcoinKey, _coinRewardedTasksKey, _purchasedItemsKey]) {
       await _preferences?.remove(key);
     }
     notifyListeners();
