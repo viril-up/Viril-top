@@ -94,6 +94,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
   void initState() {
     super.initState();
     VirilStore.instance.initialize();
+    ProfileStore.instance.initialize();
     HabitStore.instance.initialize();
     GoalStore.instance.initialize();
   }
