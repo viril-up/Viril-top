@@ -2,7 +2,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../core/widgets/viril_staggered_list.dart';
 import '../../core/data/viril_store.dart';
-import '../profile/data/profile_store.dart';
 import '../habits/data/habit_store.dart';
 import '../goals/data/goal_store.dart';
 import '../../core/theme/viril_colors.dart';
@@ -20,56 +19,38 @@ class _ProgressScreenState extends State<ProgressScreen> {
   _ProgressRange _range = _ProgressRange.week;
   DateTime _selectedDay = DateTime.now();
 
-  Widget _progressTopBar(VirilStore store) => AnimatedBuilder(
-    animation: ProfileStore.instance,
-    builder: (context, _) {
-      final profile = ProfileStore.instance;
-      return Row(children: [
-        Expanded(child: Row(children: [
-          Container(
-            width: 38, height: 38,
-            decoration: BoxDecoration(
-              color: VirilColors.stone,
-              shape: BoxShape.circle,
-              border: Border.all(color: VirilColors.gold.withValues(alpha: .75)),
-            ),
-            child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 20),
-          ),
-          const SizedBox(width: 8),
-          Expanded(child: Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800))),
-        ])),
-        const SizedBox(width: 7),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            color: VirilColors.stone,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: VirilColors.line),
-          ),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 17),
-            const SizedBox(width: 4),
-            Text('${store.activeDaysStreak}', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800)),
-          ]),
+  Widget _progressTopBar(VirilStore store) => Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+        decoration: BoxDecoration(
+          color: VirilColors.stone,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: VirilColors.line),
         ),
-        const SizedBox(width: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            color: VirilColors.gold.withValues(alpha: .10),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
-          ),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            const Icon(Icons.toll_rounded, color: VirilColors.gold, size: 16),
-            const SizedBox(width: 4),
-            Text('${store.vcoins}', style: const TextStyle(
-              color: VirilColors.gold, fontSize: 11, fontWeight: FontWeight.w900)),
-          ]),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
+          const SizedBox(width: 4),
+          Text('${store.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+        ]),
+      ),
+      const SizedBox(width: 6),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: VirilColors.gold.withValues(alpha: .10),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
         ),
-      ]);
-    },
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(Icons.toll_rounded, color: VirilColors.gold, size: 17),
+          const SizedBox(width: 4),
+          Text('${store.vcoins}', style: const TextStyle(
+            color: VirilColors.gold, fontSize: 12, fontWeight: FontWeight.w900)),
+        ]),
+      ),
+    ],
   );
 
   DateTime _dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
@@ -94,7 +75,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
   void initState() {
     super.initState();
     VirilStore.instance.initialize();
-    ProfileStore.instance.initialize();
     HabitStore.instance.initialize();
     GoalStore.instance.initialize();
   }
