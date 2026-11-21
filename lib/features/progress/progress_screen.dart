@@ -6,7 +6,6 @@ import '../habits/data/habit_store.dart';
 import '../goals/data/goal_store.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
-import '../../core/widgets/metric_tile.dart';
 
 enum _ProgressRange { week, month, year }
 
@@ -199,54 +198,46 @@ class _ProgressScreenState extends State<ProgressScreen> {
             ])),
             const SizedBox(height: 14),
             GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Дисциплина и привычки', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
-              const SizedBox(height: 5),
-              const Text('Маленькие действия, которые создают устойчивость', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
-              const SizedBox(height: 12),
-              Row(children: [
-                Expanded(child: MetricTile(value: '${habits.totalCompletions}', label: 'ОТМЕТОК')),
-                const SizedBox(width: 8),
-                Expanded(child: MetricTile(value: '${habits.bestStreak}', label: 'ЛУЧШАЯ СЕРИЯ')),
-                const SizedBox(width: 8),
-                Expanded(child: MetricTile(value: '${habits.activeHabits}', label: 'ПРИВЫЧЕК')),
-              ]),
-              const SizedBox(height: 10),
-              _Achievement(icon: Icons.local_fire_department_rounded, title: 'Неделя дисциплины', description: 'Серия из 7 дней', unlocked: habits.bestStreak >= 7),
-              _Achievement(icon: Icons.repeat_rounded, title: 'Ритм создан', description: '30 отметок привычек', unlocked: habits.totalCompletions >= 30),
-            ])),
-            const SizedBox(height: 14),
-            GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Цели и результаты', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
-              const SizedBox(height: 5),
-              const Text('Твой прогресс в долгосрочных планах', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
-              const SizedBox(height: 12),
-              Row(children: [
-                Expanded(child: MetricTile(value: '${goals.inProgressGoals.length}', label: 'В ПРОЦЕССЕ')),
-                const SizedBox(width: 8),
-                Expanded(child: MetricTile(value: '${goals.completedGoals}', label: 'ЗАВЕРШЕНО')),
-                const SizedBox(width: 8),
-                Expanded(child: MetricTile(value: '${goals.averageProgress}%', label: 'СРЕДНИЙ ПРОГРЕСС')),
-              ]),
-              const SizedBox(height: 10),
-              _Achievement(icon: Icons.flag_circle_rounded, title: 'Первая цель', description: 'Заверши первую цель', unlocked: goals.completedGoals >= 1),
-              _Achievement(icon: Icons.emoji_events_rounded, title: 'Три победы', description: 'Заверши три цели', unlocked: goals.completedGoals >= 3),
-              if (goals.completedHistory.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                const Text('ПОСЛЕДНИЕ ЗАВЕРШЕНИЯ', style: TextStyle(color: VirilColors.muted, fontSize: 9, letterSpacing: 1.2, fontWeight: FontWeight.w800)),
-                ...goals.completedHistory.take(3).map((goal) => _HistoryRow(
-                  icon: Icons.verified_rounded, title: goal.title,
-                  subtitle: _formatDate(goal.completedAt!))),
-              ],
-            ])),
-            const SizedBox(height: 14),
-            GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const Text('Твои достижения', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 4),
+              const Text('Награды за системную работу. Одного действия недостаточно — важны регулярность и результат.',
+                style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
               const SizedBox(height: 10),
-              _Achievement(icon: Icons.flag_rounded, title: 'Первый шаг', description: 'Создай первый план', unlocked: store.tasks.isNotEmpty),
-              _Achievement(icon: Icons.check_circle_rounded, title: 'Действие важнее намерения', description: 'Выполни первую задачу', unlocked: store.completedCount >= 1),
-              _Achievement(icon: Icons.bolt_rounded, title: 'Сотня опыта', description: 'Набери 100 XP', unlocked: store.xp >= 100),
-              _Achievement(icon: Icons.military_tech_rounded, title: 'Постоянство', description: 'Выполни 10 задач', unlocked: store.completedCount >= 10),
-              _Achievement(icon: Icons.calendar_month_rounded, title: '30 активных дней', description: 'Отметь активность в 30 разных днях', unlocked: store.activeDaysCount >= 30),
+              _Achievement(icon: Icons.local_fire_department_rounded, title: 'Стальной характер',
+                description: 'Сохраняй активность 14 дней подряд и отметь не менее 14 активных дней всего',
+                unlocked: store.activeDaysStreak >= 14 && store.activeDaysCount >= 14),
+              _Achievement(icon: Icons.calendar_month_rounded, title: 'Месяц в строю',
+                description: 'Поддерживай непрерывную активность 30 дней подряд',
+                unlocked: store.activeDaysStreak >= 30),
+              _Achievement(icon: Icons.repeat_rounded, title: 'Ритм мастера',
+                description: 'Набери 100 отметок привычек и серию минимум 21 день',
+                unlocked: habits.totalCompletions >= 100 && habits.bestStreak >= 21),
+              _Achievement(icon: Icons.task_alt_rounded, title: 'Дело за делом',
+                description: 'Выполни 50 задач из своих планов',
+                unlocked: store.completedCount >= 50),
+              _Achievement(icon: Icons.bolt_rounded, title: 'Тысячник',
+                description: 'Набери 1 000 XP и выполни не менее 30 задач',
+                unlocked: store.xp >= 1000 && store.completedCount >= 30),
+              _Achievement(icon: Icons.flag_circle_rounded, title: 'Стратег',
+                description: 'Заверши 5 долгосрочных целей и выполни 25 их шагов',
+                unlocked: goals.completedGoals >= 5 && goals.completedSteps >= 25),
+              _Achievement(icon: Icons.menu_book_rounded, title: 'Глубина мысли',
+                description: 'Сохрани 20 записей в дневнике мыслей',
+                unlocked: store.journalEntries.length >= 20),
+              _Achievement(icon: Icons.favorite_rounded, title: 'Осознанная благодарность',
+                description: 'Сохрани 20 записей благодарности',
+                unlocked: store.gratitudeEntries.length >= 20),
+              _Achievement(icon: Icons.balance_rounded, title: 'Четыре опоры',
+                description: 'Достигни 10-го уровня в физическом, ментальном, интеллектуальном и духовном направлениях',
+                unlocked: store.domainLevel('Физическое') >= 10 &&
+                  store.domainLevel('Ментальное') >= 10 &&
+                  store.domainLevel('Интеллект') >= 10 &&
+                  store.domainLevel('Духовное') >= 10),
+              _Achievement(icon: Icons.workspace_premium_rounded, title: 'Легенда Viril',
+                description: 'Набери 5 000 XP, 90 активных дней, выполни 100 задач, собери 150 отметок привычек и заверши 10 целей',
+                unlocked: store.xp >= 5000 && store.activeDaysCount >= 90 &&
+                  store.completedCount >= 100 && habits.totalCompletions >= 150 &&
+                  goals.completedGoals >= 10),
             ])),
             const SizedBox(height: 12),
             const Text('История XP и активности хранится на устройстве. Новые отметки начнут собирать точную дневную статистику.', style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
