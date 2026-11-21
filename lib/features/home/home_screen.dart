@@ -413,7 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     String dateLabel(DateTime? value) {
       if (value == null || !hasCalendarDate(value)) return 'Не задана';
-      return '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value!.year}';
+      return '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year}';
     }
 
     String timeLabel(DateTime? value) {
