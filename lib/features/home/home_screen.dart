@@ -412,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> {
     int? minutesOf(DateTime? value) => value == null || (value.year != 2000 && value.hour == 0 && value.minute == 0) ? null : value.hour * 60 + value.minute;
 
     String dateLabel(DateTime? value) {
-      if (!hasCalendarDate(value)) return 'Не задана';
+      if (value == null || !hasCalendarDate(value)) return 'Не задана';
       return '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value!.year}';
     }
 
