@@ -19,40 +19,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
   _ProgressRange _range = _ProgressRange.week;
   DateTime _selectedDay = DateTime.now();
 
-  Widget _progressTopBar(VirilStore store) => Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
-        decoration: BoxDecoration(
-          color: VirilColors.stone,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: VirilColors.line),
-        ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
-          const SizedBox(width: 4),
-          Text('${store.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
-        ]),
-      ),
-      const SizedBox(width: 6),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        decoration: BoxDecoration(
-          color: VirilColors.gold.withValues(alpha: .10),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
-        ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.toll_rounded, color: VirilColors.gold, size: 17),
-          const SizedBox(width: 4),
-          Text('${store.vcoins}', style: const TextStyle(
-            color: VirilColors.gold, fontSize: 12, fontWeight: FontWeight.w900)),
-        ]),
-      ),
-    ],
-  );
-
   DateTime _dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
   DateTime _rangeStart(DateTime now) {
     final today = _dateOnly(now);
@@ -113,8 +79,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
         return VirilStaggeredList(pageIndex: 3, 
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
           children: [
-            _progressTopBar(store),
-            const SizedBox(height: 10),
             GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
                 const Expanded(child: Text('Динамика развития', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900))),
