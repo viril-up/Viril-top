@@ -51,21 +51,25 @@ class _RunningScreenState extends State<RunningScreen> {
   }
 
   Future<void> _startRun() async {
+    var hasLocationPermission = false;
     try {
       var permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-        if (mounted) _message('Разреши доступ к геолокации, чтобы записывать маршрут.');
-        return;
-      }
-      _route.clear();
-      _distanceMeters = 0;
-      _lastPosition = null;
-      _watch
-        ..reset()
-        ..start();
-      _ticker?.cancel();
-      _ticker = Timer.periodic(const Duration(seconds: 1), (_) { if (mounted) setState(() {}); });
+      hasLocationPermission = permission == LocationPermission.whileInUse || permission == LocationPermission.always;
+    } catch (_) {
+      hasLocationPermission = false;
+    }
+
+    _route.clear();
+    _distanceMeters = 0;
+    _lastPosition = null;
+    _watch
+      ..reset()
+      ..start();
+    _ticker?.cancel();
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) { if (mounted) setState(() {}); });
+
+    if (hasLocationPermission) {
       _positionSubscription = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 5),
       ).listen((position) {
@@ -82,9 +86,11 @@ class _RunningScreenState extends State<RunningScreen> {
       }, onError: (_) {
         if (mounted) _message('Не удалось получить GPS-сигнал. Секундомер продолжает работать.');
       });
-      if (mounted) setState(() { _running = true; _gpsReady = false; });
-    } catch (_) {
-      if (mounted) _message('Геолокация сейчас недоступна. Проверь разрешения устройства.');
+    }
+
+    if (mounted) {
+      setState(() { _running = true; _gpsReady = false; });
+      if (!hasLocationPermission) _message('Секундомер запущен. Разреши геолокацию, чтобы записывать маршрут и километраж.');
     }
   }
 
