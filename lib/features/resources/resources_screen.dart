@@ -193,10 +193,17 @@ class _AudioLibraryLauncherCard extends StatelessWidget {
           colors: [Color(0xFF18313C), Color(0xFF111820), Color(0xFF17202A)])),
         child: Stack(children: [
           Positioned(right: 18, top: 8, bottom: 8, child: Icon(Icons.headphones_rounded, size: 68, color: VirilColors.ice.withValues(alpha: .18))),
-          Padding(padding: const EdgeInsets.symmetric(horizontal: 18), child: Row(children: const [
-            Expanded(child: Text('Аудиотека', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900))),
-            Icon(Icons.arrow_forward_ios_rounded, color: VirilColors.ice, size: 16),
-          ])),
+          Positioned.fill(child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Expanded(child: Text('Аудиотека', style: TextStyle(
+                  color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900))),
+                Icon(Icons.arrow_forward_ios_rounded, color: VirilColors.ice, size: 16),
+              ],
+            ),
+          )),
         ]),
       )),
     ),
