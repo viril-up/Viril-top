@@ -34,13 +34,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 118),
         children: [
           _profileCover(profile, stats, league),
-          const SizedBox(height: 22),
+          const SizedBox(height: 16),
           _leagueCard(context, stats, league),
           const SizedBox(height: 12),
           _FutureProfileTile(
             icon: Icons.shopping_bag_rounded,
             title: 'Магазин',
-            subtitle: 'Открывай темы, оформление и полезные материалы за V-Coin',
+            
             accent: VirilColors.gold,
             onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const VirilStoreScreen())),
           ),
@@ -48,14 +48,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _FutureProfileTile(
             icon: Icons.emoji_events_rounded,
             title: 'Мотивационная игра',
-            subtitle: 'Будущие задания и система поощрений',
+            
             accent: VirilColors.gold,
             onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MotivationGameScreen())),
           ),
           _FutureProfileTile(
-            icon: Icons.card_giftcard_rounded,
-            title: 'Пригласить друга',
-            subtitle: 'Подарки и бонусы в будущем',
+            icon: Icons.redeem_rounded,
+            title: 'Пригласить друга +',
             accent: VirilColors.ice,
             compact: true,
             onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const InviteFriendScreen())),
@@ -189,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     child: CustomPaint(
       foregroundPainter: _ProfileMaskPainter(18),
       child: Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
         gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
@@ -223,20 +222,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             letterSpacing: 1.7, fontWeight: FontWeight.w900))),
           const Icon(Icons.open_in_new_rounded, color: VirilColors.gold, size: 16),
         ]),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         Row(children: [
-          Container(width: 44, height: 44, decoration: BoxDecoration(shape: BoxShape.circle,
+          Container(width: 40, height: 40, decoration: BoxDecoration(shape: BoxShape.circle,
             border: Border.all(color: league.color, width: 1.7),
             gradient: const LinearGradient(colors: [Color(0xFF253448), Color(0xFF19212B)])),
             child: Icon(Icons.military_tech_rounded, color: league.color, size: 24)),
           const SizedBox(width: 9),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(league.name, style: TextStyle(color: league.color, fontSize: 19, fontWeight: FontWeight.w900)),
+            Text(league.name, style: TextStyle(color: league.color, fontSize: 17, fontWeight: FontWeight.w900)),
             Text(league.description, style: const TextStyle(color: VirilColors.muted, fontSize: 10)),
           ])),
           const Text('СЕЗОН', style: TextStyle(color: VirilColors.muted, fontSize: 9, letterSpacing: 1.1)),
         ]),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         Row(children: [
           _LeagueValue(label: 'МЕСТО В ЛИГЕ', value: '—'),
           const SizedBox(width: 20),
@@ -244,10 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(width: 20),
           const _LeagueValue(label: 'ПРОШЛЫЙ СЕЗОН', value: '—'),
         ]),
-        const SizedBox(height: 7),
-        Text('* Пока показывается локальный XP. Мировое место и сезонная история появятся после подключения аккаунтов и сервера.',
-          style: TextStyle(color: VirilColors.muted.withValues(alpha: .9), fontSize: 9, height: 1.4)),
-        const SizedBox(height: 6),
+
         const Row(mainAxisAlignment: MainAxisAlignment.end, children: [
           Text('ОТКРЫТЬ ЛИГУ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
           SizedBox(width: 5), Icon(Icons.arrow_forward_rounded, color: VirilColors.gold, size: 15),
@@ -466,9 +462,10 @@ class _ProfileMaskPainter extends CustomPainter {
 
 
 class _FutureProfileTile extends StatelessWidget {
-  const _FutureProfileTile({required this.icon, required this.title, required this.subtitle, required this.accent, required this.onTap, this.compact = false});
+  const _FutureProfileTile({required this.icon, required this.title, this.subtitle, required this.accent, required this.onTap, this.compact = false});
   final IconData icon;
-  final String title, subtitle;
+  final String title;
+  final String? subtitle;
   final Color accent;
   final VoidCallback onTap;
   final bool compact;
@@ -484,11 +481,7 @@ class _FutureProfileTile extends StatelessWidget {
             decoration: BoxDecoration(color: accent.withValues(alpha: .12), borderRadius: BorderRadius.circular(11)),
             child: Icon(icon, color: accent, size: compact ? 19 : 21)),
           const SizedBox(width: 11),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 2),
-            Text(subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 9)),
-          ])),
+          Expanded(child: Text(title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900))),
           Icon(Icons.chevron_right_rounded, color: accent, size: 20),
         ])),
       ),
