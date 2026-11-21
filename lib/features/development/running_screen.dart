@@ -23,7 +23,6 @@ class _RunningScreenState extends State<RunningScreen> {
   bool _gpsReady = false;
   double _distanceMeters = 0;
   Position? _lastPosition;
-  DateTime? _startedAt;
 
   @override void initState() {
     super.initState();
@@ -62,7 +61,6 @@ class _RunningScreenState extends State<RunningScreen> {
       _route.clear();
       _distanceMeters = 0;
       _lastPosition = null;
-      _startedAt = DateTime.now();
       _watch
         ..reset()
         ..start();
