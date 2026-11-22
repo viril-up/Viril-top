@@ -23,9 +23,6 @@ class AchievementsScreen extends StatefulWidget {
 }
 
 class _AchievementsScreenState extends State<AchievementsScreen> {
-  _Kind _kind = _Kind.physical;
-  _Tier? _tier;
-
   static final List<_Award> _awards = [
     _Award('Первый шаг', 'Выполни первую задачу', _Kind.physical, _Tier.easy, Icons.directions_walk_rounded, (s,h,g)=>s.completedCount>=1),
     _Award('Три дня движения', 'Будь активен 3 дня подряд', _Kind.physical, _Tier.easy, Icons.bolt_rounded, (s,h,g)=>s.activeDaysStreak>=3),
@@ -111,7 +108,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
     _Award('Пятьсот привычек', 'Набери 500 отметок привычек', _Kind.physical, _Tier.extreme, Icons.sports_score_rounded, (s,h,g)=>h.totalCompletions>=500),
     _Award('Первая цель', 'Заверши 1 цель', _Kind.general, _Tier.easy, Icons.flag_circle_rounded, (s,h,g)=>g.completedGoals>=1),
     _Award('Семь целей', 'Заверши 7 целей', _Kind.general, _Tier.medium, Icons.outlined_flag_rounded, (s,h,g)=>g.completedGoals>=7),
-    _Award('Двадцать целей', 'Заверши 20 целей', _Kind.general, _Tier.hard, Icons.assistant_navigation_rounded, (s,h,g)=>g.completedGoals>=20),
+    _Award('Двадцать целей', 'Заверши 20 целей', _Kind.general, _Tier.hard, Icons.navigation_rounded, (s,h,g)=>g.completedGoals>=20),
     _Award('Пятьдесят целей', 'Заверши 50 целей', _Kind.general, _Tier.extreme, Icons.emoji_flags_rounded, (s,h,g)=>g.completedGoals>=50),
     _Award('Первая запись', 'Сделай 1 запись в дневнике', _Kind.mental, _Tier.easy, Icons.note_add_rounded, (s,h,g)=>s.journalEntries.length>=1),
     _Award('Тридцать записей', 'Сохрани 30 записей в дневнике', _Kind.mental, _Tier.medium, Icons.library_books_rounded, (s,h,g)=>s.journalEntries.length>=30),
@@ -132,14 +129,6 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
     _Award('Физический рост', 'Достигни 5-го уровня физического направления', _Kind.physical, _Tier.easy, Icons.directions_run_rounded, (s,h,g)=>s.domainLevel('Физическое')>=5),
     _Award('Сила постоянства', 'Достигни 15-го уровня физического направления', _Kind.physical, _Tier.medium, Icons.fitness_center_rounded, (s,h,g)=>s.domainLevel('Физическое')>=15),
   ];
-
-  String _kindName(_Kind k) => switch(k) {
-    _Kind.physical=>'Физические', _Kind.spiritual=>'Духовные', _Kind.mental=>'Ментальные',
-    _Kind.intellectual=>'Интеллектуальные', _Kind.general=>'Общие',
-  };
-  String _tierName(_Tier t) => switch(t) {
-    _Tier.easy=>'Лёгкие', _Tier.medium=>'Средние', _Tier.hard=>'Тяжёлые', _Tier.extreme=>'Очень тяжёлые',
-  };
 
   @override
   void initState() {
