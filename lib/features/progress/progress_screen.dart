@@ -420,26 +420,3 @@ class _HistoryRow extends StatelessWidget {
   );
 }
 
-class _Achievement extends StatelessWidget {
-  const _Achievement({required this.icon, required this.title, required this.description, required this.unlocked});
-  final IconData icon;
-  final String title;
-  final String description;
-  final bool unlocked;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 7),
-    child: Row(children: [
-      Container(width: 36, height: 36, decoration: BoxDecoration(
-        color: (unlocked ? VirilColors.gold : VirilColors.stoneLight).withValues(alpha: .16),
-        borderRadius: BorderRadius.circular(12), border: Border.all(color: unlocked ? VirilColors.gold.withValues(alpha: .45) : VirilColors.line),
-      ), child: Icon(icon, color: unlocked ? VirilColors.gold : VirilColors.muted, size: 18)),
-      const SizedBox(width: 10),
-      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(title, style: TextStyle(fontWeight: FontWeight.w700, color: unlocked ? VirilColors.text : VirilColors.muted, fontSize: 11)),
-        Text(description, style: const TextStyle(color: VirilColors.muted, fontSize: 9)),
-      ])),
-      Icon(unlocked ? Icons.check_circle : Icons.lock_outline, color: unlocked ? const Color(0xFF39D98A) : VirilColors.muted, size: 19),
-    ]),
-  );
-}
