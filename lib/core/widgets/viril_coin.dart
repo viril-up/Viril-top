@@ -108,7 +108,7 @@ class _VirilCoinPainter extends CustomPainter {
         ..shader = const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF1A2638), Color(0xFF080D16), Color(0xFF25364B)],
+          colors: [Color(0xFF292725), Color(0xFF08090B), Color(0xFF1B1A18)],
         ).createShader(rect),
     );
 
@@ -126,7 +126,7 @@ class _VirilCoinPainter extends CustomPainter {
     final blueRim = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = radius * .025
-      ..color = const Color(0xFF2D9BFF);
+      ..color = const Color(0xFFD5A85C);
     canvas.drawCircle(center, radius * .72, blueRim);
 
     final v = Path()
@@ -169,7 +169,7 @@ class _VirilCoinPainter extends CustomPainter {
     final glint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = radius * .018
-      ..color = const Color(0xFF67C8FF).withValues(alpha: .9);
+      ..color = const Color(0xFFFFD98B).withValues(alpha: .55);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius * .68),
       math.pi * 1.08,
