@@ -65,6 +65,25 @@ class VirilStore extends ChangeNotifier {
     while (_activeDays.contains(dayKey(day))) { streak++; day = day.subtract(const Duration(days: 1)); }
     return streak;
   }
+  int get bestActiveDaysStreak {
+    if (_activeDays.isEmpty) return 0;
+    final days = _activeDays.toList()..sort();
+    var best = 0;
+    var current = 0;
+    DateTime? previous;
+    for (final key in days) {
+      final day = DateTime.parse(key);
+      current = previous != null && day.difference(previous).inDays == 1 ? current + 1 : 1;
+      if (current > best) best = current;
+      previous = day;
+    }
+    return best;
+  }
+  List<DateTime> get recentActiveDays {
+    final days = _activeDays.map(DateTime.parse).toList()
+      ..sort((a, b) => b.compareTo(a));
+    return List.unmodifiable(days.take(7));
+  }
   List<Map<String, String>> get journalEntries => List.unmodifiable(_journalEntries);
   List<Map<String, String>> get gratitudeEntries => List.unmodifiable(_gratitudeEntries);
   String dayKey(DateTime date) => '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
