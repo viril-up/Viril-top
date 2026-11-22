@@ -8,6 +8,7 @@ import 'diary_tools_card.dart';
 import 'tools_screen.dart';
 import '../profile/data/profile_store.dart';
 import '../profile/data/global_league_data.dart';
+import '../profile/viril_store_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.onOpenProfile});
@@ -223,30 +224,54 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
-                  decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: VirilColors.line)),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
-                    const SizedBox(width: 4),
-                    Text('${store.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
-                  ]),
+                Tooltip(
+                  message: 'Активность и рекорды',
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(15),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(15),
+                      onTap: () => _showActivitySheet(store),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+                        decoration: BoxDecoration(color: VirilColors.stone, borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: VirilColors.line)),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 18),
+                          const SizedBox(width: 4),
+                          Text('${store.activeDaysStreak}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                        ]),
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: VirilColors.gold.withValues(alpha: .10),
+                Tooltip(
+                  message: 'Открыть магазин V-Coin',
+                  child: Material(
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(14),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(builder: (_) => const VirilStoreScreen()),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: VirilColors.gold.withValues(alpha: .10),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: VirilColors.gold.withValues(alpha: .42)),
+                        ),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          const Icon(Icons.toll_rounded, color: VirilColors.gold, size: 17),
+                          const SizedBox(width: 4),
+                          Text('${store.vcoins}', style: const TextStyle(
+                            color: VirilColors.gold, fontSize: 12, fontWeight: FontWeight.w900)),
+                        ]),
+                      ),
+                    ),
                   ),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.toll_rounded, color: VirilColors.gold, size: 17),
-                    const SizedBox(width: 4),
-                    Text('${store.vcoins}', style: const TextStyle(
-                      color: VirilColors.gold, fontSize: 12, fontWeight: FontWeight.w900)),
-                  ]),
                 ),
                 const SizedBox(width: 6),
                 Tooltip(
@@ -283,6 +308,136 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ));
     },
+  );
+
+  Future<void> _showActivitySheet(VirilStore store) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: VirilColors.stone,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+        side: BorderSide(color: VirilColors.line),
+      ),
+      builder: (sheetContext) => AnimatedBuilder(
+        animation: store,
+        builder: (context, _) {
+          final history = store.recentActiveDays;
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 22),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(child: Container(
+                    width: 38, height: 4,
+                    decoration: BoxDecoration(color: VirilColors.goldSoft, borderRadius: BorderRadius.circular(4)),
+                  )),
+                  const SizedBox(height: 16),
+                  Row(children: [
+                    const Expanded(child: Text('Активность', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900))),
+                    IconButton(
+                      tooltip: 'Закрыть',
+                      onPressed: () => Navigator.pop(sheetContext),
+                      icon: const Icon(Icons.close_rounded, color: VirilColors.muted),
+                    ),
+                  ]),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(19),
+                      gradient: LinearGradient(
+                        colors: [VirilColors.lava.withValues(alpha: .18), VirilColors.stoneLight.withValues(alpha: .65)],
+                        begin: Alignment.topLeft, end: Alignment.bottomRight,
+                      ),
+                      border: Border.all(color: VirilColors.lava.withValues(alpha: .32)),
+                    ),
+                    child: Row(children: [
+                      const _ActivityFlame(),
+                      const SizedBox(width: 14),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        const Text('ТЕКУЩАЯ СЕРИЯ', style: TextStyle(
+                          color: VirilColors.muted, fontSize: 10, letterSpacing: 1.3, fontWeight: FontWeight.w800)),
+                        const SizedBox(height: 3),
+                        Text('${store.activeDaysStreak} дней подряд', style: const TextStyle(
+                          fontSize: 21, fontWeight: FontWeight.w900, color: VirilColors.text)),
+                        const SizedBox(height: 3),
+                        Text('Сегодня заработано ${store.todayXp} XP', style: const TextStyle(
+                          color: VirilColors.muted, fontSize: 12, fontWeight: FontWeight.w600)),
+                      ])),
+                    ]),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(children: [
+                    Expanded(child: _activityRecordCard('ЛУЧШАЯ СЕРИЯ', '${store.bestActiveDaysStreak}', Icons.emoji_events_rounded)),
+                    const SizedBox(width: 9),
+                    Expanded(child: _activityRecordCard('ДНЕЙ АКТИВНОСТИ', '${store.activeDaysCount}', Icons.calendar_month_rounded)),
+                  ]),
+                  const SizedBox(height: 18),
+                  const Text('ИСТОРИЯ РЕКОРДОВ', style: TextStyle(
+                    color: VirilColors.gold, fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.w900)),
+                  const SizedBox(height: 8),
+                  if (history.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 18),
+                      child: Text('Пока нет записей. Выполни первую цель, чтобы начать историю активности.',
+                        textAlign: TextAlign.center, style: TextStyle(color: VirilColors.muted, fontSize: 12, height: 1.4)),
+                    )
+                  else
+                    ...history.take(6).map((day) {
+                      final date = '${day.day.toString().padLeft(2, '0')}.${day.month.toString().padLeft(2, '0')}.${day.year}';
+                      final xp = store.xpForDay(day);
+                      final completed = store.completedOn(day).length;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Row(children: [
+                          Container(
+                            width: 34, height: 34,
+                            decoration: BoxDecoration(
+                              color: VirilColors.lava.withValues(alpha: .10),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 19),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(date, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                            Text('$completed выполнено · $xp XP', style: const TextStyle(
+                              color: VirilColors.muted, fontSize: 10)),
+                          ])),
+                          if (day.year == DateTime.now().year && day.month == DateTime.now().month && day.day == DateTime.now().day)
+                            const Text('СЕГОДНЯ', style: TextStyle(
+                              color: VirilColors.gold, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: .8)),
+                        ]),
+                      );
+                    }),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _activityRecordCard(String label, String value, IconData icon) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+    decoration: BoxDecoration(
+      color: VirilColors.stoneLight.withValues(alpha: .55),
+      borderRadius: BorderRadius.circular(15),
+      border: Border.all(color: VirilColors.line),
+    ),
+    child: Row(children: [
+      Icon(icon, color: VirilColors.gold, size: 18),
+      const SizedBox(width: 8),
+      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(value, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900)),
+        Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(
+          color: VirilColors.muted, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: .5)),
+      ])),
+    ]),
   );
 
   Widget _levelBar(VirilStore store) {
@@ -331,9 +486,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _goalsCard(VirilStore store, bool compact) {
-    final goals = _period == 'day'
+    final goals = (_period == 'day'
       ? store.dailyTasksFor(DateTime.now())
-      : store.tasks.where((task) => task.period == _period).toList();
+      : store.tasks.where((task) => task.period == _period).toList())
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     return GlassCard(
       radius: 22,
       padding: EdgeInsets.all(compact ? 11 : 14),
@@ -384,7 +540,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.zero,
                 itemCount: goals.length,
                 separatorBuilder: (_, __) => const Divider(height: 1, color: VirilColors.line),
-                itemBuilder: (context, index) => _GoalTile(task: goals[index]),
+                itemBuilder: (context, index) => _GoalTile(task: goals[index], number: index + 1),
               ),
         ),
       ]),
@@ -661,9 +817,54 @@ String _formatTaskDate(DateTime value) {
   return value.hour == 0 && value.minute == 0 ? date : '$date $time';
 }
 
+class _ActivityFlame extends StatefulWidget {
+  const _ActivityFlame();
+
+  @override
+  State<_ActivityFlame> createState() => _ActivityFlameState();
+}
+
+class _ActivityFlameState extends State<_ActivityFlame> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 850),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: _controller,
+    builder: (context, _) {
+      final scale = .92 + (_controller.value * .13);
+      return Transform.scale(
+        scale: scale,
+        child: Container(
+          width: 58, height: 58,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: VirilColors.lava.withValues(alpha: .10 + _controller.value * .08),
+            boxShadow: [BoxShadow(
+              color: VirilColors.lava.withValues(alpha: .18 + _controller.value * .20),
+              blurRadius: 12 + _controller.value * 9,
+              spreadRadius: 1 + _controller.value * 2,
+            )],
+          ),
+          child: const Icon(Icons.local_fire_department_rounded, color: VirilColors.lava, size: 39),
+        ),
+      );
+    },
+  );
+}
+
 class _GoalTile extends StatelessWidget {
-  const _GoalTile({required this.task});
+  const _GoalTile({required this.task, required this.number});
   final VirilTask task;
+  final int number;
 
   @override
   Widget build(BuildContext context) {
@@ -677,6 +878,18 @@ class _GoalTile extends StatelessWidget {
         border: task.isPriority ? Border.all(color: VirilColors.gold.withValues(alpha: .55)) : null,
       ),
       child: Row(children: [
+        Container(
+          width: 27, height: 27,
+          alignment: Alignment.center,
+          margin: const EdgeInsets.only(right: 5),
+          decoration: BoxDecoration(
+            color: VirilColors.gold.withValues(alpha: .12),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: VirilColors.gold.withValues(alpha: .30)),
+          ),
+          child: Text('$number', style: const TextStyle(
+            color: VirilColors.gold, fontSize: 12, fontWeight: FontWeight.w900)),
+        ),
         if (task.isPriority) const Padding(padding: EdgeInsets.only(right: 3), child: Icon(Icons.star_rounded, color: VirilColors.gold, size: 17)),
         Checkbox(
           value: task.completed,
@@ -690,7 +903,7 @@ class _GoalTile extends StatelessWidget {
           children: [
             Text(task.title, maxLines: 2, overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 11, fontWeight: FontWeight.w600,
+                fontSize: 15, height: 1.25, fontWeight: FontWeight.w700,
                 decoration: task.completed ? TextDecoration.lineThrough : null,
                 color: task.completed ? VirilColors.muted : VirilColors.text,
               )),
@@ -700,7 +913,7 @@ class _GoalTile extends StatelessWidget {
                 if (task.plannedStartAt != null) 'Старт ${_formatTaskDate(task.plannedStartAt!)}',
                 if (task.plannedEndAt != null) 'До ${_formatTaskDate(task.plannedEndAt!)}',
               ].join('  ·  '), maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 9, color: VirilColors.gold, fontWeight: FontWeight.w600)),
+                style: const TextStyle(fontSize: 10, color: VirilColors.gold, fontWeight: FontWeight.w600)),
             ],
           ],
         )),
