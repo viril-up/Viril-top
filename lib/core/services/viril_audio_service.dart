@@ -84,7 +84,7 @@ class VirilAudioService extends ChangeNotifier {
     try {
       await _player.setReleaseMode(ReleaseMode.loop);
       await _player.setVolume(_volume);
-      await _player.play(const AssetSource(_assetPath));
+      await _player.play(AssetSource(_assetPath));
       _playing = true;
     } catch (error) {
       // The app remains usable before the owner adds the optional audio file.
