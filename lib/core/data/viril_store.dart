@@ -37,6 +37,7 @@ class VirilStore extends ChangeNotifier {
   int get xp => _xp;
   int get vcoins => _vcoins;
   bool ownsStoreItem(String id) => _purchasedItems.contains(id);
+  int get purchasedItemsCount => _purchasedItems.length;
   Future<bool> purchaseStoreItem(String id, int price) async {
     await initialize();
     if (_purchasedItems.contains(id)) return true;
