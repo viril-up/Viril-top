@@ -6,6 +6,7 @@ import '../habits/data/habit_store.dart';
 import '../goals/data/goal_store.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
+import 'achievements_screen.dart';
 
 enum _ProgressRange { week, month, year }
 
@@ -197,83 +198,34 @@ class _ProgressScreenState extends State<ProgressScreen> {
               _DomainLevel(label: 'Духовный', icon: Icons.spa_rounded, color: VirilColors.violet, level: store.domainLevel('Духовное')),
             ])),
             const SizedBox(height: 14),
-            GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Твои достижения', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
-              const SizedBox(height: 4),
-              const Text('Награды за системную работу. Одного действия недостаточно — важны регулярность и результат.',
-                style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
-              const SizedBox(height: 10),
-              const Text('ЛЁГКИЕ ДОСТИЖЕНИЯ', style: TextStyle(
-                color: VirilColors.ice, fontSize: 9, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 4),
-              _Achievement(icon: Icons.flag_rounded, title: 'Начало пути',
-                description: 'Создай свой первый план', unlocked: store.tasks.isNotEmpty),
-              _Achievement(icon: Icons.check_circle_outline_rounded, title: 'Первое действие',
-                description: 'Выполни первую задачу', unlocked: store.completedCount >= 1),
-              _Achievement(icon: Icons.bolt_rounded, title: 'Первые 50 XP',
-                description: 'Набери 50 очков опыта', unlocked: store.xp >= 50),
-              _Achievement(icon: Icons.wb_sunny_rounded, title: 'Три дня движения',
-                description: 'Будь активен 3 дня подряд', unlocked: store.activeDaysStreak >= 3),
-              _Achievement(icon: Icons.repeat_rounded, title: 'Новая привычка',
-                description: 'Сделай 5 отметок привычек', unlocked: habits.totalCompletions >= 5),
-              _Achievement(icon: Icons.edit_note_rounded, title: 'Мысли на бумаге',
-                description: 'Создай первую запись в дневнике', unlocked: store.journalEntries.isNotEmpty),
-              const SizedBox(height: 12),
-              const Text('СРЕДНИЕ ДОСТИЖЕНИЯ', style: TextStyle(
-                color: VirilColors.gold, fontSize: 9, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 4),
-              _Achievement(icon: Icons.local_fire_department_rounded, title: 'Неделя силы',
-                description: 'Сохраняй активность 7 дней подряд', unlocked: store.activeDaysStreak >= 7),
-              _Achievement(icon: Icons.repeat_on_rounded, title: 'Устойчивая привычка',
-                description: 'Набери 30 отметок привычек', unlocked: habits.totalCompletions >= 30),
-              _Achievement(icon: Icons.task_alt_rounded, title: 'Десять выполненных дел',
-                description: 'Выполни 10 задач', unlocked: store.completedCount >= 10),
-              _Achievement(icon: Icons.stars_rounded, title: 'Первые 500 XP',
-                description: 'Набери 500 очков опыта', unlocked: store.xp >= 500),
-              _Achievement(icon: Icons.flag_circle_rounded, title: 'Целеустремлённость',
-                description: 'Заверши 3 долгосрочные цели', unlocked: goals.completedGoals >= 3),
-              _Achievement(icon: Icons.menu_book_rounded, title: 'Осмысленный путь',
-                description: 'Сохрани 10 записей в дневнике', unlocked: store.journalEntries.length >= 10),
-              const SizedBox(height: 12),
-              const Text('СЛОЖНЫЕ ДОСТИЖЕНИЯ', style: TextStyle(
-                color: VirilColors.lava, fontSize: 9, letterSpacing: 1.2, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 4),
-              _Achievement(icon: Icons.local_fire_department_rounded, title: 'Стальной характер',
-                description: 'Сохраняй активность 14 дней подряд и отметь не менее 14 активных дней всего',
-                unlocked: store.activeDaysStreak >= 14 && store.activeDaysCount >= 14),
-              _Achievement(icon: Icons.calendar_month_rounded, title: 'Месяц в строю',
-                description: 'Поддерживай непрерывную активность 30 дней подряд',
-                unlocked: store.activeDaysStreak >= 30),
-              _Achievement(icon: Icons.repeat_rounded, title: 'Ритм мастера',
-                description: 'Набери 100 отметок привычек и серию минимум 21 день',
-                unlocked: habits.totalCompletions >= 100 && habits.bestStreak >= 21),
-              _Achievement(icon: Icons.task_alt_rounded, title: 'Дело за делом',
-                description: 'Выполни 50 задач из своих планов',
-                unlocked: store.completedCount >= 50),
-              _Achievement(icon: Icons.bolt_rounded, title: 'Тысячник',
-                description: 'Набери 1 000 XP и выполни не менее 30 задач',
-                unlocked: store.xp >= 1000 && store.completedCount >= 30),
-              _Achievement(icon: Icons.flag_circle_rounded, title: 'Стратег',
-                description: 'Заверши 5 долгосрочных целей и выполни 25 их шагов',
-                unlocked: goals.completedGoals >= 5 && goals.completedSteps >= 25),
-              _Achievement(icon: Icons.menu_book_rounded, title: 'Глубина мысли',
-                description: 'Сохрани 20 записей в дневнике мыслей',
-                unlocked: store.journalEntries.length >= 20),
-              _Achievement(icon: Icons.favorite_rounded, title: 'Осознанная благодарность',
-                description: 'Сохрани 20 записей благодарности',
-                unlocked: store.gratitudeEntries.length >= 20),
-              _Achievement(icon: Icons.balance_rounded, title: 'Четыре опоры',
-                description: 'Достигни 10-го уровня в физическом, ментальном, интеллектуальном и духовном направлениях',
-                unlocked: store.domainLevel('Физическое') >= 10 &&
-                  store.domainLevel('Ментальное') >= 10 &&
-                  store.domainLevel('Интеллект') >= 10 &&
-                  store.domainLevel('Духовное') >= 10),
-              _Achievement(icon: Icons.workspace_premium_rounded, title: 'Легенда Viril',
-                description: 'Набери 5 000 XP, 90 активных дней, выполни 100 задач, собери 150 отметок привычек и заверши 10 целей',
-                unlocked: store.xp >= 5000 && store.activeDaysCount >= 90 &&
-                  store.completedCount >= 100 && habits.totalCompletions >= 150 &&
-                  goals.completedGoals >= 10),
-            ])),
+            InkWell(
+              borderRadius: BorderRadius.circular(18),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => const AchievementsScreen(),
+              )),
+              child: GlassCard(child: Row(children: [
+                Container(
+                  width: 46, height: 46,
+                  decoration: BoxDecoration(
+                    color: VirilColors.gold.withValues(alpha: .13),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: VirilColors.gold.withValues(alpha: .35)),
+                  ),
+                  child: const Icon(Icons.emoji_events_rounded, color: VirilColors.gold, size: 25),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Твои достижения', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900)),
+                    SizedBox(height: 3),
+                    Text('Открой награды пяти направлений и проверь свой прогресс',
+                      style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.35)),
+                  ],
+                )),
+                const Icon(Icons.chevron_right_rounded, color: VirilColors.gold, size: 24),
+              ])),
+            ),
             const SizedBox(height: 12),
             const Text('История XP и активности хранится на устройстве. Новые отметки начнут собирать точную дневную статистику.', style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
           ],
