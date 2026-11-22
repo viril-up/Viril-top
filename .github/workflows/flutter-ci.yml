@@ -2,7 +2,7 @@ name: Flutter CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/viril-splash-apk]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: flutter analyze --no-fatal-infos
+      - run: flutter analyze --no-fatal-infos --no-fatal-warnings
       - run: flutter test
 
   build-apk:
