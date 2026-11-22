@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/services/viril_audio_service.dart';
 import '../../core/data/viril_store.dart';
 import '../../core/theme/viril_colors.dart';
 import 'data/profile_store.dart';
@@ -42,6 +43,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     
     appBar: AppBar(title: const Text('Настройки'), ),
     body: ListView(padding: const EdgeInsets.fromLTRB(18, 10, 18, 40), children: [
+      const _GroupTitle('АТМОСФЕРА'),
+      const _MusicSettingsCard(),
+      const SizedBox(height: 16),
       const _GroupTitle('ПЕРСОНАЛИЗАЦИЯ'),
       _SettingTile(icon: Icons.language_rounded, title: 'Язык', subtitle: _loaded ? _language : 'Загрузка…', onTap: _chooseLanguage),
       const SizedBox(height: 16),
@@ -128,4 +132,81 @@ class _InfoPage extends StatelessWidget {
           const SizedBox(height: 8), Text(section.$2, style: const TextStyle(color: VirilColors.muted, height: 1.5, fontSize: 12)),
         ])),
     ]));
+}
+
+
+class _MusicSettingsCard extends StatelessWidget {
+  const _MusicSettingsCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final music = VirilAudioService.instance;
+    return AnimatedBuilder(
+      animation: music,
+      builder: (context, _) => Container(
+        padding: const EdgeInsets.fromLTRB(15, 13, 15, 12),
+        decoration: BoxDecoration(
+          color: VirilColors.stone,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: VirilColors.line),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Container(
+                width: 39,
+                height: 39,
+                decoration: BoxDecoration(
+                  color: VirilColors.gold.withValues(alpha: .12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.music_note_rounded, color: VirilColors.gold),
+              ),
+              const SizedBox(width: 11),
+              const Expanded(child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Фоновая музыка', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
+                  SizedBox(height: 3),
+                  Text('Тихая ambient-атмосфера', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
+                ],
+              )),
+              Switch.adaptive(
+                value: music.enabled,
+                activeColor: VirilColors.gold,
+                onChanged: (value) { music.setEnabled(value); },
+              ),
+            ]),
+            const SizedBox(height: 8),
+            Row(children: [
+              const Icon(Icons.volume_down_rounded, color: VirilColors.muted, size: 18),
+              Expanded(child: Slider(
+                value: music.volume,
+                min: 0,
+                max: 1,
+                divisions: 20,
+                activeColor: VirilColors.gold,
+                inactiveColor: VirilColors.line,
+                onChanged: music.enabled ? (value) { music.setVolume(value); } : null,
+              )),
+              const Icon(Icons.volume_up_rounded, color: VirilColors.muted, size: 18),
+              const SizedBox(width: 7),
+              SizedBox(
+                width: 34,
+                child: Text('${(music.volume * 100).round()}%',
+                  textAlign: TextAlign.end,
+                  style: const TextStyle(color: VirilColors.muted, fontSize: 10, fontWeight: FontWeight.w700)),
+              ),
+            ]),
+            const Padding(
+              padding: EdgeInsets.only(left: 2),
+              child: Text('Громкость сохраняется автоматически. Музыка приостанавливается, когда приложение свёрнуто.',
+                style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
