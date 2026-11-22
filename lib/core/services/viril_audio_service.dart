@@ -29,7 +29,7 @@ class VirilAudioService extends ChangeNotifier {
 
     final prefs = await SharedPreferences.getInstance();
     _enabled = prefs.getBool(_enabledKey) ?? true;
-    _volume = (prefs.getDouble(_volumeKey) ?? 0.16).clamp(0.0, 1.0);
+    _volume = (prefs.getDouble(_volumeKey) ?? 0.16).clamp(0.0, 1.0).toDouble();
 
     await _player.setReleaseMode(ReleaseMode.loop);
     await _player.setVolume(_volume);
@@ -55,7 +55,7 @@ class VirilAudioService extends ChangeNotifier {
   }
 
   Future<void> setVolume(double value) async {
-    _volume = value.clamp(0.0, 1.0);
+    _volume = value.clamp(0.0, 1.0).toDouble();
     notifyListeners();
 
     final prefs = await SharedPreferences.getInstance();
