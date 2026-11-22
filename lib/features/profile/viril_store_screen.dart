@@ -82,7 +82,7 @@ class VirilStoreScreen extends StatelessWidget {
         SizedBox(height: 2),
         Text('Валюта твоего прогресса', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
       ])),
-      Text('$$balance', style: const TextStyle(color: Colors.white, fontSize: 27, fontWeight: FontWeight.w900)),
+      Text(balance.toString(), style: const TextStyle(color: Colors.white, fontSize: 27, fontWeight: FontWeight.w900)),
     ]),
   );
 
