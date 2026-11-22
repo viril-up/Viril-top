@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/data/viril_store.dart';
 import '../../core/theme/viril_colors.dart';
-import '../../core/data/viril_store.dart' show VirilStore;
+import '../../core/data/viril_store.dart';
 import '../habits/data/habit_store.dart';
 import '../goals/data/goal_store.dart';
 
