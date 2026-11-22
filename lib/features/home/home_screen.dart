@@ -324,8 +324,11 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, _) {
           final history = store.recentActiveDays;
           return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 14, 20, 22),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.of(sheetContext).size.height * .82),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 22),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -414,6 +417,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }),
                 ],
+              ),
+                ),
               ),
             ),
           );
