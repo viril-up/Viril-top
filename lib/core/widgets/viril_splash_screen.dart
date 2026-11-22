@@ -66,29 +66,35 @@ class _VirilSplashScreenState extends State<VirilSplashScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ClipRect(
-                  child: SizedBox(
-                    width: 300,
-                    height: 300,
-                    child: Image.asset(
-                      'assets/splash/splash-logo.png .png',
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        Icons.change_history_rounded,
-                        color: Colors.white,
-                        size: 132,
-                      ),
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFFFFE6A0),
+                      Color(0xFFD6A84B),
+                      Color(0xFF9C7428),
+                    ],
+                  ).createShader(bounds),
+                  child: const Text(
+                    'V',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 116,
+                      height: 1,
+                      fontWeight: FontWeight.w300,
+                      letterSpacing: -8,
                     ),
                   ),
                 ),
                 const SizedBox(height: 18),
                 const Text(
-                  'Viril',
+                  'VIRIL',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 30,
+                    fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 5.5,
+                    letterSpacing: 7,
                   ),
                 ),
               ],
