@@ -66,25 +66,14 @@ class _VirilSplashScreenState extends State<VirilSplashScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ShaderMask(
-                  shaderCallback: (bounds) => const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFFFFE6A0),
-                      Color(0xFFD6A84B),
-                      Color(0xFF9C7428),
-                    ],
-                  ).createShader(bounds),
-                  child: const Text(
-                    'V',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 116,
-                      height: 1,
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: -8,
-                    ),
+                const Text(
+                  'V',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 116,
+                    height: 1,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: -8,
                   ),
                 ),
                 const SizedBox(height: 18),
