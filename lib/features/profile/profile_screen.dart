@@ -462,10 +462,9 @@ class _ProfileMaskPainter extends CustomPainter {
 
 
 class _FutureProfileTile extends StatelessWidget {
-  const _FutureProfileTile({required this.icon, required this.title, this.subtitle, required this.accent, required this.onTap, this.compact = false});
+  const _FutureProfileTile({required this.icon, required this.title, required this.accent, required this.onTap, this.compact = false});
   final IconData icon;
   final String title;
-  final String? subtitle;
   final Color accent;
   final VoidCallback onTap;
   final bool compact;
