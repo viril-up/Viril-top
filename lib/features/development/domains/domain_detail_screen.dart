@@ -16,7 +16,7 @@ class DomainDetailScreen extends StatelessWidget {
       description: 'Развивай выносливость, координацию и заботу о теле. Выбирай комфортную нагрузку, уделяй внимание технике и восстановлению.',
       icon: Icons.fitness_center_rounded,
       color: VirilColors.lava,
-      toolCategories: ['Благополучие', 'Экология'],
+      toolCategories: ['Благополучие'],
       practices: [
         ('Разминка и лёгкая подвижность', '5–8 минут мягких движений без боли'),
         ('Прогулка на свежем воздухе', 'Спокойная прогулка в удобном темпе'),
