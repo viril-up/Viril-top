@@ -60,6 +60,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                 context,
                 MaterialPageRoute(builder: (_) => const AudioLibraryScreen()),
               ),
+            ),
             _DevelopmentToolsLauncher(
               completed: store.completedToolsCount,
               total: ResourceItem.catalog.length,
