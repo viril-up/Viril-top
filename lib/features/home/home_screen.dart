@@ -462,7 +462,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return GlassCard(
       radius: 18,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -471,7 +471,7 @@ class _HomeScreenState extends State<HomeScreen> {
               LeagueEmblem(
                 number: leagueIndex + 1,
                 materialName: leagueName,
-                size: 48,
+                size: 46,
                 unlocked: true,
                 active: true,
               ),
@@ -488,70 +488,46 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: const TextStyle(
                         color: VirilColors.gold,
                         fontSize: 8,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.1,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.0,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 3),
                     Text(
-                      '${leagueName} ЛИГА',
+                      leagueName.toUpperCase() + ' ЛИГА',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: VirilColors.text,
                         fontSize: 13,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'ЛИГА ${leagueIndex + 1} ИЗ 60',
+                      'Лига ' + (leagueIndex + 1).toString() + ' из 60',
                       style: const TextStyle(
                         color: VirilColors.muted,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: .7,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                decoration: BoxDecoration(
-                  color: VirilColors.ice.withValues(alpha: .09),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: VirilColors.ice.withValues(alpha: .22)),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'УРОВЕНЬ',
-                      style: TextStyle(
-                        color: VirilColors.muted,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: .7,
-                      ),
-                    ),
-                    const SizedBox(height: 1),
-                    Text(
-                      '${store.level}',
-                      style: const TextStyle(
-                        color: VirilColors.ice,
-                        fontSize: 19,
-                        height: 1.05,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
+              Text(
+                'Уровень ' + store.level.toString(),
+                textAlign: TextAlign.end,
+                style: const TextStyle(
+                  color: VirilColors.ice,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 9),
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
@@ -561,25 +537,26 @@ class _HomeScreenState extends State<HomeScreen> {
               valueColor: const AlwaysStoppedAnimation(VirilColors.ice),
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 5),
           Row(
             children: [
               Text(
-                '${store.xp} XP',
+                store.xp.toString() + ' XP',
                 style: const TextStyle(
                   color: VirilColors.muted,
                   fontSize: 9,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const Spacer(),
               Text(
-                xpToNext == 0 ? 'МАКСИМАЛЬНЫЙ УРОВЕНЬ' : '${xpToNext} XP ДО СЛЕДУЮЩЕГО',
+                xpToNext == 0
+                    ? 'Максимальный уровень'
+                    : xpToNext.toString() + ' XP до следующего',
                 style: const TextStyle(
                   color: VirilColors.muted,
                   fontSize: 8,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: .35,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
