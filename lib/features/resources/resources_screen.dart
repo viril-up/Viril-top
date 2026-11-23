@@ -37,7 +37,6 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
             const SizedBox(height: 8),
             _LibraryLauncherCard(
               title: 'Библиотека',
-              subtitle: 'Книги и материалы для вдумчивого чтения',
               imagePath: 'assets/section_cards/library/library.png',
               accent: VirilColors.gold,
               onTap: () => Navigator.push(
@@ -47,7 +46,6 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
             ),
             _LibraryLauncherCard(
               title: 'Видеотека',
-              subtitle: 'Обучающие видео и полезные подборки',
               imagePath: 'assets/section_cards/videoteka/videoteka.png',
               accent: VirilColors.ice,
               onTap: () => Navigator.push(
@@ -641,14 +639,12 @@ class _ContentSection extends StatelessWidget {
 class _LibraryLauncherCard extends StatelessWidget {
   const _LibraryLauncherCard({
     required this.title,
-    required this.subtitle,
     required this.imagePath,
     required this.accent,
     required this.onTap,
   });
 
   final String title;
-  final String subtitle;
   final String imagePath;
   final Color accent;
   final VoidCallback onTap;
@@ -698,15 +694,6 @@ class _LibraryLauncherCard extends StatelessWidget {
                                 shadows: [
                                   Shadow(color: Colors.black87, blurRadius: 9, offset: Offset(0, 2)),
                                 ],
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              subtitle,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                                shadows: [Shadow(color: Colors.black87, blurRadius: 7)],
                               ),
                             ),
                           ],
