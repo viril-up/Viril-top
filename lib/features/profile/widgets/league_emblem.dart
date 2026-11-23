@@ -7,12 +7,14 @@ class LeagueEmblem extends StatefulWidget {
   const LeagueEmblem({
     super.key,
     required this.number,
+    required this.materialName,
     required this.size,
     this.unlocked = true,
     this.active = false,
   });
 
   final int number;
+  final String materialName;
   final double size;
   final bool unlocked;
   final bool active;
@@ -60,6 +62,7 @@ class _LeagueEmblemState extends State<LeagueEmblem>
         builder: (context, _) => CustomPaint(
           painter: _LeagueEmblemPainter(
             number: widget.number.clamp(1, 60),
+            materialName: widget.materialName,
             phase: _controller.value,
             unlocked: widget.unlocked,
             active: widget.active,
@@ -73,44 +76,59 @@ class _LeagueEmblemState extends State<LeagueEmblem>
 class _LeagueEmblemPainter extends CustomPainter {
   const _LeagueEmblemPainter({
     required this.number,
+    required this.materialName,
     required this.phase,
     required this.unlocked,
     required this.active,
   });
 
   final int number;
+  final String materialName;
   final double phase;
   final bool unlocked;
   final bool active;
 
-  static const _materials = <Color>[
-    Color(0xFF8B9299), // iron
-    Color(0xFFB9784E), // bronze
-    Color(0xFFC7D0D8), // silver
-    Color(0xFFD7AE55), // gold
-    Color(0xFFDCE3E8), // platinum
-    Color(0xFF4D91D9), // sapphire
-    Color(0xFF36A77B), // emerald
-    Color(0xFFB94D58), // ruby
-    Color(0xFF4D9B85), // jade
-    Color(0xFF65717C), // onyx
-    Color(0xFF82C9D8), // crystal
-    Color(0xFF626B78), // obsidian
-  ];
+  // Exact league-to-material mapping: each title gets its own visual identity.
+  static const _materials = <String, Color>{
+    'Железная': Color(0xFF8B9299), 'Бронзовая': Color(0xFFB9784E),
+    'Серебряная': Color(0xFFC7D0D8), 'Золотая': Color(0xFFD7AE55),
+    'Платиновая': Color(0xFFDCE3E8), 'Сапфировая': Color(0xFF2867B8),
+    'Изумрудная': Color(0xFF16845D), 'Рубиновая': Color(0xFFAC263F),
+    'Нефритовая': Color(0xFF38A58A), 'Ониксовая': Color(0xFF343D49),
+    'Кристальная': Color(0xFF9DE4F0), 'Обсидиановая': Color(0xFF34364B),
+    'Хлорофитовая': Color(0xFF65A83C), 'Мифриловая': Color(0xFF86B7D9),
+    'Адамантитовая': Color(0xFF526B91), 'Люминитовая': Color(0xFFB8D9E8),
+    'Стоическая': Color(0xFF777D83), 'Прометеевская': Color(0xFFD66A32),
+    'Мастер': Color(0xFF477BB7), 'Чемпион': Color(0xFFC3443C),
+    'Превосходная': Color(0xFFB6A6D8), 'Совершенная': Color(0xFFE4E8EE),
+    'Титан': Color(0xFF879EAD), 'Легенда': Color(0xFFB79A50),
+    'Королевская': Color(0xFF7551A5), 'Императорская': Color(0xFF9F343B),
+    'Суверенная': Color(0xFFB49B69), 'Верховная': Color(0xFFBAC5D0),
+    'Гиперборейская': Color(0xFF9BC9E8), 'Олимпийская': Color(0xFFD8C18A),
+    'Эфирная': Color(0xFF9AADD9), 'Архонтическая': Color(0xFF7561B2),
+    'Мифическая': Color(0xFFB35C9C), 'Вознесённая': Color(0xFFE3C5F0),
+    'Божественная': Color(0xFFFFE5A1), 'Просветлённая': Color(0xFFFFF1C7),
+    'Эоническая': Color(0xFF6BC9C2), 'Вечная': Color(0xFFB8C4D2),
+    'Телеологическая': Color(0xFF8F9CBA), 'Эйдетическая': Color(0xFFB5A4D8),
+    'Софическая': Color(0xFFB59A6B), 'Ноэтическая': Color(0xFF77A9C8),
+    'Аретическая': Color(0xFF9CBA91), 'Гносеологическая': Color(0xFF6F91A8),
+    'Эпистемическая': Color(0xFF8C9DCB), 'Ноуменальная': Color(0xFF77718F),
+    'Абсолютная': Color(0xFFE1E4E8), 'Сингулярная': Color(0xFF9C7BE0),
+    'Сверхновая': Color(0xFFFFA64D), 'Астральная': Color(0xFF6677C9),
+    'Межзвёздная': Color(0xFF4E91B8), 'Галактическая': Color(0xFF7753A8),
+    'Космическая': Color(0xFF365C91), 'Метагалактическая': Color(0xFF477F9B),
+    'Вселенская': Color(0xFFB7A6E5), 'Межвселенская': Color(0xFF8D75C9),
+    'Мультивселенская': Color(0xFF5B8CBA), 'Трансцендентная': Color(0xFFD4C3F0),
+    'Запредельная': Color(0xFFEEF0F5), 'Омниверсальная': Color(0xFFFFD98A),
+  };
 
-  static const _epochs = <Color>[
-    Color(0xFFB7A4E5),
-    Color(0xFFD2B36C),
-    Color(0xFF75C8D8),
-    Color(0xFF9AC7A5),
-    Color(0xFFE0C27A),
-  ];
-
-  Color get _metal {
-    final material = _materials[(number - 1) % _materials.length];
-    final epoch = _epochs[number <= 12 ? 0 : number <= 28 ? 1 : number <= 38 ? 2 : number <= 47 ? 3 : 4];
-    return Color.lerp(material, epoch, number <= 12 ? .12 : .28)!;
-  }
+  Color get _metal => _materials[materialName] ?? const Color(0xFF8B9299);
+  bool get _isTitanium => materialName == 'Титан';
+  bool get _isGem => const {
+    'Сапфировая', 'Изумрудная', 'Рубиновая', 'Нефритовая',
+    'Кристальная', 'Мифическая', 'Эфирная', 'Астральная',
+  }.contains(materialName);
+  bool get _isCosmic => number >= 48;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -123,7 +141,7 @@ class _LeagueEmblemPainter extends CustomPainter {
 
     final metal = unlocked ? _metal : const Color(0xFF51565D);
     final dark = Color.lerp(metal, const Color(0xFF080B10), .72)!;
-    final light = Color.lerp(metal, Colors.white, .48)!;
+    final light = Color.lerp(metal, Colors.white, _isGem ? .72 : .48)!;
 
     final shield = Path()
       ..moveTo(0, -45)
@@ -175,6 +193,35 @@ class _LeagueEmblemPainter extends CustomPainter {
         ..color = light.withValues(alpha: .62),
     );
     canvas.restore();
+
+    // Material-specific finish: brushed titanium, gemstone facets and cosmic dust.
+    final texture = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = _isTitanium ? 1.15 : .75
+      ..color = light.withValues(alpha: _isTitanium ? .30 : .18);
+    if (_isTitanium) {
+      for (var i = -3; i <= 3; i++) {
+        canvas.drawLine(Offset(-27, i * 7.0 - 5), Offset(27, i * 7.0 + 5), texture);
+      }
+      canvas.drawLine(const Offset(-25, -29), const Offset(25, -29), texture);
+    } else if (_isGem) {
+      final facets = Path()
+        ..moveTo(0, -29)..lineTo(19, -8)..lineTo(0, 25)..lineTo(-19, -8)..close()
+        ..moveTo(0, -29)..lineTo(0, 25)
+        ..moveTo(-19, -8)..lineTo(19, -8);
+      canvas.drawPath(facets, texture);
+    } else if (_isCosmic) {
+      for (var i = 0; i < 9; i++) {
+        final x = ((i * 17 + number * 7) % 49) - 24.0;
+        final y = ((i * 23 + number * 11) % 48) - 24.0;
+        canvas.drawCircle(Offset(x, y), i.isEven ? 1.25 : .7,
+          Paint()..color = light.withValues(alpha: .65));
+      }
+    } else {
+      for (var i = -2; i <= 2; i++) {
+        canvas.drawLine(Offset(-25, i * 9.0), Offset(25, i * 9.0), texture);
+      }
+    }
 
     // Distinct engraved geometry for every rank.
     final motif = number % 6;
@@ -291,6 +338,7 @@ class _LeagueEmblemPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _LeagueEmblemPainter oldDelegate) =>
       oldDelegate.number != number ||
+      oldDelegate.materialName != materialName ||
       oldDelegate.phase != phase ||
       oldDelegate.unlocked != unlocked ||
       oldDelegate.active != active;
