@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import '../data/viril_store.dart';
 import '../theme/viril_colors.dart';
@@ -27,7 +28,7 @@ class _VirilShellState extends State<VirilShell> {
   ];
   @override void initState() { super.initState(); VirilStore.instance.initialize(); }
   @override Widget build(BuildContext context) => Scaffold(
-    extendBody: false,
+    extendBody: true,
     body: SafeArea(bottom: false, child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -35,16 +36,46 @@ class _VirilShellState extends State<VirilShell> {
         SizedBox(height: 64, child: _header()),
       Expanded(child: VirilAnimatedStack(index: _index, children: _screens)),
     ])),
-    bottomNavigationBar: SafeArea(top: false, child: Padding(
-      padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-      child: Container(decoration: BoxDecoration(color: const Color(0xF20A0D13),
-        borderRadius: BorderRadius.circular(25), border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .22), width: .8),
-        boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 22, offset: Offset(0, 8))]),
-        child: NavigationBar(height: 72, selectedIndex: _index,
-          onDestinationSelected: (value) => setState(() => _index = value),
-          destinations: [for (final item in _items) NavigationDestination(icon: Icon(item.$1), label: item.$2)]),
+    bottomNavigationBar: SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 0, 14, 9),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xB80A0D13),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .28), width: .9),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withValues(alpha: .30), blurRadius: 24, offset: const Offset(0, 8)),
+                  BoxShadow(color: VirilColors.ice.withValues(alpha: .035), blurRadius: 12, spreadRadius: 1),
+                ],
+              ),
+              child: NavigationBar(
+                height: 68,
+                selectedIndex: _index,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                indicatorColor: VirilColors.gold.withValues(alpha: .13),
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+                onDestinationSelected: (value) => setState(() => _index = value),
+                destinations: [
+                  for (final item in _items)
+                    NavigationDestination(
+                      icon: Icon(item.$1, size: 21),
+                      selectedIcon: Icon(item.$1, size: 22, color: VirilColors.gold),
+                      label: item.$2,
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
-    )),
+    ),
   );
   Widget _header() {
     if (_index == 1) return const Padding(
