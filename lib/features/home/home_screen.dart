@@ -494,7 +494,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '\${leagueName} ЛИГА',
+                      '${leagueName} ЛИГА',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -505,7 +505,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'ЛИГА \${leagueIndex + 1} ИЗ 60',
+                      'ЛИГА ${leagueIndex + 1} ИЗ 60',
                       style: const TextStyle(
                         color: VirilColors.muted,
                         fontSize: 9,
@@ -538,7 +538,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 1),
                     Text(
-                      '\${store.level}',
+                      '${store.level}',
                       style: const TextStyle(
                         color: VirilColors.ice,
                         fontSize: 19,
@@ -565,7 +565,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               Text(
-                '\${store.xp} XP',
+                '${store.xp} XP',
                 style: const TextStyle(
                   color: VirilColors.muted,
                   fontSize: 9,
@@ -574,7 +574,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const Spacer(),
               Text(
-                xpToNext == 0 ? 'МАКСИМАЛЬНЫЙ УРОВЕНЬ' : '\${xpToNext} XP ДО СЛЕДУЮЩЕГО',
+                xpToNext == 0 ? 'МАКСИМАЛЬНЫЙ УРОВЕНЬ' : '${xpToNext} XP ДО СЛЕДУЮЩЕГО',
                 style: const TextStyle(
                   color: VirilColors.muted,
                   fontSize: 8,
