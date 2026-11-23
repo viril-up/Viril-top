@@ -34,16 +34,6 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
           children: [
             const SectionTitle('Ресурсы'),
-            _DevelopmentToolsLauncher(
-              completed: store.completedToolsCount,
-              total: ResourceItem.catalog.length,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const DevelopmentToolsScreen(),
-                ),
-              ),
-            ),
             const SizedBox(height: 8),
             _LibraryLauncherCard(
               title: 'Библиотека',
@@ -70,6 +60,16 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                 context,
                 MaterialPageRoute(builder: (_) => const AudioLibraryScreen()),
               ),
+            _DevelopmentToolsLauncher(
+              completed: store.completedToolsCount,
+              total: ResourceItem.catalog.length,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const DevelopmentToolsScreen(),
+                ),
+              ),
+            ),
             ),
           ],
         );
@@ -257,18 +257,13 @@ class _DevelopmentToolsScreenState extends State<DevelopmentToolsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'РАЗВИВАЙСЯ ЧЕРЕЗ ДЕЙСТВИЕ',
+                      'РАЗВИВАЙСЯ ЧЕРЕЗ ДЕЙСТВИЯ',
                       style: TextStyle(
                         color: VirilColors.gold,
                         fontSize: 9,
                         letterSpacing: 1.5,
                         fontWeight: FontWeight.w900,
                       ),
-                    ),
-                    const SizedBox(height: 7),
-                    const Text(
-                      'Каждый инструмент — отдельная тренировка навыка. Изучи идею, выполни мини-челлендж и попробуй практику в жизни.',
-                      style: TextStyle(color: VirilColors.muted, fontSize: 11, height: 1.5),
                     ),
                     const SizedBox(height: 14),
                     Row(
