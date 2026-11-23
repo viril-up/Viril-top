@@ -52,7 +52,7 @@ class _LeaguePathScreenState extends State<LeaguePathScreen> {
           letterSpacing: 1.6, fontWeight: FontWeight.w900)),
         const SizedBox(height: 12),
         Row(children: [
-          LeagueEmblem(number: league.number, size: 56, active: true),
+          LeagueEmblem(number: league.number, materialName: league.name, size: 56, active: true),
           const SizedBox(width: 11),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(league.name, style: TextStyle(color: color, fontSize: 21, fontWeight: FontWeight.w900)),
@@ -132,6 +132,7 @@ class _LeaguePathScreenState extends State<LeaguePathScreen> {
               ? Icon(Icons.check_circle, color: color, size: 20)
               : LeagueEmblem(
                   number: item.number,
+                  materialName: item.name,
                   size: 34,
                   unlocked: unlocked,
                   active: current,
@@ -148,6 +149,7 @@ class _LeaguePathScreenState extends State<LeaguePathScreen> {
               child: Row(children: [
                 LeagueEmblem(
                   number: item.number,
+                  materialName: item.name,
                   size: 70,
                   unlocked: unlocked,
                   active: current,
