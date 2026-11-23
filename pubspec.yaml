@@ -32,6 +32,10 @@ flutter:
     - assets/section_cards/library/
     - assets/section_cards/videoteka/
     - assets/section_cards/training/
+    - assets/section_cards/audio_library/
+    - assets/section_cards/running/
+    - assets/section_cards/meditation/
+    - assets/section_cards/my_dictionary/
     - assets/profile_cover/
     - assets/leagues/
     - assets/resources/books/
