@@ -152,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final compact = constraints.maxHeight < 650;
           final gap = compact ? 7.0 : 10.0;
           return Padding(
-            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 16, 8),
+            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 16, 84),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -175,11 +175,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ]))),
                 if (_showDiary || _showTools) ...[
                   SizedBox(height: gap),
-                  Row(children: [
-                    if (_showDiary) Expanded(child: DiaryToolsCard(onTap: _openDiary)),
-                    if (_showDiary && _showTools) const SizedBox(width: 8),
-                    if (_showTools) Expanded(child: ToolsLauncherCard(onTap: _openTools)),
-                  ]),
+                  Row(
+                    children: [
+                      if (_showDiary) Expanded(child: DiaryToolsCard(onTap: _openDiary)),
+                      if (_showDiary && _showTools) ...[
+                        const SizedBox(width: 7),
+                        _dailyChallengeButton(),
+                        const SizedBox(width: 7),
+                      ],
+                      if (_showTools) Expanded(child: ToolsLauncherCard(onTap: _openTools)),
+                    ],
+                  ),
                 ],
               ],
             ),
@@ -788,6 +794,146 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     controller.dispose();
+  }
+
+  static const _dailyChallenges = <(String, String, String, IconData)>[
+    ('Сделай паузу', 'Отложи телефон на 10 минут и проведи это время без отвлечений.', 'МЕНТАЛЬНЫЙ ВЫЗОВ', Icons.psychology_alt_rounded),
+    ('Запиши одну мысль', 'Открой дневник и запиши одну идею или вывод, который сегодня пришёл тебе в голову.', 'ОСОЗНАННОСТЬ', Icons.edit_note_rounded),
+    ('Наведи порядок', 'Выбери одно небольшое пространство вокруг себя и приведи его в порядок.', 'ДИСЦИПЛИНА', Icons.auto_awesome_rounded),
+    ('Узнай новое', 'Удели 10 минут изучению темы, которая давно тебя интересует.', 'ИНТЕЛЛЕКТ', Icons.lightbulb_outline_rounded),
+    ('Поблагодари', 'Вспомни человека, которому ты благодарен, и вырази ему благодарность.', 'ДУХОВНЫЙ ВЫЗОВ', Icons.favorite_border_rounded),
+    ('Выйди на прогулку', 'Пройдись немного на свежем воздухе в комфортном для тебя темпе.', 'АКТИВНОСТЬ', Icons.directions_walk_rounded),
+    ('План на завтра', 'Запиши одну важную задачу, которую хочешь выполнить завтра.', 'ПЛАНИРОВАНИЕ', Icons.event_note_rounded),
+  ];
+
+  String _todayChallengeKey() {
+    final now = DateTime.now();
+    final date = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    return 'viril.daily_challenge.done.$date';
+  }
+
+  Widget _dailyChallengeButton() => Tooltip(
+    message: 'Ежедневный челлендж',
+    child: Material(
+      color: Colors.transparent,
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: _showDailyChallenge,
+        child: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                VirilColors.gold.withValues(alpha: .24),
+                VirilColors.violet.withValues(alpha: .20),
+              ],
+            ),
+            border: Border.all(color: VirilColors.gold.withValues(alpha: .65), width: 1.2),
+            boxShadow: [
+              BoxShadow(color: VirilColors.gold.withValues(alpha: .12), blurRadius: 15, spreadRadius: 1),
+            ],
+          ),
+          child: const Center(
+            child: Text('?', style: TextStyle(
+              color: VirilColors.gold, fontSize: 27, fontWeight: FontWeight.w800,
+            )),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  Future<void> _showDailyChallenge() async {
+    final now = DateTime.now();
+    final dayNumber = DateTime(now.year, now.month, now.day)
+        .difference(DateTime(2024, 1, 1)).inDays;
+    final challenge = _dailyChallenges[dayNumber % _dailyChallenges.length];
+    final prefs = await SharedPreferences.getInstance();
+    var completed = prefs.getBool(_todayChallengeKey()) ?? false;
+    if (!mounted) return;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, refresh) => Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 28),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(21, 22, 21, 18),
+            decoration: BoxDecoration(
+              color: VirilColors.stone,
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(color: VirilColors.gold.withValues(alpha: .34)),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withValues(alpha: .42), blurRadius: 28, offset: const Offset(0, 12)),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 58, height: 58,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: VirilColors.gold.withValues(alpha: .12),
+                      border: Border.all(color: VirilColors.gold.withValues(alpha: .45)),
+                    ),
+                    child: Icon(challenge.$4, color: VirilColors.gold, size: 28),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Center(child: Text('ВЫЗОВ ДНЯ', style: TextStyle(
+                  color: VirilColors.gold, fontSize: 10, letterSpacing: 1.8, fontWeight: FontWeight.w900,
+                ))),
+                const SizedBox(height: 8),
+                Text(challenge.$1, textAlign: TextAlign.center, style: const TextStyle(
+                  fontSize: 21, fontWeight: FontWeight.w900, color: VirilColors.text,
+                )),
+                const SizedBox(height: 7),
+                Text(challenge.$3, textAlign: TextAlign.center, style: const TextStyle(
+                  color: VirilColors.ice, fontSize: 9, letterSpacing: 1.1, fontWeight: FontWeight.w800,
+                )),
+                const SizedBox(height: 13),
+                Text(challenge.$2, textAlign: TextAlign.center, style: const TextStyle(
+                  color: VirilColors.muted, fontSize: 13, height: 1.5,
+                )),
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 46,
+                  child: FilledButton.icon(
+                    onPressed: completed ? null : () async {
+                      await prefs.setBool(_todayChallengeKey(), true);
+                      refresh(() => completed = true);
+                    },
+                    icon: Icon(completed ? Icons.check_circle_rounded : Icons.done_rounded, size: 18),
+                    label: Text(completed ? 'Выполнено сегодня' : 'Я выполнил челлендж'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: VirilColors.gold,
+                      foregroundColor: VirilColors.black,
+                      disabledBackgroundColor: VirilColors.ice.withValues(alpha: .14),
+                      disabledForegroundColor: VirilColors.ice,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 7),
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Закрыть', style: TextStyle(color: VirilColors.muted)),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void _openDiary() {

@@ -38,7 +38,7 @@ class _CompactHomeLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Material(
-    color: VirilColors.stone.withValues(alpha: .95),
+    color: Colors.transparent,
     borderRadius: BorderRadius.circular(14),
     child: InkWell(
       onTap: onTap,
@@ -48,7 +48,16 @@ class _CompactHomeLauncher extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: VirilColors.line),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF292C32), Color(0xFF17191E), Color(0xFF24272D)],
+            stops: [0, .52, 1],
+          ),
+          border: Border.all(color: VirilColors.ice.withValues(alpha: .12)),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: .18), blurRadius: 12, offset: const Offset(0, 4)),
+          ],
         ),
         child: Row(children: [
           Icon(icon, color: VirilColors.ice, size: 20),
