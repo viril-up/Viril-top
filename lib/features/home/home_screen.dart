@@ -152,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final compact = constraints.maxHeight < 650;
           final gap = compact ? 7.0 : 10.0;
           return Padding(
-            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 16, 8),
+            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 16, 108),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
