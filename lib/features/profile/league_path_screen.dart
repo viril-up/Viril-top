@@ -143,6 +143,51 @@ class _LeaguePathScreenState extends State<LeaguePathScreen> {
             style: const TextStyle(color: VirilColors.muted, fontSize: 8, letterSpacing: .7)),
           children: [
             const Divider(color: VirilColors.line, height: 8),
+            Padding(
+              padding: const EdgeInsets.only(top: 5, bottom: 10),
+              child: Row(children: [
+                LeagueEmblem(
+                  number: item.number,
+                  size: 70,
+                  unlocked: unlocked,
+                  active: current,
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ЭМБЛЕМА ЛИГИ №${item.number.toString().padLeft(2, '0')}',
+                      style: TextStyle(
+                        color: unlocked ? color : VirilColors.muted,
+                        fontSize: 9,
+                        letterSpacing: 1.1,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      item.epochName,
+                      style: const TextStyle(
+                        color: VirilColors.muted,
+                        fontSize: 9,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      current ? 'ТВОЯ ТЕКУЩАЯ СТУПЕНЬ' :
+                          completed ? 'ЭТА ЛИГА УЖЕ ПРОЙДЕНА' :
+                          unlocked ? 'ЛИГА ОТКРЫТА' : 'ЭМБЛЕМА БУДЕТ ДОСТУПНА ПО МЕРЕ ПРОГРЕССА',
+                      style: const TextStyle(
+                        color: VirilColors.muted,
+                        fontSize: 8,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                )),
+              ]),
+            ),
             Row(children: [
               _level('I', item.levelOneXp, xp, color),
               _level('II', item.levelTwoXp, xp, color),
