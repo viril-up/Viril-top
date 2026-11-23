@@ -38,7 +38,7 @@ class DevelopmentScreen extends StatelessWidget {
                 DecoratedBox(decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.centerLeft, end: Alignment.centerRight,
-                    colors: [Colors.black.withValues(alpha: .78), Colors.black.withValues(alpha: .12)],
+                    colors: [Colors.black.withValues(alpha: .12), Colors.black.withValues(alpha: .02)],
                   ),
                 )),
                 const Align(
@@ -56,45 +56,23 @@ class DevelopmentScreen extends StatelessWidget {
         ),
       ),
       _DevelopmentFeatureCard(
-        icon: Icons.directions_run_rounded,
         title: 'Бег',
-        subtitle: 'Секундомер, GPS-маршрут и результаты пробежек',
+        imagePath: 'assets/section_cards/running/running.png',
         accent: VirilColors.lava,
         onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RunningScreen())),
       ),
       _DevelopmentFeatureCard(
-        icon: Icons.self_improvement_rounded,
         title: 'Медитация',
-        subtitle: 'Таймер, дыхательная практика и спокойный фокус',
+        imagePath: 'assets/section_cards/meditation/meditation.png',
         accent: VirilColors.ice,
         onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MeditationScreen())),
       ),
-      InkWell(
-        borderRadius: BorderRadius.circular(22),
+      _DevelopmentFeatureCard(
+        title: 'Мой словарь',
+        imagePath: 'assets/section_cards/my_dictionary/my_dictionary.png',
+        accent: VirilColors.gold,
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const PersonalDictionaryScreen()),
-        ),
-        child: GlassCard(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: Row(children: [
-            Container(
-              width: 46, height: 46,
-              decoration: BoxDecoration(
-                color: VirilColors.gold.withValues(alpha: .13),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: VirilColors.gold.withValues(alpha: .3)),
-              ),
-              child: const Icon(Icons.menu_book_rounded, color: VirilColors.gold, size: 24),
-            ),
-            const SizedBox(width: 13),
-            const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Мой словарь', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900)),
-              SizedBox(height: 4),
-              Text('Собирай слова, записывай собственные значения и повторяй их',
-                style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
-            ])),
-            const Icon(Icons.chevron_right_rounded, color: VirilColors.gold),
-          ]),
         ),
       ),
       const Padding(
@@ -221,27 +199,69 @@ class _DirectionCard extends StatelessWidget {
 
 
 class _DevelopmentFeatureCard extends StatelessWidget {
-  const _DevelopmentFeatureCard({required this.icon, required this.title, required this.subtitle, required this.accent, required this.onTap});
-  final IconData icon;
-  final String title, subtitle;
+  const _DevelopmentFeatureCard({
+    required this.title,
+    required this.imagePath,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final String title;
+  final String imagePath;
   final Color accent;
   final VoidCallback onTap;
 
-  @override Widget build(BuildContext context) => InkWell(
-    borderRadius: BorderRadius.circular(22),
+  @override
+  Widget build(BuildContext context) => InkWell(
     onTap: onTap,
-    child: GlassCard(margin: const EdgeInsets.only(bottom: 12), child: Row(children: [
-      Container(width: 46, height: 46,
-        decoration: BoxDecoration(color: accent.withValues(alpha: .13), borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: accent.withValues(alpha: .35))),
-        child: Icon(icon, color: accent, size: 24)),
-      const SizedBox(width: 13),
-      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900)),
-        const SizedBox(height: 4),
-        Text(subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
-      ])),
-      const Icon(Icons.chevron_right_rounded, color: VirilColors.gold),
-    ])),
+    borderRadius: BorderRadius.circular(20),
+    child: GlassCard(
+      padding: EdgeInsets.zero,
+      margin: const EdgeInsets.only(bottom: 12),
+      radius: 20,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: SizedBox(
+          height: 112,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [accent.withValues(alpha: .28), const Color(0xFF171D26)],
+                    ),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w900,
+                      shadows: [
+                        Shadow(color: Colors.black.withValues(alpha: .72), blurRadius: 9, offset: const Offset(0, 2)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 17,
+                child: Icon(Icons.arrow_forward_ios_rounded, color: Colors.white.withValues(alpha: .95), size: 16),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
   );
 }
