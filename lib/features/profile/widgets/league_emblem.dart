@@ -90,39 +90,39 @@ class _LeagueEmblemPainter extends CustomPainter {
 
   // Exact league-to-material mapping: each title gets its own visual identity.
   static const _materials = <String, Color>{
-    'Железная': Color(0xFF8B9299), 'Бронзовая': Color(0xFFB9784E),
-    'Серебряная': Color(0xFFC7D0D8), 'Золотая': Color(0xFFD7AE55),
-    'Платиновая': Color(0xFFDCE3E8), 'Сапфировая': Color(0xFF2867B8),
-    'Изумрудная': Color(0xFF16845D), 'Рубиновая': Color(0xFFAC263F),
-    'Нефритовая': Color(0xFF38A58A), 'Ониксовая': Color(0xFF343D49),
-    'Кристальная': Color(0xFF9DE4F0), 'Обсидиановая': Color(0xFF34364B),
-    'Хлорофитовая': Color(0xFF65A83C), 'Мифриловая': Color(0xFF86B7D9),
-    'Адамантитовая': Color(0xFF526B91), 'Люминитовая': Color(0xFFB8D9E8),
-    'Стоическая': Color(0xFF777D83), 'Прометеевская': Color(0xFFD66A32),
-    'Мастер': Color(0xFF477BB7), 'Чемпион': Color(0xFFC3443C),
-    'Превосходная': Color(0xFFB6A6D8), 'Совершенная': Color(0xFFE4E8EE),
-    'Титан': Color(0xFF879EAD), 'Легенда': Color(0xFFB79A50),
-    'Королевская': Color(0xFF7551A5), 'Императорская': Color(0xFF9F343B),
-    'Суверенная': Color(0xFFB49B69), 'Верховная': Color(0xFFBAC5D0),
-    'Гиперборейская': Color(0xFF9BC9E8), 'Олимпийская': Color(0xFFD8C18A),
-    'Эфирная': Color(0xFF9AADD9), 'Архонтическая': Color(0xFF7561B2),
-    'Мифическая': Color(0xFFB35C9C), 'Вознесённая': Color(0xFFE3C5F0),
-    'Божественная': Color(0xFFFFE5A1), 'Просветлённая': Color(0xFFFFF1C7),
-    'Эоническая': Color(0xFF6BC9C2), 'Вечная': Color(0xFFB8C4D2),
-    'Телеологическая': Color(0xFF8F9CBA), 'Эйдетическая': Color(0xFFB5A4D8),
-    'Софическая': Color(0xFFB59A6B), 'Ноэтическая': Color(0xFF77A9C8),
-    'Аретическая': Color(0xFF9CBA91), 'Гносеологическая': Color(0xFF6F91A8),
-    'Эпистемическая': Color(0xFF8C9DCB), 'Ноуменальная': Color(0xFF77718F),
-    'Абсолютная': Color(0xFFE1E4E8), 'Сингулярная': Color(0xFF9C7BE0),
-    'Сверхновая': Color(0xFFFFA64D), 'Астральная': Color(0xFF6677C9),
-    'Межзвёздная': Color(0xFF4E91B8), 'Галактическая': Color(0xFF7753A8),
-    'Космическая': Color(0xFF365C91), 'Метагалактическая': Color(0xFF477F9B),
-    'Вселенская': Color(0xFFB7A6E5), 'Межвселенская': Color(0xFF8D75C9),
-    'Мультивселенская': Color(0xFF5B8CBA), 'Трансцендентная': Color(0xFFD4C3F0),
-    'Запредельная': Color(0xFFEEF0F5), 'Омниверсальная': Color(0xFFFFD98A),
+    'Железная': Color(0xFF9AA8B5), 'Бронзовая': Color(0xFFE58A45),
+    'Серебряная': Color(0xFFDDEBFA), 'Золотая': Color(0xFFFFC928),
+    'Платиновая': Color(0xFFB9E7FF), 'Сапфировая': Color(0xFF176BFF),
+    'Изумрудная': Color(0xFF00D889), 'Рубиновая': Color(0xFFFF3158),
+    'Нефритовая': Color(0xFF00C9A7), 'Ониксовая': Color(0xFF7371A8),
+    'Кристальная': Color(0xFF63E8FF), 'Обсидиановая': Color(0xFF8B72D9),
+    'Хлорофитовая': Color(0xFF8BEA32), 'Мифриловая': Color(0xFF63C9FF),
+    'Адамантитовая': Color(0xFF648DFF), 'Люминитовая': Color(0xFFFFF18A),
+    'Стоическая': Color(0xFFB0BEC9), 'Прометеевская': Color(0xFFFF642E),
+    'Мастер': Color(0xFF3E9BFF), 'Чемпион': Color(0xFFFF3F3F),
+    'Превосходная': Color(0xFFCC8CFF), 'Совершенная': Color(0xFFF3F7FF),
+    'Титан': Color(0xFF91C7E8), 'Легенда': Color(0xFFFFD34E),
+    'Королевская': Color(0xFFB66BFF), 'Императорская': Color(0xFFFF455D),
+    'Суверенная': Color(0xFFFFB84D), 'Верховная': Color(0xFFB8D7F5),
+    'Гиперборейская': Color(0xFF65D9FF), 'Олимпийская': Color(0xFFFFD76A),
+    'Эфирная': Color(0xFF9F9BFF), 'Архонтическая': Color(0xFF9565FF),
+    'Мифическая': Color(0xFFFF65C7), 'Вознесённая': Color(0xFFE8A5FF),
+    'Божественная': Color(0xFFFFE36E), 'Просветлённая': Color(0xFFFFFFB8),
+    'Эоническая': Color(0xFF42F0D2), 'Вечная': Color(0xFFB9D8FF),
+    'Телеологическая': Color(0xFF9DAEFF), 'Эйдетическая': Color(0xFFD0A0FF),
+    'Софическая': Color(0xFFFFC477), 'Ноэтическая': Color(0xFF70D2FF),
+    'Аретическая': Color(0xFFA6E875), 'Гносеологическая': Color(0xFF6FC5E8),
+    'Эпистемическая': Color(0xFF829EFF), 'Ноуменальная': Color(0xFFB19BFF),
+    'Абсолютная': Color(0xFFE8F1FF), 'Сингулярная': Color(0xFFB17BFF),
+    'Сверхновая': Color(0xFFFF8A38), 'Астральная': Color(0xFF718CFF),
+    'Межзвёздная': Color(0xFF42C7FF), 'Галактическая': Color(0xFFAD65FF),
+    'Космическая': Color(0xFF4F83FF), 'Метагалактическая': Color(0xFF45E0D0),
+    'Вселенская': Color(0xFFC4A0FF), 'Межвселенская': Color(0xFF9675FF),
+    'Мультивселенская': Color(0xFF55B8FF), 'Трансцендентная': Color(0xFFE2B9FF),
+    'Запредельная': Color(0xFFF1F5FF), 'Омниверсальная': Color(0xFFFFD65A),
   };
 
-  Color get _metal => _materials[materialName] ?? const Color(0xFF8B9299);
+  Color get _metal => _materials[materialName] ?? const Color(0xFF55B8FF);
   bool get _isTitanium => materialName == 'Титан';
   bool get _isGem => const {
     'Сапфировая', 'Изумрудная', 'Рубиновая', 'Нефритовая',
@@ -139,9 +139,10 @@ class _LeagueEmblemPainter extends CustomPainter {
     canvas.translate(center.dx, center.dy);
     canvas.scale(scale);
 
-    final metal = unlocked ? _metal : const Color(0xFF51565D);
-    final dark = Color.lerp(metal, const Color(0xFF080B10), .72)!;
-    final light = Color.lerp(metal, Colors.white, _isGem ? .72 : .48)!;
+    // Keep every league vividly identifiable, including leagues not unlocked yet.
+    final metal = _metal;
+    final dark = Color.lerp(metal, const Color(0xFF080B10), .56)!;
+    final light = Color.lerp(metal, Colors.white, _isGem ? .68 : .52)!;
 
     final shield = Path()
       ..moveTo(0, -45)
@@ -153,11 +154,18 @@ class _LeagueEmblemPainter extends CustomPainter {
       ..quadraticBezierTo(-25, -44, 0, -45)
       ..close();
 
+    final glow = Paint()
+      ..color = metal.withValues(alpha: active ? .42 : .25)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, active ? 10 : 6);
+    canvas.drawCircle(Offset.zero, active ? 43 : 39, glow);
     final halo = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = active ? 2.8 : 1.6
-      ..color = metal.withValues(alpha: active ? .52 : .24);
+      ..strokeWidth = active ? 3.2 : 2.0
+      ..color = metal.withValues(alpha: active ? .95 : .72);
     canvas.drawCircle(Offset.zero, 47, halo);
+    canvas.drawCircle(Offset.zero, 43,
+      Paint()..style = PaintingStyle.stroke..strokeWidth = .8
+        ..color = light.withValues(alpha: .65));
 
     final shadow = Paint()
       ..color = Colors.black.withValues(alpha: .65)
@@ -168,8 +176,8 @@ class _LeagueEmblemPainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [light, metal, dark, const Color(0xFF10141A)],
-        stops: const [0, .25, .72, 1],
+        colors: [light, metal, Color.lerp(metal, dark, .38)!, dark],
+        stops: const [0, .30, .68, 1],
       ).createShader(const Rect.fromLTWH(-40, -46, 80, 94));
     canvas.drawPath(shield, body);
 
@@ -198,7 +206,7 @@ class _LeagueEmblemPainter extends CustomPainter {
     final texture = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = _isTitanium ? 1.15 : .75
-      ..color = light.withValues(alpha: _isTitanium ? .30 : .18);
+      ..color = light.withValues(alpha: _isTitanium ? .48 : .34);
     if (_isTitanium) {
       for (var i = -3; i <= 3; i++) {
         canvas.drawLine(Offset(-27, i * 7.0 - 5), Offset(27, i * 7.0 + 5), texture);
@@ -229,7 +237,7 @@ class _LeagueEmblemPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.35
       ..strokeJoin = StrokeJoin.round
-      ..color = light.withValues(alpha: .76);
+      ..color = light.withValues(alpha: .96);
 
     if (motif == 0) {
       _drawPolygon(canvas, 0, 0, 22, 6, phase * math.pi * 2, accent);
@@ -279,7 +287,7 @@ class _LeagueEmblemPainter extends CustomPainter {
       text: TextSpan(
         text: number.toString().padLeft(2, '0'),
         style: TextStyle(
-          color: Colors.white.withValues(alpha: unlocked ? .96 : .45),
+          color: Colors.white.withValues(alpha: .98),
           fontSize: 10,
           fontWeight: FontWeight.w900,
           letterSpacing: 1,
@@ -299,7 +307,7 @@ class _LeagueEmblemPainter extends CustomPainter {
           end: Alignment.bottomCenter,
           colors: [
             Colors.white.withValues(alpha: 0),
-            Colors.white.withValues(alpha: active ? .22 : .10),
+            Colors.white.withValues(alpha: active ? .38 : .22),
             Colors.white.withValues(alpha: 0),
           ],
         ).createShader(Rect.fromLTWH(sweep - 12, -42, 24, 84));
