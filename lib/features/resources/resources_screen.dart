@@ -686,8 +686,8 @@ class _LibraryLauncherCard extends StatelessWidget {
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                       colors: [
-                        Colors.black.withValues(alpha: .78),
-                        Colors.black.withValues(alpha: .10),
+                        Colors.black.withValues(alpha: .14),
+                        Colors.black.withValues(alpha: .02),
                       ],
                     ),
                   ),
@@ -746,45 +746,45 @@ class _AudioLibraryLauncherCard extends StatelessWidget {
         radius: 20,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: Container(
-            height: 88,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [Color(0xFF18313C), Color(0xFF111820), Color(0xFF17202A)],
-              ),
-            ),
+          child: SizedBox(
+            height: 112,
             child: Stack(
+              fit: StackFit.expand,
               children: [
-                Positioned(
-                  right: 18,
-                  top: 8,
-                  bottom: 8,
-                  child: Icon(
-                    Icons.headphones_rounded,
-                    size: 68,
-                    color: VirilColors.ice.withValues(alpha: .18),
+                Image.asset(
+                  'assets/section_cards/audio_library/audio-library.png',
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF18313C), Color(0xFF111820)],
+                      ),
+                    ),
                   ),
                 ),
-                Positioned.fill(
+                const Align(
+                  alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
-                    child: Row(
-                      children: const [
-                        Expanded(
-                          child: Text(
-                            'Аудиотека',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-                        Icon(Icons.arrow_forward_ios_rounded, color: VirilColors.ice, size: 16),
-                      ],
+                    padding: EdgeInsets.symmetric(horizontal: 18),
+                    child: Text(
+                      'Аудиотека',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w900,
+                        shadows: [
+                          Shadow(color: Colors.black87, blurRadius: 9, offset: Offset(0, 2)),
+                        ],
+                      ),
                     ),
+                  ),
+                ),
+                Positioned(
+                  right: 17,
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.white.withValues(alpha: .95),
+                    size: 16,
                   ),
                 ),
               ],
