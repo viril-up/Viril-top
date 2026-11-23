@@ -165,16 +165,16 @@ class _LeagueEmblemPainter extends CustomPainter {
       ).createShader(const Rect.fromLTWH(-40, -46, 80, 94));
     canvas.drawPath(shield, edge);
 
-    final inset = shield.transform(
-      (Matrix4.identity()..scale(.82, .82)).storage,
-    );
+    canvas.save();
+    canvas.scale(.82, .82);
     canvas.drawPath(
-      inset,
+      shield,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1
         ..color = light.withValues(alpha: .62),
     );
+    canvas.restore();
 
     // Distinct engraved geometry for every rank.
     final motif = number % 6;
