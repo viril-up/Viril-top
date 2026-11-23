@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/data/viril_store.dart';
 import '../../core/theme/viril_colors.dart';
 import 'data/league_data.dart';
+import 'widgets/league_emblem.dart';
 
 class LeaguePathScreen extends StatefulWidget {
   const LeaguePathScreen({super.key});
@@ -51,9 +52,7 @@ class _LeaguePathScreenState extends State<LeaguePathScreen> {
           letterSpacing: 1.6, fontWeight: FontWeight.w900)),
         const SizedBox(height: 12),
         Row(children: [
-          Container(width: 56, height: 56, decoration: BoxDecoration(shape: BoxShape.circle,
-            border: Border.all(color: color, width: 1.8), color: color.withValues(alpha: .12)),
-            child: _emblem(league.number, color, 48)),
+          LeagueEmblem(number: league.number, size: 56, active: true),
           const SizedBox(width: 11),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(league.name, style: TextStyle(color: color, fontSize: 21, fontWeight: FontWeight.w900)),
@@ -129,8 +128,14 @@ class _LeaguePathScreenState extends State<LeaguePathScreen> {
         child: ExpansionTile(
           tilePadding: const EdgeInsets.symmetric(horizontal: 9),
           childrenPadding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-          leading: completed ? Icon(Icons.check_circle, color: color, size: 18) :
-            _emblem(item.number, unlocked ? color : VirilColors.muted, 22),
+          leading: completed
+              ? Icon(Icons.check_circle, color: color, size: 20)
+              : LeagueEmblem(
+                  number: item.number,
+                  size: 34,
+                  unlocked: unlocked,
+                  active: current,
+                ),
           title: Text('${item.number.toString().padLeft(2, '0')}. ${item.name}',
             style: TextStyle(color: current ? color : unlocked ? Colors.white : VirilColors.muted,
               fontSize: 11, fontWeight: FontWeight.w900)),
@@ -149,18 +154,6 @@ class _LeaguePathScreenState extends State<LeaguePathScreen> {
               style: const TextStyle(color: VirilColors.muted, fontSize: 9)),
           ])));
   }
-  Widget _emblem(int number, Color color, double size) => ClipOval(
-    child: Image.asset(
-      'assets/leagues/league-${number.toString().padLeft(2, '0')}.png',
-      width: size, height: size, fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => Container(
-        width: size, height: size, alignment: Alignment.center,
-        decoration: BoxDecoration(shape: BoxShape.circle, color: color.withValues(alpha: .12)),
-        child: Icon(Icons.military_tech_rounded, color: color, size: size * .72),
-      ),
-    ),
-  );
-
   Widget _level(String name, int threshold, int xp, Color color) {
     final done = xp >= threshold;
     return Expanded(child: Container(margin: const EdgeInsets.only(right: 5), padding: const EdgeInsets.all(7),
