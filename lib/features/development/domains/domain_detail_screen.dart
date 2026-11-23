@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../core/data/viril_store.dart';
 import '../../../core/theme/viril_colors.dart';
 import '../../../core/widgets/glass_card.dart';
+import '../../resources/data/resource_store.dart';
+import '../../resources/models/resource_item.dart';
+import '../../resources/resources_screen.dart';
 
 class DomainDetailScreen extends StatelessWidget {
   const DomainDetailScreen({super.key, required this.domain});
@@ -13,6 +16,7 @@ class DomainDetailScreen extends StatelessWidget {
       description: 'Развивай выносливость, координацию и заботу о теле. Выбирай комфортную нагрузку, уделяй внимание технике и восстановлению.',
       icon: Icons.fitness_center_rounded,
       color: VirilColors.lava,
+      toolCategories: ['Благополучие', 'Экология'],
       practices: [
         ('Разминка и лёгкая подвижность', '5–8 минут мягких движений без боли'),
         ('Прогулка на свежем воздухе', 'Спокойная прогулка в удобном темпе'),
@@ -24,6 +28,7 @@ class DomainDetailScreen extends StatelessWidget {
       description: 'Учись замечать своё состояние, управлять вниманием и спокойно разбирать сложные ситуации.',
       icon: Icons.psychology_alt_rounded,
       color: VirilColors.ice,
+      toolCategories: ['Осознанность', 'Эмоции', 'Эмоциональный интеллект', 'Благополучие', 'Отношения', 'Цифровая дисциплина', 'Общение'],
       practices: [
         ('Пауза осознанности', 'На несколько минут переключи внимание на дыхание'),
         ('Дневник мыслей', 'Запиши событие, свою мысль и альтернативный взгляд'),
@@ -35,6 +40,7 @@ class DomainDetailScreen extends StatelessWidget {
       description: 'Развивай кругозор, речь, критическое мышление и способность учиться самостоятельно.',
       icon: Icons.auto_stories_rounded,
       color: VirilColors.gold,
+      toolCategories: ['Речь и интеллект', 'Мышление', 'Обучение', 'Внимание', 'Наука', 'История', 'Информационная грамотность', 'Решение проблем', 'Практические навыки', 'Профориентация', 'Стратегия', 'Коммуникация', 'Планирование', 'Финансовая грамотность'],
       practices: [
         ('Чтение с заметками', 'Прочитай небольшой фрагмент и запиши одну идею'),
         ('Изучение языка', 'Повтори слова и составь несколько предложений'),
@@ -46,6 +52,7 @@ class DomainDetailScreen extends StatelessWidget {
       description: 'Исследуй свои ценности, укрепляй благодарность и находи смысл в ежедневных поступках.',
       icon: Icons.spa_rounded,
       color: VirilColors.violet,
+      toolCategories: ['Самопознание', 'Философия', 'Творчество', 'Кругозор', 'Мудрость', 'Культура', 'Командная работа'],
       practices: [
         ('Личные ценности', 'Выбери одну ценность и подумай, как проявить её сегодня'),
         ('Практика благодарности', 'Запиши три вещи, за которые благодарен'),
@@ -83,6 +90,11 @@ class DomainDetailScreen extends StatelessWidget {
           const SizedBox(height: 10),
           for (final practice in info.practices)
             _PracticeCard(domain: domain, title: practice.$1, description: practice.$2, color: info.color),
+          const SizedBox(height: 18),
+          const Text('ИНСТРУМЕНТЫ РАЗВИТИЯ', style: TextStyle(color: VirilColors.gold, letterSpacing: 1.8, fontSize: 10, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 10),
+          for (final item in ResourceItem.catalog.where((item) => info.toolCategories.contains(item.category)))
+            _DirectionToolCard(item: item, color: info.color),
         ],
       ),
     );
@@ -96,12 +108,43 @@ class _DomainInfo {
     required this.icon,
     required this.color,
     required this.practices,
+    required this.toolCategories,
   });
   final String subtitle;
   final String description;
   final IconData icon;
   final Color color;
   final List<(String, String)> practices;
+  final List<String> toolCategories;
+}
+
+class _DirectionToolCard extends StatelessWidget {
+  const _DirectionToolCard({required this.item, required this.color});
+  final ResourceItem item;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+    borderRadius: BorderRadius.circular(18),
+    onTap: () {
+      ResourceStore.instance.initialize();
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => ResourceToolDetailScreen(item: item)));
+    },
+    child: GlassCard(
+      margin: const EdgeInsets.only(bottom: 9),
+      padding: const EdgeInsets.all(13),
+      child: Row(children: [
+        Icon(item.icon, color: color, size: 21),
+        const SizedBox(width: 11),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(item.title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 3),
+          Text(item.subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.35)),
+        ])),
+        const Icon(Icons.chevron_right_rounded, color: VirilColors.gold, size: 19),
+      ]),
+    ),
+  );
 }
 
 class _PracticeCard extends StatelessWidget {
