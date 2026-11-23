@@ -680,18 +680,6 @@ class _LibraryLauncherCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Colors.black.withValues(alpha: .14),
-                        Colors.black.withValues(alpha: .02),
-                      ],
-                    ),
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 18),
                   child: Row(
@@ -707,12 +695,19 @@ class _LibraryLauncherCard extends StatelessWidget {
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w900,
+                                shadows: [
+                                  Shadow(color: Colors.black87, blurRadius: 9, offset: Offset(0, 2)),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 3),
                             Text(
                               subtitle,
-                              style: const TextStyle(color: Colors.white70, fontSize: 9),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                shadows: [Shadow(color: Colors.black87, blurRadius: 7)],
+                              ),
                             ),
                           ],
                         ),
