@@ -71,7 +71,6 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                 ),
               ),
             ),
-            ),
           ],
         );
       },
