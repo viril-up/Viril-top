@@ -35,18 +35,13 @@ class DevelopmentScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                DecoratedBox(decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft, end: Alignment.centerRight,
-                    colors: [Colors.black.withValues(alpha: .12), Colors.black.withValues(alpha: .02)],
-                  ),
-                )),
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 18),
                     child: Text('Тренировки', style: TextStyle(
                       color: Colors.white, fontSize: 17, fontWeight: FontWeight.w900,
+                      shadows: [Shadow(color: Colors.black87, blurRadius: 9, offset: Offset(0, 2))],
                     )),
                   ),
                 ),
