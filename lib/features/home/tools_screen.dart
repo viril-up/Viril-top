@@ -24,12 +24,13 @@ class ToolsLauncherCard extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF292C32), Color(0xFF17191E), Color(0xFF24272D)],
-            stops: [0, .52, 1],
+            colors: [Color(0xFF30343B), Color(0xFF1D2229), Color(0xFF11161C), Color(0xFF202832)],
+            stops: [0, .38, .76, 1],
           ),
-          border: Border.all(color: VirilColors.ice.withValues(alpha: .12)),
+          border: Border.all(color: VirilColors.ice.withValues(alpha: .055)),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: .18), blurRadius: 12, offset: const Offset(0, 4)),
+            BoxShadow(color: VirilColors.ice.withValues(alpha: .045), blurRadius: 22, spreadRadius: 1),
+            BoxShadow(color: Colors.black.withValues(alpha: .22), blurRadius: 15, offset: const Offset(0, 5)),
           ],
         ),
         child: Row(children: [
