@@ -18,14 +18,23 @@ class VirilShell extends StatefulWidget {
 class _VirilShellState extends State<VirilShell> {
   int _index = 0;
   late final List<Widget> _screens = [
-    HomeScreen(onOpenProfile: _openProfile), const DevelopmentScreen(),
-    const ResourcesScreen(), const ProgressScreen(), const ProfileScreen(), const CommunityScreen(),
+    HomeScreen(onOpenProfile: _openProfile),
+    const DevelopmentScreen(),
+    const ResourcesScreen(),
+    const CommunityScreen(initialTab: 0),
+    const CommunityScreen(initialTab: 1),
+    const ProgressScreen(),
+    const ProfileScreen(),
   ];
-  void _openProfile() => setState(() => _index = 4);
+  void _openProfile() => setState(() => _index = 6);
   static const _items = [
-    (Icons.home_rounded, 'Главная'), (Icons.auto_awesome_rounded, 'Развитие'),
-    (Icons.menu_book_rounded, 'Ресурсы'), (Icons.insights_rounded, 'Прогресс'),
-    (Icons.person_rounded, 'Профиль'), (Icons.groups_rounded, 'Сообщество'),
+    (Icons.home_rounded, 'Главная'),
+    (Icons.auto_awesome_rounded, 'Развитие'),
+    (Icons.menu_book_rounded, 'Ресурсы'),
+    (Icons.chat_bubble_rounded, 'Чат'),
+    (Icons.groups_rounded, 'Сообщество'),
+    (Icons.insights_rounded, 'Прогресс'),
+    (Icons.person_rounded, 'Профиль'),
   ];
   @override void initState() { super.initState(); VirilStore.instance.initialize(); }
   @override Widget build(BuildContext context) => Scaffold(
@@ -33,7 +42,7 @@ class _VirilShellState extends State<VirilShell> {
     body: SafeArea(bottom: false, child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-      if (_index == 1 || _index == 3)
+      if (_index == 1 || _index == 5)
         SizedBox(height: 64, child: _header()),
       Expanded(child: VirilAnimatedStack(index: _index, children: _screens)),
     ])),
@@ -62,12 +71,19 @@ class _VirilShellState extends State<VirilShell> {
                 elevation: 0,
                 indicatorColor: VirilColors.gold.withValues(alpha: .13),
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+                labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
+                  fontSize: 8.5,
+                  height: 1.0,
+                  letterSpacing: -.25,
+                  fontWeight: states.contains(WidgetState.selected) ? FontWeight.w800 : FontWeight.w600,
+                  color: states.contains(WidgetState.selected) ? VirilColors.gold : VirilColors.muted,
+                )),
                 onDestinationSelected: (value) => setState(() => _index = value),
                 destinations: [
                   for (final item in _items)
                     NavigationDestination(
-                      icon: Icon(item.$1, size: 21),
-                      selectedIcon: Icon(item.$1, size: 22, color: VirilColors.gold),
+                      icon: Icon(item.$1, size: 19),
+                      selectedIcon: Icon(item.$1, size: 20, color: VirilColors.gold),
                       label: item.$2,
                     ),
                 ],
@@ -84,7 +100,7 @@ class _VirilShellState extends State<VirilShell> {
       child: Align(alignment: Alignment.centerLeft, child: Text('Развитие',
         style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: VirilColors.text))),
     );
-    if (_index == 3) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) {
+    if (_index == 5) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) {
       final profile = ProfileStore.instance;
       return Padding(padding: const EdgeInsets.fromLTRB(16, 7, 16, 8), child: SizedBox(
         width: double.infinity,
