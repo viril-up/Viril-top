@@ -17,13 +17,18 @@ class VirilShell extends StatefulWidget {
 class _VirilShellState extends State<VirilShell> {
   int _index = 0;
   late final List<Widget> _screens = [
-    HomeScreen(onOpenProfile: _openProfile), const DevelopmentScreen(),
-    const ResourcesScreen(), const ProgressScreen(), const ProfileScreen(),
+    HomeScreen(onOpenProfile: _openProfile),
+    const DevelopmentScreen(),
+    const ResourcesScreen(),
+    const ProgressScreen(),
+    const ProfileScreen(),
   ];
   void _openProfile() => setState(() => _index = 4);
   static const _items = [
-    (Icons.home_rounded, 'Главная'), (Icons.auto_awesome_rounded, 'Развитие'),
-    (Icons.menu_book_rounded, 'Ресурсы'), (Icons.insights_rounded, 'Прогресс'),
+    (Icons.home_rounded, 'Главная'),
+    (Icons.auto_awesome_rounded, 'Развитие'),
+    (Icons.menu_book_rounded, 'Ресурсы'),
+    (Icons.insights_rounded, 'Прогресс'),
     (Icons.person_rounded, 'Профиль'),
   ];
   @override void initState() { super.initState(); VirilStore.instance.initialize(); }
@@ -61,12 +66,19 @@ class _VirilShellState extends State<VirilShell> {
                 elevation: 0,
                 indicatorColor: VirilColors.gold.withValues(alpha: .13),
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+                labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
+                  fontSize: 10,
+                  height: 1.0,
+                  letterSpacing: -.25,
+                  fontWeight: states.contains(WidgetState.selected) ? FontWeight.w900 : FontWeight.w800,
+                  color: states.contains(WidgetState.selected) ? VirilColors.gold : VirilColors.text,
+                )),
                 onDestinationSelected: (value) => setState(() => _index = value),
                 destinations: [
                   for (final item in _items)
                     NavigationDestination(
-                      icon: Icon(item.$1, size: 21),
-                      selectedIcon: Icon(item.$1, size: 22, color: VirilColors.gold),
+                      icon: Icon(item.$1, size: 22, color: VirilColors.ice),
+                      selectedIcon: Icon(item.$1, size: 23, color: VirilColors.gold),
                       label: item.$2,
                     ),
                 ],

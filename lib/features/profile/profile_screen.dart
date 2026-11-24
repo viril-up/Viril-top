@@ -10,6 +10,7 @@ import 'data/global_league_data.dart';
 import 'profile_settings_screen.dart';
 import 'future_features_screen.dart';
 import 'viril_store_screen.dart';
+import '../community/community_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -35,7 +36,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 118),
         children: [
           _profileCover(profile, stats, league),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
+          _FutureProfileTile(
+            icon: Icons.chat_bubble_rounded,
+            title: 'Личные сообщения',
+            accent: VirilColors.ice,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const CommunityScreen(initialTab: 0)),
+            ),
+          ),
+          const SizedBox(height: 5),
           _leagueCard(context, stats, league),
           const SizedBox(height: 12),
           _FutureProfileTile(

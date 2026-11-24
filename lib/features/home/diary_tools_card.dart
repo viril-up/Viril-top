@@ -17,7 +17,7 @@ class DiaryToolsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _CompactHomeLauncher(
-    title: 'Дневник мыслей',
+    title: 'Дневник',
     subtitle: '',
     icon: Icons.auto_stories_rounded,
     onTap: onTap,
@@ -286,7 +286,7 @@ class _DiaryToolsPageState extends State<DiaryToolsPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: const Text('Дневник мыслей'),
+      title: const Text('Дневник'),
       backgroundColor: Colors.transparent,
       elevation: 0,
     ),
