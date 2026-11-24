@@ -195,9 +195,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(18),
         child: Stack(
-          fit: StackFit.expand,
           children: [
-          Image.asset(
+          Positioned.fill(child: Image.asset(
             'assets/section_cards/global_league/global-league.png',
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => const DecoratedBox(
@@ -205,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 gradient: LinearGradient(colors: [Color(0xFF303640), Color(0xFF11161E)]),
               ),
             ),
-          ),
+          )),
           Padding(
             padding: const EdgeInsets.all(10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
