@@ -5,6 +5,7 @@ import '../../core/theme/viril_colors.dart';
 import '../../core/data/viril_store.dart';
 import 'data/profile_store.dart';
 import 'global_league_screen.dart';
+import 'widgets/league_emblem.dart';
 import 'data/global_league_data.dart';
 import 'profile_settings_screen.dart';
 import 'future_features_screen.dart';
@@ -209,18 +210,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.all(10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          const Icon(Icons.shield_moon_rounded, color: VirilColors.gold, size: 22),
-          const SizedBox(width: 9),
           const Expanded(child: Text('ГЛОБАЛЬНАЯ ЛИГА', style: TextStyle(color: VirilColors.gold, fontSize: 11,
             letterSpacing: 1.7, fontWeight: FontWeight.w900))),
           const Icon(Icons.open_in_new_rounded, color: VirilColors.gold, size: 16),
         ]),
         const SizedBox(height: 8),
         Row(children: [
-          Container(width: 40, height: 40, decoration: BoxDecoration(shape: BoxShape.circle,
-            border: Border.all(color: league.color, width: 1.7),
-            gradient: const LinearGradient(colors: [Color(0xFF253448), Color(0xFF19212B)])),
-            child: Icon(Icons.military_tech_rounded, color: league.color, size: 24)),
+          LeagueEmblem(
+            number: league.number,
+            materialName: league.name,
+            size: 40,
+            unlocked: true,
+            active: true,
+          ),
           const SizedBox(width: 9),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(league.name, style: TextStyle(color: league.color, fontSize: 17, fontWeight: FontWeight.w900)),
@@ -344,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   static _League _leagueFor(int xp) {
     final index = GlobalLeagueData.leagueIndexForXp(xp);
     final name = GlobalLeagueData.allLeagues[index];
-    return _League(name, 'Лига ${index + 1} из 60 · уровень ${GlobalLeagueData.levelForXp(xp)}', GlobalLeagueData.colorForLeague(index));
+    return _League(name, 'Лига ${index + 1} из 60 · уровень ${GlobalLeagueData.levelForXp(xp)}', GlobalLeagueData.colorForLeague(index), index + 1);
   }
 }
 
@@ -355,7 +357,7 @@ Future<void> launchExternal(BuildContext context, Uri uri) async {
   }
 }
 
-class _League { const _League(this.name, this.description, this.color); final String name, description; final Color color; }
+class _League { const _League(this.name, this.description, this.color, this.number); final String name, description; final Color color; final int number; }
 class _StatItem extends StatelessWidget {
   const _StatItem({required this.icon, required this.value, required this.label});
   final IconData icon; final String value, label;
