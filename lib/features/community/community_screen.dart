@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 import '../../core/theme/viril_colors.dart';
 
 class CommunityScreen extends StatefulWidget {
-  const CommunityScreen({super.key});
+  const CommunityScreen({super.key, this.initialTab = 0});
+  final int initialTab;
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
   int tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    tab = widget.initialTab.clamp(0, 2);
+  }
   final friends = <Map<String, String>>[
     {'name':'Artem','nick':'artem_01','id':'VR-20481','league':'Алмазная лига'},
     {'name':'Maksim','nick':'maksim.fit','id':'VR-10572','league':'Платиновая лига'},
