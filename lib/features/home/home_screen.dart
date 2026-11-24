@@ -462,7 +462,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return GlassCard(
       radius: 18,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -471,7 +471,7 @@ class _HomeScreenState extends State<HomeScreen> {
               LeagueEmblem(
                 number: leagueIndex + 1,
                 materialName: leagueName,
-                size: 46,
+                size: 42,
                 unlocked: true,
                 active: true,
               ),
