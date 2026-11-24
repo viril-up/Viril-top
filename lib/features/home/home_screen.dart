@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final compact = constraints.maxHeight < 650;
           final gap = compact ? 7.0 : 10.0;
           return Padding(
-            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 16, 84),
+            padding: EdgeInsets.fromLTRB(16, compact ? 3 : 7, 16, 148),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -174,20 +174,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Text('Добавь нужные блоки через «Виджеты»', textAlign: TextAlign.center,
                       style: TextStyle(color: VirilColors.muted, fontSize: 11)),
                   ]))),
-                if (_showDiary || _showTools) ...[
-                  SizedBox(height: gap),
-                  Row(
-                    children: [
-                      if (_showDiary) Expanded(child: DiaryToolsCard(onTap: _openDiary)),
-                      if (_showDiary && _showTools) ...[
-                        const SizedBox(width: 7),
-                        _dailyChallengeButton(),
-                        const SizedBox(width: 7),
-                      ],
-                      if (_showTools) Expanded(child: ToolsLauncherCard(onTap: _openTools)),
-                    ],
-                  ),
-                ],
               ],
             ),
           );
@@ -462,7 +448,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return GlassCard(
       radius: 18,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -471,7 +457,7 @@ class _HomeScreenState extends State<HomeScreen> {
               LeagueEmblem(
                 number: leagueIndex + 1,
                 materialName: leagueName,
-                size: 46,
+                size: 41,
                 unlocked: true,
                 active: true,
               ),
@@ -527,7 +513,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 9),
+          const SizedBox(height: 6),
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
