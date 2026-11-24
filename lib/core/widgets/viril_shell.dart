@@ -4,6 +4,8 @@ import '../data/viril_store.dart';
 import '../theme/viril_colors.dart';
 import 'viril_animated_stack.dart';
 import '../../features/home/home_screen.dart';
+import '../../features/home/diary_tools_card.dart';
+import '../../features/home/tools_screen.dart';
 import '../../features/development/development_screen.dart';
 import '../../features/resources/resources_screen.dart';
 import '../../features/progress/progress_screen.dart';
@@ -27,56 +29,184 @@ class _VirilShellState extends State<VirilShell> {
     (Icons.person_rounded, 'Профиль'),
   ];
   @override void initState() { super.initState(); VirilStore.instance.initialize(); }
-  @override Widget build(BuildContext context) => Scaffold(
+  @override
+  Widget build(BuildContext context) => Scaffold(
     extendBody: true,
-    body: SafeArea(bottom: false, child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-      if (_index == 1 || _index == 3)
-        SizedBox(height: 64, child: _header()),
-      Expanded(child: VirilAnimatedStack(index: _index, children: _screens)),
-    ])),
+    body: SafeArea(
+      bottom: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_index == 1 || _index == 3)
+            SizedBox(height: 64, child: _header()),
+          Expanded(child: VirilAnimatedStack(index: _index, children: _screens)),
+        ],
+      ),
+    ),
     bottomNavigationBar: SafeArea(
       top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 9),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xB80A0D13),
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .28), width: .9),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withValues(alpha: .30), blurRadius: 24, offset: const Offset(0, 8)),
-                  BoxShadow(color: VirilColors.ice.withValues(alpha: .035), blurRadius: 12, spreadRadius: 1),
-                ],
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xD90A0D13), Color(0xF20A0D13), Color(0xFF090C11)],
               ),
-              child: NavigationBar(
-                height: 68,
-                selectedIndex: _index,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                indicatorColor: VirilColors.gold.withValues(alpha: .13),
-                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-                onDestinationSelected: (value) => setState(() => _index = value),
-                destinations: [
-                  for (final item in _items)
-                    NavigationDestination(
-                      icon: Icon(item.$1, size: 21),
-                      selectedIcon: Icon(item.$1, size: 22, color: VirilColors.gold),
-                      label: item.$2,
+              border: Border(
+                top: BorderSide(color: VirilColors.goldSoft.withValues(alpha: .24), width: .8),
+              ),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withValues(alpha: .34), blurRadius: 28, offset: const Offset(0, -8)),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(child: _quickAction(
+                      icon: Icons.menu_book_rounded,
+                      label: 'Дневник',
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(builder: (_) => const DiaryToolsPage()),
+                      ),
+                    )),
+                    const SizedBox(width: 10),
+                    _helpButton(),
+                    const SizedBox(width: 10),
+                    Expanded(child: _quickAction(
+                      icon: Icons.grid_view_rounded,
+                      label: 'Инструменты',
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(builder: (_) => const ToolsScreen()),
+                      ),
+                    )),
+                  ],
+                ),
+                const SizedBox(height: 9),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(32),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xD810141B),
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .30), width: .9),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withValues(alpha: .28), blurRadius: 20, offset: const Offset(0, 6)),
+                        BoxShadow(color: VirilColors.ice.withValues(alpha: .035), blurRadius: 12, spreadRadius: 1),
+                      ],
                     ),
-                ],
-              ),
+                    child: NavigationBar(
+                      height: 66,
+                      selectedIndex: _index,
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      indicatorColor: VirilColors.gold.withValues(alpha: .14),
+                      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+                      onDestinationSelected: (value) => setState(() => _index = value),
+                      destinations: [
+                        for (final item in _items)
+                          NavigationDestination(
+                            icon: Icon(item.$1, size: 20),
+                            selectedIcon: Icon(item.$1, size: 21, color: VirilColors.gold),
+                            label: item.$2,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       ),
     ),
   );
+
+  Widget _quickAction({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) => Material(
+    color: Colors.transparent,
+    borderRadius: BorderRadius.circular(28),
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(28),
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF28313D), Color(0xFF171E28), Color(0xFF111720)],
+          ),
+          border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .42), width: .9),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: .20), blurRadius: 14, offset: const Offset(0, 4)),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: VirilColors.ice, size: 18),
+            const SizedBox(width: 7),
+            Flexible(
+              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: VirilColors.text, fontSize: 12, fontWeight: FontWeight.w800)),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _helpButton() => Material(
+    color: Colors.transparent,
+    shape: const CircleBorder(),
+    child: InkWell(
+      customBorder: const CircleBorder(),
+      onTap: () => showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          backgroundColor: VirilColors.stone,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+          title: const Text('Помощь Viril'),
+          content: const Text('Здесь будет собрана помощь по разделам и функциям приложения.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Понятно')),
+          ],
+        ),
+      ),
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF303A47), Color(0xFF171F2A)],
+          ),
+          border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .48), width: .9),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: .24), blurRadius: 15, offset: const Offset(0, 4)),
+          ],
+        ),
+        child: const Center(
+          child: Text('?', style: TextStyle(color: VirilColors.gold, fontSize: 25, fontWeight: FontWeight.w800)),
+        ),
+      ),
+    ),
+  );
+
   Widget _header() {
     if (_index == 1) return const Padding(
       padding: EdgeInsets.fromLTRB(22, 12, 22, 12),
