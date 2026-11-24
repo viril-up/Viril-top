@@ -8,6 +8,7 @@ import '../../features/development/development_screen.dart';
 import '../../features/resources/resources_screen.dart';
 import '../../features/progress/progress_screen.dart';
 import '../../features/profile/profile_screen.dart';
+import '../../features/community/community_screen.dart';
 import '../../features/profile/data/profile_store.dart';
 
 class VirilShell extends StatefulWidget {
@@ -18,13 +19,13 @@ class _VirilShellState extends State<VirilShell> {
   int _index = 0;
   late final List<Widget> _screens = [
     HomeScreen(onOpenProfile: _openProfile), const DevelopmentScreen(),
-    const ResourcesScreen(), const ProgressScreen(), const ProfileScreen(),
+    const ResourcesScreen(), const ProgressScreen(), const ProfileScreen(), const CommunityScreen(),
   ];
   void _openProfile() => setState(() => _index = 4);
   static const _items = [
     (Icons.home_rounded, 'Главная'), (Icons.auto_awesome_rounded, 'Развитие'),
     (Icons.menu_book_rounded, 'Ресурсы'), (Icons.insights_rounded, 'Прогресс'),
-    (Icons.person_rounded, 'Профиль'),
+    (Icons.person_rounded, 'Профиль'), (Icons.groups_rounded, 'Сообщество'),
   ];
   @override void initState() { super.initState(); VirilStore.instance.initialize(); }
   @override Widget build(BuildContext context) => Scaffold(
