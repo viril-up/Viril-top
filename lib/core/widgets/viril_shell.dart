@@ -28,56 +28,192 @@ class _VirilShellState extends State<VirilShell> {
     (Icons.person_rounded, 'Профиль'), (Icons.groups_rounded, 'Сообщество'),
   ];
   @override void initState() { super.initState(); VirilStore.instance.initialize(); }
-  @override Widget build(BuildContext context) => Scaffold(
+  @override
+  Widget build(BuildContext context) => Scaffold(
     extendBody: true,
-    body: SafeArea(bottom: false, child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-      if (_index == 1 || _index == 3)
-        SizedBox(height: 64, child: _header()),
-      Expanded(child: VirilAnimatedStack(index: _index, children: _screens)),
-    ])),
+    body: SafeArea(
+      bottom: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_index == 1 || _index == 3)
+            SizedBox(height: 64, child: _header()),
+          Expanded(child: VirilAnimatedStack(index: _index, children: _screens)),
+        ],
+      ),
+    ),
     bottomNavigationBar: SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 9),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xB80A0D13),
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(color: VirilColors.goldSoft.withValues(alpha: .28), width: .9),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withValues(alpha: .30), blurRadius: 24, offset: const Offset(0, 8)),
-                  BoxShadow(color: VirilColors.ice.withValues(alpha: .035), blurRadius: 12, spreadRadius: 1),
-                ],
-              ),
-              child: NavigationBar(
-                height: 68,
-                selectedIndex: _index,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                indicatorColor: VirilColors.gold.withValues(alpha: .13),
-                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-                onDestinationSelected: (value) => setState(() => _index = value),
-                destinations: [
-                  for (final item in _items)
-                    NavigationDestination(
-                      icon: Icon(item.$1, size: 21),
-                      selectedIcon: Icon(item.$1, size: 22, color: VirilColors.gold),
-                      label: item.$2,
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 5),
+        child: SizedBox(
+          height: 112,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Positioned.fill(
+                child: ClipPath(
+                  clipper: _HillNavClipper(),
+                  child: BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0xE51B222D), Color(0xF20D1118), Color(0xFF090C11)],
+                        ),
+                        border: Border.all(
+                          color: VirilColors.goldSoft.withValues(alpha: .34),
+                          width: .9,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: .34),
+                            blurRadius: 26,
+                            offset: const Offset(0, -7),
+                          ),
+                        ],
+                      ),
                     ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 5,
+                height: 57,
+                child: Row(
+                  children: [
+                    _navItem(1, Icons.auto_awesome_rounded, 'Развитие'),
+                    _navItem(2, Icons.menu_book_rounded, 'Ресурсы'),
+                    _navItem(5, Icons.groups_rounded, 'Сообщество'),
+                    _navItem(3, Icons.insights_rounded, 'Прогресс'),
+                    _navItem(4, Icons.person_rounded, 'Профиль'),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: 2,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: _homeNavItem(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+
+  Widget _navItem(int index, IconData icon, String label) {
+    final selected = _index == index;
+    return Expanded(
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: label,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => setState(() => _index = index),
+            borderRadius: BorderRadius.circular(18),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 3, bottom: 1),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 20, color: selected ? VirilColors.gold : VirilColors.ice.withValues(alpha: .78)),
+                  const SizedBox(height: 3),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 9.5,
+                      height: 1.05,
+                      fontWeight: selected ? FontWeight.w900 : FontWeight.w600,
+                      color: selected ? VirilColors.gold : VirilColors.muted,
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
+
+  Widget _homeNavItem() {
+    final selected = _index == 0;
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: 'Главная',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => setState(() => _index = 0),
+          borderRadius: BorderRadius.circular(24),
+          child: SizedBox(
+            width: 82,
+            height: 61,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: selected
+                        ? [VirilColors.gold, VirilColors.goldSoft]
+                        : [const Color(0xFF394657), const Color(0xFF1A222D)],
+                    ),
+                    border: Border.all(
+                      color: VirilColors.goldSoft.withValues(alpha: selected ? .85 : .55),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: VirilColors.gold.withValues(alpha: selected ? .22 : .10),
+                        blurRadius: 15,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.home_rounded,
+                    size: 23,
+                    color: selected ? VirilColors.black : VirilColors.gold,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Главная',
+                  style: TextStyle(
+                    fontSize: 9.5,
+                    height: 1,
+                    fontWeight: FontWeight.w900,
+                    color: selected ? VirilColors.gold : VirilColors.text,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _header() {
     if (_index == 1) return const Padding(
       padding: EdgeInsets.fromLTRB(22, 12, 22, 12),
@@ -179,4 +315,35 @@ class _VirilShellState extends State<VirilShell> {
       ])),
     ]));
   }
+}
+
+class _HillNavClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.moveTo(0, 43);
+    path.quadraticBezierTo(0, 25, 19, 25);
+    path.lineTo(size.width * .285, 25);
+    path.cubicTo(
+      size.width * .365, 25,
+      size.width * .385, 1,
+      size.width * .5, 1,
+    );
+    path.cubicTo(
+      size.width * .615, 1,
+      size.width * .635, 25,
+      size.width * .715, 25,
+    );
+    path.lineTo(size.width - 19, 25);
+    path.quadraticBezierTo(size.width, 25, size.width, 43);
+    path.lineTo(size.width, size.height - 23);
+    path.quadraticBezierTo(size.width, size.height, size.width - 23, size.height);
+    path.lineTo(23, size.height);
+    path.quadraticBezierTo(0, size.height, 0, size.height - 23);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant _HillNavClipper oldClipper) => false;
 }
