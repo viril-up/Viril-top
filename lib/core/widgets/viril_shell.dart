@@ -8,7 +8,6 @@ import '../../features/development/development_screen.dart';
 import '../../features/resources/resources_screen.dart';
 import '../../features/progress/progress_screen.dart';
 import '../../features/profile/profile_screen.dart';
-import '../../features/community/community_screen.dart';
 import '../../features/profile/data/profile_store.dart';
 
 class VirilShell extends StatefulWidget {
