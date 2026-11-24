@@ -22,17 +22,15 @@ class _VirilShellState extends State<VirilShell> {
     const DevelopmentScreen(),
     const ResourcesScreen(),
     const CommunityScreen(initialTab: 0),
-    const CommunityScreen(initialTab: 1),
     const ProgressScreen(),
     const ProfileScreen(),
   ];
-  void _openProfile() => setState(() => _index = 6);
+  void _openProfile() => setState(() => _index = 5);
   static const _items = [
     (Icons.home_rounded, 'Главная'),
     (Icons.auto_awesome_rounded, 'Развитие'),
     (Icons.menu_book_rounded, 'Ресурсы'),
     (Icons.chat_bubble_rounded, 'Чат'),
-    (Icons.groups_rounded, 'Сообщество'),
     (Icons.insights_rounded, 'Прогресс'),
     (Icons.person_rounded, 'Профиль'),
   ];
@@ -42,7 +40,7 @@ class _VirilShellState extends State<VirilShell> {
     body: SafeArea(bottom: false, child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-      if (_index == 1 || _index == 5)
+      if (_index == 1 || _index == 4)
         SizedBox(height: 64, child: _header()),
       Expanded(child: VirilAnimatedStack(index: _index, children: _screens)),
     ])),
@@ -100,7 +98,7 @@ class _VirilShellState extends State<VirilShell> {
       child: Align(alignment: Alignment.centerLeft, child: Text('Развитие',
         style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: VirilColors.text))),
     );
-    if (_index == 5) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) {
+    if (_index == 4) return AnimatedBuilder(animation: Listenable.merge([VirilStore.instance, ProfileStore.instance]), builder: (context, _) {
       final profile = ProfileStore.instance;
       return Padding(padding: const EdgeInsets.fromLTRB(16, 7, 16, 8), child: SizedBox(
         width: double.infinity,
