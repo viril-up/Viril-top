@@ -14,7 +14,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   @override
   void initState() {
     super.initState();
-    tab = widget.initialTab.clamp(0, 2);
+    tab = widget.initialTab.clamp(0, 2).toInt();
   }
   final friends = <Map<String, String>>[
     {'name':'Artem','nick':'artem_01','id':'VR-20481','league':'Алмазная лига'},
