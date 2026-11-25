@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/data/viril_store.dart';
 import '../../core/models/viril_task.dart';
@@ -26,11 +28,28 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _showGoals = true;
   bool _showDiary = true;
   bool _showTools = true;
+  List<String> _dailyQuotes = const [];
 
   @override
   void initState() {
     super.initState();
     _loadWidgetPreferences();
+    _loadDailyQuotes();
+  }
+
+  Future<void> _loadDailyQuotes() async {
+    try {
+      final raw = await rootBundle.loadString('assets/quotes/quotes.json');
+      final decoded = jsonDecode(raw);
+      if (decoded is List) {
+        final quotes = decoded.whereType<String>().toList();
+        if (mounted && quotes.isNotEmpty) {
+          setState(() => _dailyQuotes = quotes);
+        }
+      }
+    } catch (error) {
+      debugPrint('Viril daily quotes could not be loaded: $error');
+    }
   }
 
   Future<void> _loadWidgetPreferences() async {
@@ -607,15 +626,17 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           child: goals.isEmpty
             ? Center(
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.flag_outlined, color: VirilColors.muted.withValues(alpha: .8), size: 29),
-                  const SizedBox(height: 7),
-                  const Text('Здесь появятся твои цели', style: TextStyle(
-                    color: VirilColors.muted, fontSize: 12, fontWeight: FontWeight.w600,
-                  )),
-                  const SizedBox(height: 3),
-                  const Text('Нажми + и создай первую', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
-                ]),
+                child: _period == 'day'
+                    ? _dailyQuote()
+                    : Column(mainAxisSize: MainAxisSize.min, children: [
+                        Icon(Icons.flag_outlined, color: VirilColors.muted.withValues(alpha: .8), size: 29),
+                        const SizedBox(height: 7),
+                        const Text('Здесь появятся твои цели', style: TextStyle(
+                          color: VirilColors.muted, fontSize: 12, fontWeight: FontWeight.w600,
+                        )),
+                        const SizedBox(height: 3),
+                        const Text('Нажми + и создай первую', style: TextStyle(color: VirilColors.muted, fontSize: 10)),
+                      ]),
               )
             : ListView.separated(
                 padding: EdgeInsets.zero,
@@ -625,6 +646,51 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
         ),
       ]),
+    );
+  }
+
+  Widget _dailyQuote() {
+    final fallback = 'Время нельзя накопить. Его можно только вложить — или потерять.';
+    final dayNumber = DateTime.now().difference(DateTime(2025, 1, 1)).inDays;
+    final quote = _dailyQuotes.isEmpty
+        ? fallback
+        : _dailyQuotes[dayNumber % _dailyQuotes.length];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(Icons.local_fire_department_rounded,
+                color: VirilColors.lava.withValues(alpha: .9), size: 16),
+            const SizedBox(width: 6),
+            const Text('МЫСЛЬ ДНЯ', style: TextStyle(
+              color: VirilColors.gold, fontSize: 9, letterSpacing: 1.8,
+              fontWeight: FontWeight.w900,
+            )),
+          ]),
+          const SizedBox(height: 13),
+          Text(
+            '«$quote»',
+            textAlign: TextAlign.center,
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: VirilColors.text, fontSize: 15, height: 1.45,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 11),
+          Container(
+            width: 28, height: 2,
+            decoration: BoxDecoration(
+              color: VirilColors.lava.withValues(alpha: .8),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
