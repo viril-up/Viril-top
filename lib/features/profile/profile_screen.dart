@@ -125,12 +125,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   duration: const Duration(milliseconds: 450),
                   curve: Curves.easeInOut,
                   width: 58, height: 58,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-                      colors: [VirilColors.gold.withValues(alpha: .42), VirilColors.stone, VirilColors.ice.withValues(alpha: .2)]),
-                    border: Border.all(color: VirilColors.gold, width: 2),
-                    boxShadow: [BoxShadow(color: VirilColors.gold.withValues(alpha: .35), blurRadius: 17)],
+                    color: Color(0xFF111720),
                   ),
                   child: Center(child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 350),
