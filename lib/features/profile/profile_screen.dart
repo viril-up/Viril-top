@@ -124,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 450),
                   curve: Curves.easeInOut,
-                  width: 68, height: 68,
+                  width: 58, height: 58,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
@@ -136,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     duration: const Duration(milliseconds: 350),
                     transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: FadeTransition(opacity: animation, child: child)),
                     child: Icon(_avatarFor(profile.avatarIndex), key: ValueKey(profile.avatarIndex),
-                      size: 34, color: VirilColors.gold),
+                      size: 30, color: VirilColors.gold),
                   )),
                 ),
               ),              ),
