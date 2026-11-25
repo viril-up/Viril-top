@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadWidgetPreferences();
     _loadDailyQuotes();
+    ProfileStore.instance.initialize();
   }
 
   Future<void> _loadDailyQuotes() async {
