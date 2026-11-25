@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/profile_store.dart';
+import '../../../core/theme/viril_colors.dart';
 import 'profile_frame.dart';
 
 /// Shared avatar renderer used by the Home, Profile and Progress headers.
@@ -21,7 +22,7 @@ class ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final content = profile.hasAvatarImage
-        ? Icon(profile.avatarIcon, color: const Color(0xFFFFD27A), size: iconSize ?? size * .48)
+        ? Icon(profile.avatarIcon, color: VirilColors.gold, size: iconSize ?? size * .48)
         : const SizedBox.shrink();
 
     if (profile.hasFrame) {
