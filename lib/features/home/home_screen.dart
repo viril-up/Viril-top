@@ -11,7 +11,7 @@ import 'tools_screen.dart';
 import '../profile/data/profile_store.dart';
 import '../profile/data/global_league_data.dart';
 import '../profile/widgets/league_emblem.dart';
-import '../profile/widgets/profile_frame.dart';
+import '../profile/widgets/profile_avatar.dart';
 import '../profile/viril_store_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -217,12 +217,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _homeProfileAvatar(ProfileStore profile) {
-    final icon = Icon(profile.avatarIcon, color: VirilColors.gold, size: 20);
-    if (!profile.hasFrame) return SizedBox(width: 42, height: 42, child: Center(child: icon));
-    return ProfileFrame(frameIndex: profile.frameIndex, size: 42, child: icon);
-  }
-
   Widget _topBar(VirilStore store) => AnimatedBuilder(
     animation: ProfileStore.instance,
     builder: (context, _) {
@@ -234,8 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: Row(
                 children: [
-                  if (profile.hasAvatar)
-                    Tooltip(
+                  Tooltip(
                       message: 'Профиль · ${profile.name}',
                       child: Material(
                         color: Colors.transparent,
@@ -243,11 +236,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: InkWell(
                           customBorder: const CircleBorder(),
                           onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
-                          child: _homeProfileAvatar(profile),
+                          child: ProfileAvatar(profile: profile, size: 42, iconSize: 20),
                         ),
                       ),
                     ),
-                  if (profile.hasAvatar) const SizedBox(width: 9),
+                  const SizedBox(width: 9),
                   Flexible(
                     child: Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
