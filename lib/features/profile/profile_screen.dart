@@ -139,7 +139,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       size: 30, color: VirilColors.gold),
                   )),
                 ),
-              ),              ),
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
