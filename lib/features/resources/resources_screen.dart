@@ -28,7 +28,6 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
     return AnimatedBuilder(
       animation: ResourceStore.instance,
       builder: (context, _) {
-        final store = ResourceStore.instance;
         return VirilStaggeredList(
           pageIndex: 2,
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
