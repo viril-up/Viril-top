@@ -22,6 +22,8 @@ class ProfileStore extends ChangeNotifier {
   int get avatarIndex => _avatarIndex;
   int get frameIndex => _frameIndex;
   bool get isReady => _ready;
+  bool get hasAvatar => _avatarIndex >= 0;
+  bool get hasFrame => _frameIndex >= 0;
   IconData get avatarIcon => const <IconData>[
     Icons.psychology_rounded, Icons.auto_awesome_rounded, Icons.fitness_center_rounded,
     Icons.self_improvement_rounded, Icons.menu_book_rounded, Icons.school_rounded,
@@ -54,8 +56,8 @@ class ProfileStore extends ChangeNotifier {
     final cleanName = name.trim();
     _name = cleanName.isEmpty ? 'Путник' : cleanName;
     _bio = bio.trim();
-    _avatarIndex = avatarIndex.clamp(0, 19).toInt();
-    if (frameIndex != null) _frameIndex = frameIndex.clamp(0, 7).toInt();
+    _avatarIndex = avatarIndex.clamp(-1, 19).toInt();
+    if (frameIndex != null) _frameIndex = frameIndex.clamp(-1, 7).toInt();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_nameKey, _name);
     await prefs.setString(_bioKey, _bio);
