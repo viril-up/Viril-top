@@ -19,6 +19,12 @@ class ProgressScreen extends StatefulWidget {
 }
 
 class _ProgressScreenState extends State<ProgressScreen> {
+  Widget _progressProfileAvatar(ProfileStore profile) {
+    final icon = Icon(profile.avatarIcon, color: VirilColors.gold, size: 16);
+    if (!profile.hasFrame) return SizedBox(width: 34, height: 34, child: Center(child: icon));
+    return ProfileFrame(frameIndex: profile.frameIndex, size: 34, child: icon);
+  }
+
   _ProgressRange _range = _ProgressRange.week;
   DateTime _selectedDay = DateTime.now();
 
@@ -85,8 +91,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
           children: [
             GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                ProfileFrame(frameIndex: ProfileStore.instance.frameIndex, size: 34,
-                  child: Icon(ProfileStore.instance.avatarIcon, color: VirilColors.gold, size: 16)),
+                if (ProfileStore.instance.hasAvatar)
+                  _progressProfileAvatar(ProfileStore.instance),
                 const SizedBox(width: 9),
                 const Expanded(child: Text('Динамика развития', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900))),
                 Text('${store.todayPercent}% сегодня', style: const TextStyle(color: VirilColors.ice, fontSize: 11, fontWeight: FontWeight.w800)),
