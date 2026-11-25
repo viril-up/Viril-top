@@ -698,7 +698,6 @@ class _LibraryLauncherCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Icon(Icons.arrow_forward_ios_rounded, color: accent, size: 16),
                     ],
                   ),
                 ),
@@ -758,14 +757,6 @@ class _AudioLibraryLauncherCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
-                ),
-                Positioned(
-                  right: 17,
-                  child: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: Colors.white.withValues(alpha: .95),
-                    size: 16,
                   ),
                 ),
               ],
