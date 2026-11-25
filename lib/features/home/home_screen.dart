@@ -217,6 +217,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _homeProfileAvatar(ProfileStore profile) {
+    final icon = Icon(profile.avatarIcon, color: VirilColors.gold, size: 20);
+    if (!profile.hasFrame) return SizedBox(width: 42, height: 42, child: Center(child: icon));
+    return ProfileFrame(frameIndex: profile.frameIndex, size: 42, child: icon);
+  }
+
   Widget _topBar(VirilStore store) => AnimatedBuilder(
     animation: ProfileStore.instance,
     builder: (context, _) {
@@ -228,20 +234,20 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: Row(
                 children: [
-                  Tooltip(
-                    message: 'Профиль · ${profile.name}',
-                    child: Material(
-                      color: Colors.transparent,
-                      shape: const CircleBorder(),
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
-                        child: ProfileFrame(frameIndex: profile.frameIndex, size: 42,
-                          child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 20)),
+                  if (profile.hasAvatar)
+                    Tooltip(
+                      message: 'Профиль · ${profile.name}',
+                      child: Material(
+                        color: Colors.transparent,
+                        shape: const CircleBorder(),
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
+                          child: _homeProfileAvatar(profile),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 9),
+                  if (profile.hasAvatar) const SizedBox(width: 9),
                   Flexible(
                     child: Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
