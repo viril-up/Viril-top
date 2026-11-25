@@ -386,15 +386,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _openTelegram(BuildContext context) async =>
       launchExternal(context, Uri.parse('https://t.me/Virilgo'));
 
-  static IconData _avatarFor(int index) => const <IconData>[
-    Icons.psychology_rounded, Icons.auto_awesome_rounded, Icons.fitness_center_rounded,
-    Icons.self_improvement_rounded, Icons.menu_book_rounded, Icons.school_rounded,
-    Icons.lightbulb_rounded, Icons.explore_rounded, Icons.shield_rounded,
-    Icons.bolt_rounded, Icons.favorite_rounded, Icons.spa_rounded,
-    Icons.track_changes_rounded, Icons.military_tech_rounded, Icons.waves_rounded,
-    Icons.rocket_launch_rounded, Icons.nights_stay_rounded, Icons.public_rounded,
-    Icons.diamond_rounded, Icons.emoji_events_rounded,
-  ][index.clamp(0, 19)];
   static _League _leagueFor(int xp) {
     final index = GlobalLeagueData.leagueIndexForXp(xp);
     final name = GlobalLeagueData.allLeagues[index];
