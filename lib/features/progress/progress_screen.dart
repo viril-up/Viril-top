@@ -8,7 +8,6 @@ import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import 'achievements_screen.dart';
 import '../profile/data/profile_store.dart';
-import '../profile/widgets/profile_frame.dart';
 
 enum _ProgressRange { week, month, year }
 
@@ -85,9 +84,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
           children: [
             GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                ProfileFrame(frameIndex: ProfileStore.instance.frameIndex, size: 34,
-                  child: Icon(ProfileStore.instance.avatarIcon, color: VirilColors.gold, size: 16)),
-                const SizedBox(width: 9),
                 const Expanded(child: Text('Динамика развития', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900))),
                 Text('${store.todayPercent}% сегодня', style: const TextStyle(color: VirilColors.ice, fontSize: 11, fontWeight: FontWeight.w800)),
               ]),

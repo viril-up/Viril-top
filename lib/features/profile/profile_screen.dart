@@ -6,6 +6,7 @@ import '../../core/data/viril_store.dart';
 import 'data/profile_store.dart';
 import 'global_league_screen.dart';
 import 'widgets/league_emblem.dart';
+import 'widgets/profile_avatar.dart';
 import 'widgets/profile_frame.dart';
 import 'data/global_league_data.dart';
 import 'profile_settings_screen.dart';
@@ -115,30 +116,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              ProfileFrame(frameIndex: profile.frameIndex, size: 68,
-                child: TweenAnimationBuilder<double>(
-                tween: Tween(begin: .92, end: 1),
-                duration: const Duration(milliseconds: 850),
-                curve: Curves.easeInOut,
-                builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 450),
-                  curve: Curves.easeInOut,
-                  width: 58, height: 58,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xFF111720),
-                  ),
-                  child: Center(child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 350),
-                    transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: FadeTransition(opacity: animation, child: child)),
-                    child: Icon(_avatarFor(profile.avatarIndex), key: ValueKey(profile.avatarIndex),
-                      size: 30, color: VirilColors.gold),
-                  )),
-                ),
-                ),
-              ),
+              ProfileAvatar(profile: profile, size: 68, iconSize: 30),
               const SizedBox(width: 12),
+
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white)),
@@ -302,20 +282,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
             GridView.builder(
               shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, mainAxisSpacing: 8, crossAxisSpacing: 8),
-              itemCount: avatarIcons.length,
-              itemBuilder: (_, i) => InkWell(
-                borderRadius: BorderRadius.circular(13),
-                onTap: () => setDialogState(() => avatar = i),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 260),
-                  decoration: BoxDecoration(
-                    color: avatar == i ? VirilColors.gold.withValues(alpha: .2) : VirilColors.stoneLight,
-                    borderRadius: BorderRadius.circular(13),
-                    border: Border.all(color: avatar == i ? VirilColors.gold : VirilColors.line, width: avatar == i ? 1.6 : 1),
+              itemCount: avatarIcons.length + 1,
+              itemBuilder: (_, i) {
+                final selected = avatar == i - 1;
+                return Tooltip(
+                  message: i == 0 ? 'Без аватарки' : 'Выбрать аватар',
+                  child: InkWell(
+                  borderRadius: BorderRadius.circular(13),
+                  onTap: () => setDialogState(() => avatar = i - 1),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 260),
+                    decoration: BoxDecoration(
+                      color: selected ? VirilColors.gold.withValues(alpha: .2) : VirilColors.stoneLight,
+                      borderRadius: BorderRadius.circular(13),
+                      border: Border.all(color: selected ? VirilColors.gold : VirilColors.line, width: selected ? 1.6 : 1),
+                    ),
+                    child: Icon(i == 0 ? Icons.person_off_rounded : avatarIcons[i - 1],
+                      color: selected ? VirilColors.gold : VirilColors.muted, size: 25),
                   ),
-                  child: Icon(avatarIcons[i], color: avatar == i ? VirilColors.gold : VirilColors.muted, size: 25),
-                ),
-              ),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 16),
             const Text('ВЫБЕРИ РАМКУ ПРОФИЛЯ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
@@ -326,27 +313,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, mainAxisSpacing: 9, crossAxisSpacing: 9, childAspectRatio: 2.65,
               ),
-              itemCount: ProfileFrame.styles.length,
-              itemBuilder: (_, i) => InkWell(
-                borderRadius: BorderRadius.circular(13),
-                onTap: () => setDialogState(() => frame = i),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: frame == i ? VirilColors.gold.withValues(alpha: .12) : VirilColors.stoneLight,
-                    borderRadius: BorderRadius.circular(13),
-                    border: Border.all(color: frame == i ? VirilColors.gold : VirilColors.line, width: frame == i ? 1.5 : 1),
+              itemCount: ProfileFrame.styles.length + 1,
+              itemBuilder: (_, i) {
+                final selected = frame == i - 1;
+                return InkWell(
+                  borderRadius: BorderRadius.circular(13),
+                  onTap: () => setDialogState(() => frame = i - 1),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 220),
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: selected ? VirilColors.gold.withValues(alpha: .12) : VirilColors.stoneLight,
+                      borderRadius: BorderRadius.circular(13),
+                      border: Border.all(color: selected ? VirilColors.gold : VirilColors.line, width: selected ? 1.5 : 1),
+                    ),
+                    child: Row(children: [
+                      if (i == 0)
+                        const SizedBox(width: 32, height: 32, child: Icon(Icons.circle_outlined, color: VirilColors.muted, size: 23))
+                      else
+                        ProfileFrame(frameIndex: i - 1, size: 32,
+                          child: const Icon(Icons.auto_awesome_rounded, size: 15, color: Colors.white)),
+                      const SizedBox(width: 7),
+                      Expanded(child: Text(i == 0 ? 'Без рамки' : ProfileFrame.styles[i - 1].name,
+                        maxLines: 1, overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800,
+                          color: selected ? VirilColors.gold : VirilColors.text))),
+                      if (selected) const Icon(Icons.check_circle_rounded, color: VirilColors.gold, size: 14),
+                    ]),
                   ),
-                  child: Row(children: [
-                    ProfileFrame(frameIndex: i, size: 32, child: const Icon(Icons.auto_awesome_rounded, size: 15, color: Colors.white)),
-                    const SizedBox(width: 7),
-                    Expanded(child: Text(ProfileFrame.styles[i].name, maxLines: 1, overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: frame == i ? VirilColors.gold : VirilColors.text))),
-                    if (frame == i) const Icon(Icons.check_circle_rounded, color: VirilColors.gold, size: 14),
-                  ]),
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(height: 8),
             const Text('20 тематических образов: интеллект, физическая сила, осознанность, духовность, знания и другие направления.',
@@ -390,15 +386,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _openTelegram(BuildContext context) async =>
       launchExternal(context, Uri.parse('https://t.me/Virilgo'));
 
-  static IconData _avatarFor(int index) => const <IconData>[
-    Icons.psychology_rounded, Icons.auto_awesome_rounded, Icons.fitness_center_rounded,
-    Icons.self_improvement_rounded, Icons.menu_book_rounded, Icons.school_rounded,
-    Icons.lightbulb_rounded, Icons.explore_rounded, Icons.shield_rounded,
-    Icons.bolt_rounded, Icons.favorite_rounded, Icons.spa_rounded,
-    Icons.track_changes_rounded, Icons.military_tech_rounded, Icons.waves_rounded,
-    Icons.rocket_launch_rounded, Icons.nights_stay_rounded, Icons.public_rounded,
-    Icons.diamond_rounded, Icons.emoji_events_rounded,
-  ][index.clamp(0, 19)];
   static _League _leagueFor(int xp) {
     final index = GlobalLeagueData.leagueIndexForXp(xp);
     final name = GlobalLeagueData.allLeagues[index];

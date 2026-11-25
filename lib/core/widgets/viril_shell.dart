@@ -9,6 +9,7 @@ import '../../features/resources/resources_screen.dart';
 import '../../features/progress/progress_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/profile/data/profile_store.dart';
+import '../../features/profile/widgets/profile_avatar.dart';
 
 class VirilShell extends StatefulWidget {
   const VirilShell({super.key});
@@ -110,7 +111,7 @@ class _VirilShellState extends State<VirilShell> {
                     child: InkWell(
                       customBorder: const CircleBorder(),
                       onTap: _openProfile,
-                      child: SizedBox(width: 40, height: 40, child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 21)),
+                      child: ProfileAvatar(profile: profile, size: 40, iconSize: 21),
                     ),
                   ),
                   const SizedBox(width: 8),
