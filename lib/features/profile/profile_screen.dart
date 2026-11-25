@@ -6,7 +6,7 @@ import '../../core/data/viril_store.dart';
 import 'data/profile_store.dart';
 import 'global_league_screen.dart';
 import 'widgets/league_emblem.dart';
-import 'widgets/profile_frame.dart';
+import 'widgets/profile_avatar.dart';
 import 'data/global_league_data.dart';
 import 'profile_settings_screen.dart';
 import 'future_features_screen.dart';
@@ -115,8 +115,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              if (profile.hasAvatar) _profileAvatar(profile, 68),
-              if (profile.hasAvatar) const SizedBox(width: 12),
+              ProfileAvatar(profile: profile, size: 68, iconSize: 30),
+              const SizedBox(width: 12),
 
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
@@ -156,17 +156,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ]),
       ),
     );
-  }
-
-  Widget _profileAvatar(ProfileStore profile, double size) {
-    final avatar = Container(
-      width: size - 10,
-      height: size - 10,
-      decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF111720)),
-      child: Center(child: Icon(_avatarFor(profile.avatarIndex), size: size * .44, color: VirilColors.gold)),
-    );
-    if (!profile.hasFrame) return SizedBox(width: size, height: size, child: Center(child: avatar));
-    return ProfileFrame(frameIndex: profile.frameIndex, size: size, child: avatar);
   }
 
   Widget _lifetimeStats(VirilStore stats) => Container(
