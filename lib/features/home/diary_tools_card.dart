@@ -48,16 +48,10 @@ class _CompactHomeLauncher extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF30343B), Color(0xFF1D2229), Color(0xFF11161C), Color(0xFF202832)],
-            stops: [0, .38, .76, 1],
-          ),
-          border: Border.all(color: VirilColors.ice.withValues(alpha: .055)),
+          color: VirilColors.voidBlack,
+          border: Border.all(color: VirilColors.line.withValues(alpha: .55)),
           boxShadow: [
-            BoxShadow(color: VirilColors.ice.withValues(alpha: .045), blurRadius: 22, spreadRadius: 1),
-            BoxShadow(color: Colors.black.withValues(alpha: .22), blurRadius: 15, offset: const Offset(0, 5)),
+            BoxShadow(color: Colors.black.withValues(alpha: .38), blurRadius: 18, offset: const Offset(0, 5)),
           ],
         ),
         child: Row(children: [
