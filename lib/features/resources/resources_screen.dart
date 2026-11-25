@@ -729,7 +729,7 @@ class _AudioLibraryLauncherCard extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: SizedBox(
-            height: 112,
+            height: 88,
             child: Stack(
               fit: StackFit.expand,
               children: [
