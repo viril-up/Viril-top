@@ -46,6 +46,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     VirilStore.instance.initialize();
     HabitStore.instance.initialize();
     GoalStore.instance.initialize();
+    ProfileStore.instance.initialize();
   }
 
   @override
