@@ -43,24 +43,12 @@ class _CompactHomeLauncher extends StatelessWidget {
     child: InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
-      child: Container(
-        height: 58,
+      child: GlassCard(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF30343B), Color(0xFF1D2229), Color(0xFF11161C), Color(0xFF202832)],
-            stops: [0, .38, .76, 1],
-          ),
-          border: Border.all(color: VirilColors.ice.withValues(alpha: .055)),
-          boxShadow: [
-            BoxShadow(color: VirilColors.ice.withValues(alpha: .045), blurRadius: 22, spreadRadius: 1),
-            BoxShadow(color: Colors.black.withValues(alpha: .22), blurRadius: 15, offset: const Offset(0, 5)),
-          ],
-        ),
-        child: Row(children: [
+        radius: 14,
+        child: SizedBox(
+          height: 58,
+          child: Row(children: [
           Icon(icon, color: VirilColors.ice, size: 20),
           const SizedBox(width: 8),
           Expanded(child: Column(
@@ -74,7 +62,8 @@ class _CompactHomeLauncher extends StatelessWidget {
             ],
           )),
           const Icon(Icons.chevron_right_rounded, color: VirilColors.muted, size: 17),
-        ]),
+          ]),
+        ),
       ),
     ),
   );

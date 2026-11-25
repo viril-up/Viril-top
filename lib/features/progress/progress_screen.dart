@@ -7,6 +7,8 @@ import '../goals/data/goal_store.dart';
 import '../../core/theme/viril_colors.dart';
 import '../../core/widgets/glass_card.dart';
 import 'achievements_screen.dart';
+import '../profile/data/profile_store.dart';
+import '../profile/widgets/profile_frame.dart';
 
 enum _ProgressRange { week, month, year }
 
@@ -44,6 +46,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     VirilStore.instance.initialize();
     HabitStore.instance.initialize();
     GoalStore.instance.initialize();
+    ProfileStore.instance.initialize();
   }
 
   @override
@@ -52,7 +55,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final habits = HabitStore.instance;
     final goals = GoalStore.instance;
     return AnimatedBuilder(
-      animation: Listenable.merge([store, habits, goals]),
+      animation: Listenable.merge([store, habits, goals, ProfileStore.instance]),
       builder: (context, _) {
         final now = DateTime.now();
         final start = _rangeStart(now);
@@ -82,6 +85,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
           children: [
             GlassCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
+                ProfileFrame(frameIndex: ProfileStore.instance.frameIndex, size: 34,
+                  child: Icon(ProfileStore.instance.avatarIcon, color: VirilColors.gold, size: 16)),
+                const SizedBox(width: 9),
                 const Expanded(child: Text('Динамика развития', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900))),
                 Text('${store.todayPercent}% сегодня', style: const TextStyle(color: VirilColors.ice, fontSize: 11, fontWeight: FontWeight.w800)),
               ]),
@@ -214,20 +220,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   child: const Icon(Icons.emoji_events_rounded, color: VirilColors.gold, size: 25),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Твои достижения', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900)),
-                    SizedBox(height: 3),
-                    Text('Открой награды пяти направлений и проверь свой прогресс',
-                      style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.35)),
-                  ],
-                )),
-                const Icon(Icons.chevron_right_rounded, color: VirilColors.gold, size: 24),
+                const Expanded(child: Text('Твои достижения',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900))),
               ])),
             ),
-            const SizedBox(height: 12),
-            const Text('История XP и активности хранится на устройстве. Новые отметки начнут собирать точную дневную статистику.', style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
           ],
         );
       },

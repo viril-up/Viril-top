@@ -70,10 +70,6 @@ class DevelopmentScreen extends StatelessWidget {
           MaterialPageRoute(builder: (_) => const PersonalDictionaryScreen()),
         ),
       ),
-      const Padding(
-        padding: EdgeInsets.fromLTRB(3, 7, 3, 12),
-        child: Text('НАПРАВЛЕНИЯ САМОРАЗВИТИЯ', style: TextStyle(color: VirilColors.muted, fontSize: 9, letterSpacing: 1.8, fontWeight: FontWeight.w800)),
-      ),
       _DevelopmentHubCard(
         onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DevelopmentDirectionsScreen())),
       ),
@@ -104,7 +100,6 @@ class _DevelopmentHubCard extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           const Expanded(child: Text('Саморазвитие', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800))),
-          const Icon(Icons.chevron_right_rounded, color: VirilColors.gold),
         ]),
         const SizedBox(height: 10),
         const Divider(color: VirilColors.line, height: 1),
@@ -113,11 +108,6 @@ class _DevelopmentHubCard extends StatelessWidget {
         const _DirectionLine(icon: Icons.psychology_alt_rounded, title: 'Ментальное развитие', color: VirilColors.ice),
         const _DirectionLine(icon: Icons.auto_stories_rounded, title: 'Интеллектуальное развитие', color: VirilColors.gold),
         const _DirectionLine(icon: Icons.spa_rounded, title: 'Духовное развитие', color: VirilColors.violet),
-        const SizedBox(height: 5),
-        const Align(
-          alignment: Alignment.centerRight,
-          child: Text('ОТКРЫТЬ НАПРАВЛЕНИЯ  →', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1, fontWeight: FontWeight.w800)),
-        ),
       ]),
     ),
   );
@@ -183,7 +173,6 @@ class _DirectionCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(subtitle, style: const TextStyle(color: VirilColors.muted, fontSize: 11, height: 1.35)),
         ])),
-        const Icon(Icons.chevron_right_rounded, color: VirilColors.gold),
       ]),
     ),
   );
@@ -245,10 +234,6 @@ class _DevelopmentFeatureCard extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                right: 17,
-                child: Icon(Icons.arrow_forward_ios_rounded, color: Colors.white.withValues(alpha: .95), size: 16),
               ),
             ],
           ),

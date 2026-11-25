@@ -11,6 +11,7 @@ import 'tools_screen.dart';
 import '../profile/data/profile_store.dart';
 import '../profile/data/global_league_data.dart';
 import '../profile/widgets/league_emblem.dart';
+import '../profile/widgets/profile_frame.dart';
 import '../profile/viril_store_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadWidgetPreferences();
     _loadDailyQuotes();
+    ProfileStore.instance.initialize();
   }
 
   Future<void> _loadDailyQuotes() async {
@@ -229,12 +231,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   Tooltip(
                     message: 'Профиль · ${profile.name}',
                     child: Material(
-                      color: VirilColors.stone,
-                      shape: const CircleBorder(side: BorderSide(color: VirilColors.gold)),
+                      color: Colors.transparent,
+                      shape: const CircleBorder(),
                       child: InkWell(
                         customBorder: const CircleBorder(),
                         onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
-                        child: SizedBox(width: 42, height: 42, child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 22)),
+                        child: ProfileFrame(frameIndex: profile.frameIndex, size: 42,
+                          child: Icon(profile.avatarIcon, color: VirilColors.gold, size: 20)),
                       ),
                     ),
                   ),
