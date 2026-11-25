@@ -6,6 +6,7 @@ import '../../core/data/viril_store.dart';
 import 'data/profile_store.dart';
 import 'global_league_screen.dart';
 import 'widgets/league_emblem.dart';
+import 'widgets/profile_frame.dart';
 import 'data/global_league_data.dart';
 import 'profile_settings_screen.dart';
 import 'future_features_screen.dart';
@@ -114,7 +115,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              TweenAnimationBuilder<double>(
+              ProfileFrame(frameIndex: profile.frameIndex, size: 68,
+                child: TweenAnimationBuilder<double>(
                 tween: Tween(begin: .92, end: 1),
                 duration: const Duration(milliseconds: 850),
                 curve: Curves.easeInOut,
@@ -137,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       size: 34, color: VirilColors.gold),
                   )),
                 ),
-              ),
+              ),              ),
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis,
@@ -272,6 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final nameController = TextEditingController(text: profile.name);
     final quoteController = TextEditingController(text: profile.bio);
     var avatar = profile.avatarIndex;
+    var frame = profile.frameIndex;
     const avatarIcons = <IconData>[
       Icons.psychology_rounded, Icons.auto_awesome_rounded, Icons.fitness_center_rounded,
       Icons.self_improvement_rounded, Icons.menu_book_rounded, Icons.school_rounded,
@@ -316,6 +319,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
+            const Text('ВЫБЕРИ РАМКУ ПРОФИЛЯ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 9),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, mainAxisSpacing: 9, crossAxisSpacing: 9, childAspectRatio: 2.65,
+              ),
+              itemCount: ProfileFrame.styles.length,
+              itemBuilder: (_, i) => InkWell(
+                borderRadius: BorderRadius.circular(13),
+                onTap: () => setDialogState(() => frame = i),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: frame == i ? VirilColors.gold.withValues(alpha: .12) : VirilColors.stoneLight,
+                    borderRadius: BorderRadius.circular(13),
+                    border: Border.all(color: frame == i ? VirilColors.gold : VirilColors.line, width: frame == i ? 1.5 : 1),
+                  ),
+                  child: Row(children: [
+                    ProfileFrame(frameIndex: i, size: 32, child: const Icon(Icons.auto_awesome_rounded, size: 15, color: Colors.white)),
+                    const SizedBox(width: 7),
+                    Expanded(child: Text(ProfileFrame.styles[i].name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: frame == i ? VirilColors.gold : VirilColors.text))),
+                    if (frame == i) const Icon(Icons.check_circle_rounded, color: VirilColors.gold, size: 14),
+                  ]),
+                ),
+              ),
+            ),
             const SizedBox(height: 8),
             const Text('20 тематических образов: интеллект, физическая сила, осознанность, духовность, знания и другие направления.',
               style: TextStyle(color: VirilColors.muted, fontSize: 10, height: 1.4)),
@@ -338,7 +372,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       } else if (demoNicknames.contains(nickname)) {
         if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Этот никнейм уже занят. Выбери другой.')));
       } else {
-        await profile.updateProfile(name: nameController.text, bio: quoteController.text, avatarIndex: avatar);
+        await profile.updateProfile(name: nameController.text, bio: quoteController.text, avatarIndex: avatar, frameIndex: frame);
       }
     }
     nameController.dispose();
