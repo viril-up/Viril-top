@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -7,12 +8,15 @@ class ProfileStore extends ChangeNotifier {
   static const _nameKey = 'viril.profile.name.v1';
   static const _bioKey = 'viril.profile.bio.v1';
   static const _avatarKey = 'viril.profile.avatar.v1';
+  static const _userIdKey = 'viril.profile.demo_user_id.v1';
   String _name = 'Путник';
   String _bio = 'Мой путь начинается сегодня.';
+  String _userId = '';
   int _avatarIndex = 0;
   bool _ready = false;
   String get name => _name;
   String get bio => _bio;
+  String get userId => _userId;
   int get avatarIndex => _avatarIndex;
   bool get isReady => _ready;
   IconData get avatarIcon => const <IconData>[
@@ -24,15 +28,24 @@ class ProfileStore extends ChangeNotifier {
     Icons.rocket_launch_rounded, Icons.nights_stay_rounded, Icons.public_rounded,
     Icons.diamond_rounded, Icons.emoji_events_rounded,
   ][_avatarIndex.clamp(0, 19).toInt()];
+
   Future<void> initialize() async {
     if (_ready) return;
     final prefs = await SharedPreferences.getInstance();
     _name = prefs.getString(_nameKey) ?? _name;
     _bio = prefs.getString(_bioKey) ?? _bio;
     _avatarIndex = prefs.getInt(_avatarKey) ?? 0;
+    _userId = prefs.getString(_userIdKey) ?? _generateDemoId();
+    await prefs.setString(_userIdKey, _userId);
     _ready = true;
     notifyListeners();
   }
+
+  String _generateDemoId() {
+    final random = Random.secure();
+    return (100000 + random.nextInt(900000)).toString();
+  }
+
   Future<void> updateProfile({required String name, required String bio, required int avatarIndex}) async {
     final cleanName = name.trim();
     _name = cleanName.isEmpty ? 'Путник' : cleanName;
@@ -44,6 +57,7 @@ class ProfileStore extends ChangeNotifier {
     await prefs.setInt(_avatarKey, _avatarIndex);
     notifyListeners();
   }
+
   Future<void> resetLocalProfile() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_nameKey);

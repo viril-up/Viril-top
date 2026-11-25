@@ -145,6 +145,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 4),
                 Text('УРОВЕНЬ ${stats.level}  ·  ${league.name.toUpperCase()}',
                   style: const TextStyle(fontSize: 9, letterSpacing: 1.15, color: VirilColors.gold, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 3),
+                Text('ID: ${profile.userId.isEmpty ? 'создаётся…' : profile.userId}',
+                  style: const TextStyle(fontSize: 9, letterSpacing: .8, color: Colors.white70, fontWeight: FontWeight.w600)),
               ])),
               IconButton(
                 tooltip: 'Изменить никнейм, цитату и аватар',
@@ -325,7 +328,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     ));
     if (result == true) {
-      await profile.updateProfile(name: nameController.text, bio: quoteController.text, avatarIndex: avatar);
+      final nickname = nameController.text.trim().replaceAll('@', '').toLowerCase();
+      const demoNicknames = <String>{
+        'artem', 'artem_01', 'maksim', 'maksim.fit', 'daniil', 'dan_vision',
+        'timur', 'timur.focus', 'eldar', 'eldar_move', 'alex', 'alex.mind',
+      };
+      if (nickname.isEmpty) {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Никнейм не может быть пустым.')));
+      } else if (demoNicknames.contains(nickname)) {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Этот никнейм уже занят. Выбери другой.')));
+      } else {
+        await profile.updateProfile(name: nameController.text, bio: quoteController.text, avatarIndex: avatar);
+      }
     }
     nameController.dispose();
     quoteController.dispose();
