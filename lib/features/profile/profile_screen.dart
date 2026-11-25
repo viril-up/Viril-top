@@ -295,7 +295,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               itemCount: avatarIcons.length + 1,
               itemBuilder: (_, i) {
                 final selected = avatar == i - 1;
-                return InkWell(
+                return Tooltip(
+                  message: i == 0 ? 'Без аватарки' : 'Выбрать аватар',
+                  child: InkWell(
                   borderRadius: BorderRadius.circular(13),
                   onTap: () => setDialogState(() => avatar = i - 1),
                   child: AnimatedContainer(
@@ -307,6 +309,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     child: Icon(i == 0 ? Icons.person_off_rounded : avatarIcons[i - 1],
                       color: selected ? VirilColors.gold : VirilColors.muted, size: 25),
+                  ),
                   ),
                 );
               },
