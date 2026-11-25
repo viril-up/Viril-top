@@ -23,17 +23,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
   ];
 
   final friends = <Map<String, String>>[];
-  final conversations = <Map<String, String>>[
-    {'name': 'Artem', 'nick': 'artem_01', 'id': '204817', 'last': 'Сегодня закрыл все цели. Отличный день!', 'time': '12:48'},
-    {'name': 'Maksim', 'nick': 'maksim.fit', 'id': '105729', 'last': 'Завтра пробежка в 7:00?', 'time': 'Вчера'},
-    {'name': 'Daniil', 'nick': 'dan_vision', 'id': '882164', 'last': 'Спасибо за совет по тренировкам.', 'time': 'Пн'},
-  ];
+  final conversations = <Map<String, String>>[];
 
   @override
   void initState() {
     super.initState();
     tab = widget.initialTab.clamp(0, 1).toInt();
-    friends.addAll(directory.take(3));
   }
 
   @override
@@ -50,19 +45,14 @@ class _CommunityScreenState extends State<CommunityScreen> {
         onPressed: () => Navigator.maybePop(context),
         icon: const Icon(Icons.arrow_back_rounded),
       ),
-      title: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Личные сообщения', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900)),
-        SizedBox(height: 2),
-        Text('ТВОЁ ОКРУЖЕНИЕ. ТВОЙ ПРОГРЕСС.', style: TextStyle(color: VirilColors.gold, fontSize: 8, letterSpacing: 1.15, fontWeight: FontWeight.w800)),
-      ]),
+      title: const Text('Личные сообщения', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900)),
     ),
     body: SafeArea(
       top: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 18),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          _heroCard(),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(color: VirilColors.black.withValues(alpha: .75), borderRadius: BorderRadius.circular(16), border: Border.all(color: VirilColors.line)),
@@ -76,27 +66,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
         ]),
       ),
     ),
-  );
-
-  Widget _heroCard() => Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(20),
-      gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF1B2B40), Color(0xFF101722), Color(0xFF111116)]),
-      border: Border.all(color: VirilColors.gold.withValues(alpha: .25)),
-      boxShadow: [BoxShadow(color: VirilColors.black.withValues(alpha: .28), blurRadius: 18, offset: const Offset(0, 8))],
-    ),
-    child: Row(children: [
-      Container(width: 46, height: 46, decoration: BoxDecoration(shape: BoxShape.circle, color: VirilColors.gold.withValues(alpha: .12), border: Border.all(color: VirilColors.gold.withValues(alpha: .55))),
-        child: const Icon(Icons.forum_rounded, color: VirilColors.gold, size: 22)),
-      const SizedBox(width: 12),
-      const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('ТВОЯ СЕТЬ КОНТАКТОВ', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1.3, fontWeight: FontWeight.w900)),
-        SizedBox(height: 4),
-        Text('Общайся. Находи единомышленников.', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
-      ])),
-      const Icon(Icons.auto_awesome_rounded, color: VirilColors.gold, size: 18),
-    ]),
   );
 
   Widget _tabButton(String label, IconData icon, int index) => Expanded(child: GestureDetector(
