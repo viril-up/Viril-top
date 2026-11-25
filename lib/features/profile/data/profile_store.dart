@@ -22,7 +22,8 @@ class ProfileStore extends ChangeNotifier {
   int get avatarIndex => _avatarIndex;
   int get frameIndex => _frameIndex;
   bool get isReady => _ready;
-  bool get hasAvatar => _avatarIndex >= 0;
+  bool get hasAvatar => true;
+  bool get hasAvatarImage => _avatarIndex >= 0;
   bool get hasFrame => _frameIndex >= 0;
   IconData get avatarIcon => const <IconData>[
     Icons.psychology_rounded, Icons.auto_awesome_rounded, Icons.fitness_center_rounded,
