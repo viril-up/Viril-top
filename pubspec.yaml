@@ -28,6 +28,7 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
+    - assets/quotes/
     - assets/section_cards/global_league/
     - assets/section_cards/library/
     - assets/section_cards/videoteka/
