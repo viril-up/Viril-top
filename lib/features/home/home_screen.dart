@@ -231,8 +231,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Tooltip(
                     message: 'Профиль · ${profile.name}',
                     child: Material(
-                      color: VirilColors.stone,
-                      shape: const CircleBorder(side: BorderSide(color: VirilColors.gold)),
+                      color: Colors.transparent,
+                      shape: const CircleBorder(),
                       child: InkWell(
                         customBorder: const CircleBorder(),
                         onTap: widget.onOpenProfile ?? () => _showInfo('Профиль', 'Открой вкладку «Профиль» в нижней панели.'),
