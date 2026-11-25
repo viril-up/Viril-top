@@ -44,10 +44,10 @@ class _CompactHomeLauncher extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
       child: GlassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
         radius: 14,
         child: SizedBox(
-          height: 58,
+          height: 48,
           child: Row(children: [
           Icon(icon, color: VirilColors.ice, size: 20),
           const SizedBox(width: 8),
