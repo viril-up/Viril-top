@@ -87,36 +87,33 @@ class _DevelopmentHubCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-    borderRadius: BorderRadius.circular(24),
+    borderRadius: BorderRadius.circular(20),
     onTap: onTap,
     child: GlassCard(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Container(
-            width: 48, height: 48,
+            width: 40, height: 40,
             decoration: BoxDecoration(
               color: VirilColors.navyLight.withValues(alpha: .55),
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: VirilColors.line),
             ),
-            child: const Icon(Icons.hub_rounded, color: VirilColors.gold, size: 25),
+            child: const Icon(Icons.hub_rounded, color: VirilColors.gold, size: 22),
           ),
-          const SizedBox(width: 13),
-          const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Саморазвитие', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-            SizedBox(height: 4),
-            Text('Четыре направления в одной системе', style: TextStyle(color: VirilColors.muted, fontSize: 11)),
-          ])),
+          const SizedBox(width: 10),
+          const Expanded(child: Text('Саморазвитие', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800))),
           const Icon(Icons.chevron_right_rounded, color: VirilColors.gold),
         ]),
-        const SizedBox(height: 17),
+        const SizedBox(height: 10),
         const Divider(color: VirilColors.line, height: 1),
-        const SizedBox(height: 14),
+        const SizedBox(height: 9),
         const _DirectionLine(icon: Icons.fitness_center_rounded, title: 'Физическое развитие', color: VirilColors.lava),
         const _DirectionLine(icon: Icons.psychology_alt_rounded, title: 'Ментальное развитие', color: VirilColors.ice),
         const _DirectionLine(icon: Icons.auto_stories_rounded, title: 'Интеллектуальное развитие', color: VirilColors.gold),
         const _DirectionLine(icon: Icons.spa_rounded, title: 'Духовное развитие', color: VirilColors.violet),
-        const SizedBox(height: 12),
+        const SizedBox(height: 5),
         const Align(
           alignment: Alignment.centerRight,
           child: Text('ОТКРЫТЬ НАПРАВЛЕНИЯ  →', style: TextStyle(color: VirilColors.gold, fontSize: 9, letterSpacing: 1, fontWeight: FontWeight.w800)),
@@ -134,11 +131,11 @@ class _DirectionLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 12),
+    padding: const EdgeInsets.only(bottom: 8),
     child: Row(children: [
-      Icon(icon, color: color, size: 18),
-      const SizedBox(width: 11),
-      Text(title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+      Icon(icon, color: color, size: 16),
+      const SizedBox(width: 10),
+      Text(title, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
     ]),
   );
 }
