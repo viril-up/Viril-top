@@ -7,6 +7,7 @@ import 'data/profile_store.dart';
 import 'global_league_screen.dart';
 import 'widgets/league_emblem.dart';
 import 'widgets/profile_avatar.dart';
+import 'widgets/profile_frame.dart';
 import 'data/global_league_data.dart';
 import 'profile_settings_screen.dart';
 import 'future_features_screen.dart';
