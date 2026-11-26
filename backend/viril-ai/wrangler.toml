@@ -1,0 +1,6 @@
+name = "viril-ai"
+main = "src/index.ts"
+compatibility_date = "2026-11-26"
+
+[ai]
+binding = "AI"
