@@ -7,6 +7,16 @@ interface ChatMessage {
   content: string;
 }
 
+interface ModelResult {
+  response?: unknown;
+  choices?: Array<{
+    message?: {
+      content?: unknown;
+    };
+  }>;
+  [key: string]: unknown;
+}
+
 const MODEL = "@cf/google/gemma-4-26b-a4b-it";
 const MAX_MESSAGES = 20;
 const MAX_MESSAGE_LENGTH = 8000;
@@ -70,14 +80,29 @@ export default {
       const result = await env.AI.run(MODEL, {
         messages: body.messages as ChatMessage[],
         max_tokens: 900,
+        chat_template_kwargs: {
+          enable_thinking: false,
+        },
       });
 
-      const output = result as { response?: string; [key: string]: unknown };
-      if (typeof output.response !== "string" || output.response.trim().length === 0) {
-        return json({ error: "The model returned an empty response" }, 502);
+      const output = result as ModelResult;
+      const choiceContent = output.choices?.[0]?.message?.content;
+      const responseText =
+        typeof output.response === "string"
+          ? output.response
+          : typeof choiceContent === "string"
+            ? choiceContent
+            : "";
+
+      if (responseText.trim().length === 0) {
+        console.error("Workers AI returned no text", {
+          model: MODEL,
+          resultKeys: Object.keys(output),
+        });
+        return json({ error: "The AI model returned no text. Check the Worker logs for the model response format." }, 502);
       }
 
-      return json({ response: output.response });
+      return json({ response: responseText.trim() });
     } catch (error) {
       console.error("Viril AI inference failed", error);
       return json({ error: "AI inference is temporarily unavailable" }, 502);

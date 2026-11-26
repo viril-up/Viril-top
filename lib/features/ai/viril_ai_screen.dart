@@ -14,7 +14,10 @@ class VirilAiScreen extends StatefulWidget {
 }
 
 class _VirilAiScreenState extends State<VirilAiScreen> {
-  static const _apiBaseUrl = String.fromEnvironment('VIRIL_AI_API_URL');
+  static const _apiBaseUrl = String.fromEnvironment(
+    'VIRIL_AI_API_URL',
+    defaultValue: 'https://viril-top.userqwertyuiopplus.workers.dev',
+  );
   final _inputController = TextEditingController();
   final _scrollController = ScrollController();
   final List<Map<String, String>> _messages = [
