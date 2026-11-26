@@ -196,20 +196,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Text('Добавь нужные блоки через «Виджеты»', textAlign: TextAlign.center,
                       style: TextStyle(color: VirilColors.muted, fontSize: 11)),
                   ]))),
-                if (_showDiary || _showTools) ...[
-                  SizedBox(height: gap),
+                SizedBox(height: gap),
+                if (_showDiary || _showTools)
                   Row(
                     children: [
                       if (_showDiary) Expanded(child: DiaryToolsCard(onTap: _openDiary)),
-                      if (_showDiary && _showTools) ...[
-                        const SizedBox(width: 7),
-                        _virilAiButton(),
-                        const SizedBox(width: 7),
-                      ],
+                      if (_showDiary) const SizedBox(width: 7),
+                      _virilAiButton(),
+                      if (_showTools) const SizedBox(width: 7),
                       if (_showTools) Expanded(child: ToolsLauncherCard(onTap: _openTools)),
                     ],
-                  ),
-                ],
+                  )
+                else
+                  Center(child: _virilAiButton()),
               ],
             ),
           );
