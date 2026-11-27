@@ -32,6 +32,30 @@ jobs:
           path.write_text(content)
           PY
 
+      - name: Configure Supabase OAuth deep link
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("android/app/src/main/AndroidManifest.xml")
+          content = path.read_text()
+          intent_filter = '''
+                  <intent-filter>
+                      <action android:name="android.intent.action.VIEW" />
+                      <category android:name="android.intent.category.DEFAULT" />
+                      <category android:name="android.intent.category.BROWSABLE" />
+                      <data android:scheme="io.supabase.viril" android:host="login-callback" />
+                  </intent-filter>
+          '''
+          start = content.find("<activity")
+          end = content.find("</activity>", start)
+          if start < 0 or end < 0:
+              raise SystemExit("Could not find MainActivity in AndroidManifest.xml")
+          activity = content[start:end]
+          if "io.supabase.viril" not in activity:
+              content = content[:end] + intent_filter + content[end:]
+          path.write_text(content)
+          PY
+
       - name: Install dependencies
         run: flutter pub get
 
