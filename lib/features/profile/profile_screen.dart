@@ -13,6 +13,7 @@ import 'profile_settings_screen.dart';
 import 'future_features_screen.dart';
 import 'viril_store_screen.dart';
 import '../community/community_screen.dart';
+import '../auth/auth_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -75,8 +76,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 16),
           _sectionLabel('ТВОЙ ПРОФИЛЬ'),
           const SizedBox(height: 10),
-          _ActionTile(icon: Icons.person_add_alt_1_rounded, title: 'Зарегистрироваться',
-            subtitle: 'Создать игровой аккаунт Viril через Google', onTap: () => _showRegistrationInfo(context)),
+          _ActionTile(icon: Icons.person_add_alt_1_rounded, title: 'Войти / зарегистрироваться',
+            subtitle: 'Google или электронная почта', onTap: () => _openAuth(context)),
           _ActionTile(icon: Icons.quiz_outlined, title: 'Ответы на вопросы',
             subtitle: 'Всё, что нужно знать о приложении', onTap: () => _openFaq(context)),
           _ActionTile(icon: Icons.support_agent_rounded, title: 'Поддержка',
@@ -374,10 +375,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _openFaq(BuildContext context) async => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const _FaqScreen()));
-  Future<void> _showRegistrationInfo(BuildContext context) async => showDialog<void>(context: context, builder: (ctx) => AlertDialog(
-    backgroundColor: VirilColors.stone, title: const Text('Регистрация через Google'),
-    content: const Text('Игровые аккаунты и синхронизация между устройствами ещё не подключены. Сейчас профиль и прогресс хранятся локально на этом устройстве. Подключение Google будет добавлено отдельным этапом.'),
-    actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Понятно'))]));
+  Future<void> _openAuth(BuildContext context) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const AuthScreen()),
+    );
+  }
   Future<void> _openSupport(BuildContext context) async {
     final uri = Uri(scheme: 'mailto', path: 'VirilSupport@gmail.com',
       queryParameters: {'subject': 'Поддержка Viril'});
