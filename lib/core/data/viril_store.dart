@@ -222,6 +222,65 @@ class VirilStore extends ChangeNotifier {
     await _preferences?.setString(_tasksKey, jsonEncode(_tasks.map((task) => task.toJson()).toList()));
   }
 
+  Map<String, dynamic> exportSnapshot() => {
+    'xp': _xp,
+    'vcoins': _vcoins,
+    'tasks': _tasks.map((task) => task.toJson()).toList(),
+    'coinRewardedTasks': _coinRewardedTasks.toList(),
+    'purchasedItems': _purchasedItems.toList(),
+    'habitRewards': _habitRewards.toList(),
+    'activeDays': _activeDays.toList(),
+    'dailyXp': _dailyXp,
+    'journalEntries': _journalEntries,
+    'gratitudeEntries': _gratitudeEntries,
+  };
+
+  Future<void> importSnapshot(Map<String, dynamic> data) async {
+    await initialize();
+    _xp = (data['xp'] as num?)?.toInt() ?? 0;
+    _vcoins = (data['vcoins'] as num?)?.toInt() ?? 0;
+    _tasks = (data['tasks'] as List<dynamic>? ?? [])
+        .whereType<Map<String, dynamic>>()
+        .map(VirilTask.fromJson).toList();
+    _coinRewardedTasks
+      ..clear()
+      ..addAll((data['coinRewardedTasks'] as List<dynamic>? ?? []).whereType<String>());
+    _purchasedItems
+      ..clear()
+      ..addAll((data['purchasedItems'] as List<dynamic>? ?? []).whereType<String>());
+    _habitRewards
+      ..clear()
+      ..addAll((data['habitRewards'] as List<dynamic>? ?? []).whereType<String>());
+    _activeDays
+      ..clear()
+      ..addAll((data['activeDays'] as List<dynamic>? ?? []).whereType<String>());
+    _dailyXp
+      ..clear()
+      ..addAll((data['dailyXp'] as Map<String, dynamic>? ?? {}).map(
+        (key, value) => MapEntry(key, (value as num).toInt()),
+      ));
+    _journalEntries
+      ..clear()
+      ..addAll((data['journalEntries'] as List<dynamic>? ?? [])
+          .whereType<Map>().map((item) => Map<String, String>.from(item)));
+    _gratitudeEntries
+      ..clear()
+      ..addAll((data['gratitudeEntries'] as List<dynamic>? ?? [])
+          .whereType<Map>().map((item) => Map<String, String>.from(item)));
+
+    await _preferences?.setInt(_xpKey, _xp);
+    await _preferences?.setInt(_vcoinKey, _vcoins);
+    await _saveTasks();
+    await _preferences?.setStringList(_coinRewardedTasksKey, _coinRewardedTasks.toList());
+    await _preferences?.setStringList(_purchasedItemsKey, _purchasedItems.toList());
+    await _preferences?.setStringList(_habitRewardsKey, _habitRewards.toList());
+    await _preferences?.setStringList(_activeDaysKey, _activeDays.toList());
+    await _preferences?.setString(_dailyXpKey, jsonEncode(_dailyXp));
+    await _saveEntries(_journalKey, _journalEntries);
+    await _saveEntries(_gratitudeKey, _gratitudeEntries);
+    notifyListeners();
+  }
+
   Future<void> resetProgress() async {
     await initialize();
     _tasks.clear(); _xp = 0; _vcoins = 0; _coinRewardedTasks.clear();
