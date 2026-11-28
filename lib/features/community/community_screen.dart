@@ -84,15 +84,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
   Future<List<Map<String, dynamic>>> _conversations() async {
     final uid = _uid;
     if (uid == null) return [];
-    final rows = await _db.from('dm_conversation_members')
-      .select('conversation_id').eq('user_id', uid);
-    final ids = (rows as List).map((e) => e['conversation_id'].toString()).toList();
+    final rows = await _db.rpc('viril_list_dm_peers');
+    final peers = (rows as List).map((e) => Map<String,dynamic>.from(e as Map)).toList();
     final output = <Map<String, dynamic>>[];
-    for (final id in ids) {
-      final members = await _db.from('dm_conversation_members')
-        .select('user_id').eq('conversation_id', id);
-      final peer = (members as List).map((e) => e['user_id'].toString()).firstWhere((id) => id != uid, orElse: () => '');
-      if (peer.isEmpty) continue;
+    for (final item in peers) {
+      final id = item['conversation_id'].toString();
+      final peer = item['peer_user_id'].toString();
       final profileRows = await _db.from('profiles')
         .select('user_id,public_id,nickname,full_name,avatar_url').eq('user_id', peer).limit(1);
       if ((profileRows as List).isEmpty) continue;
