@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/services/supabase_service.dart';
+import '../../../core/services/progress_sync_service.dart';
 
 class ProfileStore extends ChangeNotifier {
   ProfileStore._();
@@ -107,6 +108,8 @@ class ProfileStore extends ChangeNotifier {
       // OAuth metadata remains available if profile row access is not yet configured.
     }
     notifyListeners();
+    // Progress is synchronized only after Supabase has supplied a verified user.
+    await ProgressSyncService.instance.syncForCurrentUser();
   }
 
   String _generateDemoId() {
