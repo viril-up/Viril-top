@@ -193,6 +193,12 @@ class _AuthScreenState extends State<AuthScreen> {
     child: Text(text, style: TextStyle(color: isError ? Colors.redAccent.shade100 : VirilColors.ice, fontSize: 11, height: 1.4)),
   );
 
+  String get _webRedirectUrl {
+    final isGitHubPagesProjectSite = Uri.base.pathSegments.contains('Viril-top');
+    final targetPath = isGitHubPagesProjectSite ? '/Viril-top/' : '/';
+    return Uri.base.replace(path: targetPath, query: '', fragment: '').toString();
+  }
+
   Future<void> _submitEmail() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() {
@@ -207,7 +213,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final response = await client.auth.signUp(
           email: email,
           password: password,
-          emailRedirectTo: kIsWeb ? Uri.base.origin : null,
+          emailRedirectTo: kIsWeb ? _webRedirectUrl : null,
         );
         if (!mounted) return;
         if (response.session != null) {
@@ -239,7 +245,7 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       await SupabaseService.client.auth.signInWithOAuth(
         OAuthProvider.google,
-        redirectTo: kIsWeb ? Uri.base.origin : 'io.supabase.viril://login-callback/',
+        redirectTo: kIsWeb ? _webRedirectUrl : 'io.supabase.viril://login-callback/',
       );
     } on AuthException catch (error) {
       if (mounted) setState(() => _notice = _friendlyError(error.message));
