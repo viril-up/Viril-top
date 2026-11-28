@@ -76,8 +76,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 16),
           _sectionLabel('ТВОЙ ПРОФИЛЬ'),
           const SizedBox(height: 10),
-          _ActionTile(icon: Icons.person_add_alt_1_rounded, title: 'Войти / зарегистрироваться',
-            subtitle: 'Google или электронная почта', onTap: () => _openAuth(context)),
+          _ActionTile(
+            icon: profile.isSignedIn ? Icons.verified_user_rounded : Icons.person_add_alt_1_rounded,
+            title: profile.isSignedIn ? 'Аккаунт подключён' : 'Войти / зарегистрироваться',
+            subtitle: profile.isSignedIn
+                ? '${profile.accountEmail.isEmpty ? profile.accountName : profile.accountEmail} · ID ${profile.userId}'
+                : 'Google или электронная почта',
+            onTap: () => profile.isSignedIn
+                ? _manageAccount(context)
+                : _openAuth(context),
+          ),
           _ActionTile(icon: Icons.quiz_outlined, title: 'Ответы на вопросы',
             subtitle: 'Всё, что нужно знать о приложении', onTap: () => _openFaq(context)),
           _ActionTile(icon: Icons.support_agent_rounded, title: 'Поддержка',
@@ -376,9 +384,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _openFaq(BuildContext context) async => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const _FaqScreen()));
   Future<void> _openAuth(BuildContext context) async {
-    await Navigator.of(context).push(
+    final connected = await Navigator.of(context).push<bool>(
       MaterialPageRoute(builder: (_) => const AuthScreen()),
     );
+    if (connected == true && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Аккаунт Viril успешно подключён.')),
+      );
+    }
+  }
+
+  Future<void> _manageAccount(BuildContext context) async {
+    final shouldSignOut = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: VirilColors.stone,
+        title: const Text('Аккаунт Viril'),
+        content: Text(
+          'Подключённый аккаунт: ${ProfileStore.instance.accountEmail}\nID: ${ProfileStore.instance.userId}\n\nВыйти, чтобы подключить другой аккаунт?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Отмена'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Выйти'),
+          ),
+        ],
+      ),
+    );
+    if (shouldSignOut != true) return;
+    try {
+      await ProfileStore.instance.signOut();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Вы вышли из аккаунта.')),
+        );
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Не удалось выйти. Проверь интернет и повтори попытку.')),
+        );
+      }
+    }
   }
   Future<void> _openSupport(BuildContext context) async {
     final uri = Uri(scheme: 'mailto', path: 'VirilSupport@gmail.com',

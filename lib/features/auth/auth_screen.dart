@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -20,9 +21,25 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isBusy = false;
   bool _obscurePassword = true;
   String? _notice;
+  bool _awaitingGoogle = false;
+  StreamSubscription<AuthState>? _authSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    if (SupabaseService.isInitialized) {
+      _authSubscription = SupabaseService.client.auth.onAuthStateChange.listen((state) {
+        if (_awaitingGoogle && state.event == AuthChangeEvent.signedIn && mounted) {
+          _awaitingGoogle = false;
+          Navigator.of(context).pop(true);
+        }
+      });
+    }
+  }
 
   @override
   void dispose() {
+    _authSubscription?.cancel();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -238,6 +255,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
+    _awaitingGoogle = true;
     setState(() {
       _isBusy = true;
       _notice = null;
@@ -248,8 +266,10 @@ class _AuthScreenState extends State<AuthScreen> {
         redirectTo: kIsWeb ? _webRedirectUrl : 'io.supabase.viril://login-callback/',
       );
     } on AuthException catch (error) {
+      _awaitingGoogle = false;
       if (mounted) setState(() => _notice = _friendlyError(error.message));
     } catch (_) {
+      _awaitingGoogle = false;
       if (mounted) setState(() => _notice = 'Не удалось запустить вход через Google. Проверь настройки провайдера.');
     } finally {
       if (mounted) setState(() => _isBusy = false);

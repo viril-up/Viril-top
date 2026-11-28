@@ -5,8 +5,6 @@ import '../../../core/theme/viril_colors.dart';
 import 'profile_frame.dart';
 
 /// Shared avatar renderer used by the Home, Profile and Progress headers.
-/// A missing avatar image keeps the circular avatar surface visible; only its
-/// inner symbol is omitted. The selected frame is always applied independently.
 class ProfileAvatar extends StatelessWidget {
   const ProfileAvatar({
     super.key,
@@ -21,9 +19,18 @@ class ProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = profile.hasAvatarImage
-        ? Icon(profile.avatarIcon, color: VirilColors.gold, size: iconSize ?? size * .48)
-        : const SizedBox.shrink();
+    final hasRemoteImage = profile.accountAvatarUrl.startsWith('https://');
+    final content = hasRemoteImage
+        ? ClipOval(
+            child: Image.network(
+              profile.accountAvatarUrl,
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => _fallbackIcon(),
+            ),
+          )
+        : _fallbackIcon();
 
     if (profile.hasFrame) {
       return ProfileFrame(frameIndex: profile.frameIndex, size: size, child: content);
@@ -41,4 +48,14 @@ class ProfileAvatar extends StatelessWidget {
       ),
     );
   }
+
+  Widget _fallbackIcon() => SizedBox(
+        width: size,
+        height: size,
+        child: Center(
+          child: profile.hasAvatarImage
+              ? Icon(profile.avatarIcon, color: VirilColors.gold, size: iconSize ?? size * .48)
+              : const SizedBox.shrink(),
+        ),
+      );
 }
