@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -19,6 +20,9 @@ class ProgressSyncService {
   int _revision = 0;
   String? _syncedUserId;
   bool _busy = false;
+  bool _applyingRemote = false;
+  bool _listenersAttached = false;
+  Timer? _uploadTimer;
 
   Future<void> syncForCurrentUser() async {
     final session = Supabase.instance.client.auth.currentSession;
@@ -41,6 +45,7 @@ class ProgressSyncService {
           _revision = (remote['revision'] as num?)?.toInt() ?? 0;
           _syncedUserId = user.id;
           await prefs.setString(_ownerKey, user.id);
+          _attachListeners();
           return;
         }
       }
@@ -56,6 +61,7 @@ class ProgressSyncService {
         _revision = (saved['revision'] as num?)?.toInt() ?? 1;
         _syncedUserId = user.id;
         await prefs.setString(_ownerKey, user.id);
+        _attachListeners();
         return;
       }
 
@@ -67,6 +73,7 @@ class ProgressSyncService {
         _revision = (latest['revision'] as num?)?.toInt() ?? 0;
         _syncedUserId = user.id;
         await prefs.setString(_ownerKey, user.id);
+        _attachListeners();
       }
     } catch (error, stackTrace) {
       debugPrint('Viril progress sync failed: $error');
@@ -95,6 +102,8 @@ class ProgressSyncService {
   };
 
   Future<void> _applySnapshot(Map<String, dynamic> snapshot) async {
+    _applyingRemote = true;
+    try {
     final viril = snapshot['viril'];
     final goals = snapshot['goals'];
     await VirilStore.instance.importSnapshot(
@@ -103,6 +112,54 @@ class ProgressSyncService {
     await GoalStore.instance.importSnapshot(
       goals is List<dynamic> ? goals : <dynamic>[],
     );
+    } finally {
+      _applyingRemote = false;
+    }
+  }
+
+  void _attachListeners() {
+    if (_listenersAttached) return;
+    VirilStore.instance.addListener(_scheduleUpload);
+    GoalStore.instance.addListener(_scheduleUpload);
+    _listenersAttached = true;
+  }
+
+  void onSignedOut() {
+    _syncedUserId = null;
+    _uploadTimer?.cancel();
+  }
+
+  void _scheduleUpload() {
+    if (_applyingRemote || _syncedUserId == null) return;
+    _uploadTimer?.cancel();
+    _uploadTimer = Timer(const Duration(milliseconds: 900), _pushLocalChanges);
+  }
+
+  Future<void> _pushLocalChanges() async {
+    if (_busy || _syncedUserId == null) return;
+    final session = Supabase.instance.client.auth.currentSession;
+    final user = Supabase.instance.client.auth.currentUser;
+    final token = session?.accessToken;
+    if (user == null || user.id != _syncedUserId || token == null) return;
+    _busy = true;
+    try {
+      final saved = await _putSnapshot(token, await _buildSnapshot(), _revision);
+      if (saved != null) {
+        _revision = (saved['revision'] as num?)?.toInt() ?? (_revision + 1);
+        return;
+      }
+      final latest = await _getSnapshot(token);
+      if (latest != null && latest['exists'] == true &&
+          latest['snapshot'] is Map<String, dynamic>) {
+        await _applySnapshot(latest['snapshot'] as Map<String, dynamic>);
+        _revision = (latest['revision'] as num?)?.toInt() ?? _revision;
+      }
+    } catch (error, stackTrace) {
+      debugPrint('Viril progress upload failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+    } finally {
+      _busy = false;
+    }
   }
 
   Future<Map<String, dynamic>?> _getSnapshot(String token) async {
