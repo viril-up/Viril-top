@@ -1,6 +1,11 @@
-name = "viril-ai"
+name = "viril-top"
 main = "src/index.ts"
 compatibility_date = "2026-11-26"
 
 [ai]
 binding = "AI"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "viril-progress"
+database_id = "860b94eb-056b-4947-9672-a3db8849dd66"
