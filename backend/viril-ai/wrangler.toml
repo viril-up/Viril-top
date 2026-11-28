@@ -1,4 +1,4 @@
-name = "viril-ai"
+name = "viril-top"
 main = "src/index.ts"
 compatibility_date = "2026-11-26"
 
