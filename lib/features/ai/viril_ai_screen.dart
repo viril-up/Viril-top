@@ -58,7 +58,9 @@ class _VirilAiScreenState extends State<VirilAiScreen> {
       final response = await http
           .post(
             uri,
-            headers: const {'Content-Type': 'application/json'},
+            // A JSON content type triggers a browser CORS preflight. Use the CORS-safelisted
+            // text/plain type; the Worker parses the request body as JSON regardless.
+            headers: const {'Content-Type': 'text/plain;charset=UTF-8'},
             body: jsonEncode({
               'messages': _messages
                   .where((message) => message['role'] == 'user' || message['role'] == 'assistant')
