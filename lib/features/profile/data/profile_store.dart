@@ -1,24 +1,41 @@
+import 'dart:async';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../core/services/supabase_service.dart';
 
 class ProfileStore extends ChangeNotifier {
   ProfileStore._();
   static final ProfileStore instance = ProfileStore._();
+
   static const _nameKey = 'viril.profile.name.v1';
   static const _bioKey = 'viril.profile.bio.v1';
   static const _avatarKey = 'viril.profile.avatar.v1';
   static const _frameKey = 'viril.profile.frame.v1';
   static const _userIdKey = 'viril.profile.demo_user_id.v1';
+
   String _name = 'Путник';
   String _bio = 'Мой путь начинается сегодня.';
   String _userId = '';
+  String _accountEmail = '';
+  String _accountName = '';
+  String _accountAvatarUrl = '';
+  String _accountPublicId = '';
   int _avatarIndex = 0;
   int _frameIndex = 0;
   bool _ready = false;
+  StreamSubscription<AuthState>? _authSubscription;
+
   String get name => _name;
   String get bio => _bio;
-  String get userId => _userId;
+  String get userId => _accountPublicId.isNotEmpty ? _accountPublicId : _userId;
+  String get accountEmail => _accountEmail;
+  String get accountName => _accountName;
+  String get accountAvatarUrl => _accountAvatarUrl;
+  bool get isSignedIn => _accountEmail.isNotEmpty || _accountName.isNotEmpty || _accountPublicId.isNotEmpty;
   int get avatarIndex => _avatarIndex;
   int get frameIndex => _frameIndex;
   bool get isReady => _ready;
@@ -45,12 +62,63 @@ class ProfileStore extends ChangeNotifier {
     _userId = prefs.getString(_userIdKey) ?? _generateDemoId();
     await prefs.setString(_userIdKey, _userId);
     _ready = true;
+
+    if (SupabaseService.isInitialized) {
+      final client = SupabaseService.client;
+      await _applyAuthUser(client.auth.currentUser);
+      _authSubscription ??= client.auth.onAuthStateChange.listen((state) {
+        _applyAuthUser(state.session?.user);
+      });
+    }
+    notifyListeners();
+  }
+
+  Future<void> _applyAuthUser(User? user) async {
+    if (user == null) {
+      _accountEmail = '';
+      _accountName = '';
+      _accountAvatarUrl = '';
+      _accountPublicId = '';
+      notifyListeners();
+      return;
+    }
+
+    _accountEmail = user.email ?? '';
+    final metadata = user.userMetadata ?? const <String, dynamic>{};
+    _accountName = (metadata['full_name'] ?? metadata['name'] ?? '').toString();
+    _accountAvatarUrl = (metadata['avatar_url'] ?? metadata['picture'] ?? '').toString();
+
+    try {
+      final row = await SupabaseService.client
+          .from('profiles')
+          .select('public_id, full_name, email, avatar_url')
+          .eq('user_id', user.id)
+          .maybeSingle();
+      if (row != null) {
+        final publicId = row['public_id']?.toString() ?? '';
+        if (publicId.isNotEmpty) _accountPublicId = publicId.padLeft(4, '0');
+        final fullName = row['full_name']?.toString() ?? '';
+        final email = row['email']?.toString() ?? '';
+        final avatar = row['avatar_url']?.toString() ?? '';
+        if (fullName.isNotEmpty) _accountName = fullName;
+        if (email.isNotEmpty) _accountEmail = email;
+        if (avatar.isNotEmpty) _accountAvatarUrl = avatar;
+      }
+    } catch (_) {
+      // OAuth metadata remains available if profile row access is not yet configured.
+    }
     notifyListeners();
   }
 
   String _generateDemoId() {
     final random = Random.secure();
     return (100000 + random.nextInt(900000)).toString();
+  }
+
+  Future<void> signOut() async {
+    if (SupabaseService.isInitialized) {
+      await SupabaseService.client.auth.signOut();
+    }
   }
 
   Future<void> updateProfile({required String name, required String bio, required int avatarIndex, int? frameIndex}) async {
@@ -78,5 +146,11 @@ class ProfileStore extends ChangeNotifier {
     _avatarIndex = 0;
     _frameIndex = 0;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
   }
 }
