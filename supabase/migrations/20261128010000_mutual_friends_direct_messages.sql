@@ -227,3 +227,24 @@ begin
     alter publication supabase_realtime add table public.dm_messages;
   end if;
 end $$;
+
+-- Expose only each signed-in user's own conversation IDs and the other participant's ID.
+create or replace function public.viril_list_dm_peers()
+returns table(conversation_id uuid, peer_user_id uuid)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select mine.conversation_id, peer.user_id
+  from public.dm_conversation_members mine
+  join public.dm_conversation_members peer
+    on peer.conversation_id = mine.conversation_id
+   and peer.user_id <> auth.uid()
+  where mine.user_id = auth.uid()
+    and (auth.jwt() ->> 'is_anonymous') is distinct from 'true'
+    and (select count(*) from public.dm_conversation_members all_members
+         where all_members.conversation_id = mine.conversation_id) = 2;
+$$;
+revoke all on function public.viril_list_dm_peers() from public, anon;
+grant execute on function public.viril_list_dm_peers() to authenticated;
