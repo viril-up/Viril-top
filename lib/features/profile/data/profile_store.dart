@@ -76,6 +76,7 @@ class ProfileStore extends ChangeNotifier {
 
   Future<void> _applyAuthUser(User? user) async {
     if (user == null) {
+      ProgressSyncService.instance.onSignedOut();
       _accountEmail = '';
       _accountName = '';
       _accountAvatarUrl = '';
