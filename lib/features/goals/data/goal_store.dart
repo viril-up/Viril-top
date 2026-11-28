@@ -122,6 +122,19 @@ class GoalStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<Map<String, dynamic>> exportSnapshot() =>
+      _goals.map((goal) => goal.toJson()).toList();
+
+  Future<void> importSnapshot(List<dynamic> data) async {
+    await initialize();
+    _goals
+      ..clear()
+      ..addAll(data.whereType<Map<String, dynamic>>()
+          .map(VirilGoal.fromJson));
+    await _save();
+    notifyListeners();
+  }
+
   Future<void> addGoal(String title, int durationDays, {DateTime? plannedStartAt, DateTime? plannedEndAt}) async {
     await initialize();
     final value = title.trim();
