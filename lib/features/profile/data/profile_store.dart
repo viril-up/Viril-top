@@ -29,9 +29,9 @@ class ProfileStore extends ChangeNotifier {
   bool _ready = false;
   StreamSubscription<AuthState>? _authSubscription;
 
-  String get name => _name;
+  String get name => _name == 'Путник' && _accountName.isNotEmpty ? _accountName : _name;
   String get bio => _bio;
-  String get userId => _accountPublicId.isNotEmpty ? _accountPublicId : _userId;
+  String get userId => isSignedIn ? _accountPublicId : _userId;
   String get accountEmail => _accountEmail;
   String get accountName => _accountName;
   String get accountAvatarUrl => _accountAvatarUrl;
