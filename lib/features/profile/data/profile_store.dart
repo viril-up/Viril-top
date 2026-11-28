@@ -84,6 +84,7 @@ class ProfileStore extends ChangeNotifier {
     }
 
     _accountEmail = user.email ?? '';
+    _accountPublicId = '';
     final metadata = user.userMetadata ?? const <String, dynamic>{};
     _accountName = (metadata['full_name'] ?? metadata['name'] ?? '').toString();
     _accountAvatarUrl = (metadata['avatar_url'] ?? metadata['picture'] ?? '').toString();
@@ -91,17 +92,15 @@ class ProfileStore extends ChangeNotifier {
     try {
       final row = await SupabaseService.client
           .from('profiles')
-          .select('public_id, full_name, email, avatar_url')
+          .select('public_id, full_name, avatar_url')
           .eq('user_id', user.id)
           .maybeSingle();
       if (row != null) {
         final publicId = row['public_id']?.toString() ?? '';
         if (publicId.isNotEmpty) _accountPublicId = publicId.padLeft(4, '0');
         final fullName = row['full_name']?.toString() ?? '';
-        final email = row['email']?.toString() ?? '';
         final avatar = row['avatar_url']?.toString() ?? '';
         if (fullName.isNotEmpty) _accountName = fullName;
-        if (email.isNotEmpty) _accountEmail = email;
         if (avatar.isNotEmpty) _accountAvatarUrl = avatar;
       }
     } catch (_) {
